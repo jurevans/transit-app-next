@@ -1,0 +1,22 @@
+.popup {
+  width: auto;
+}
+
+.icons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.notes {
+  font-size: 14px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
