@@ -21,6 +21,8 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
 import { updatedStationDetails } from '../../../features/map/mapStationDetails';
+// import { useFetchStationsQuery } from '../../../features/api/stationsApiSlice';
+// import { useFetchLinesQuery } from '../../../features/api/linesApiSlice';
 import {
   getInRange,
   getDurationForTransition,
@@ -36,11 +38,9 @@ import {
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
-  PickerLineObject,
-  PickerPlotObject,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
-// import '../../../styles/components/map/Map.scss';
+import styles from '../../../styles/components/map/Map.module.scss';
 
 const { mapboxAccessToken } = process.env;
 const { cities, mapStyles } = settings;
@@ -59,7 +59,10 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const range = useAppSelector(state => state.city.range);
   const mapStyle = useAppSelector(state => state.mapStyle.style);
-
+/*
+  const { data: stationData = {}, isFetching: isStationFetching } = useFetchStationsQuery(city);
+  const { data: linesData = {}, isFetching: isLinesFetching } = useFetchLinesQuery(city);
+*/
   type ViewState = {
     [key: string]: {
       viewState: {
@@ -74,7 +77,6 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
       layers: any[];
     }
   };
-
   // Use local state for DeckGL
   const acc: ViewState = {};
   const initialViewState: ViewState = Object.keys(cities).reduce((config, city) => {
@@ -224,7 +226,7 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
   };
 
   return (
-    <div className="map" onClick={handleClick} onContextMenu={event => event.preventDefault()}>
+    <div className={styles.map} onClick={handleClick} onContextMenu={event => event.preventDefault()}>
       <DeckGL
         id="deck"
         ref={deckRef}

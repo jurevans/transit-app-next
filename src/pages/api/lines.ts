@@ -1,9 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import linesMTA from '../../../config/shapefiles/MTA/lines';
-import linesTriMet from '../../../config/shapefiles/TriMet/lines';
+import { getKeyValue } from '../../helpers/functions';
+import shapeFiles from '../../../config/shapefiles';
+import { ShapeFileData } from '../../../config/shapefiles';
+
+type LinesRequest = {
+  city: string;
+};
 
 /**
- * API Route to load static data
+ * API Route to load static data for lines
  * @param req 
  * @param res 
  */
@@ -11,19 +16,14 @@ const handler = (
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) => {
-  /* TODO: Clean this up a bit */
   if (req.method === 'GET') {
-    const { city } = req.query;
-    console.log('QUERY', city);
-    if (city) {
-      if (city === 'nyc') {
-        res.status(200).json(linesMTA);
-      }
-      if (city === 'portland') {
-        res.status(200).json(linesTriMet);
-      }
+    const { city } = req.query as LinesRequest;
+    const linesData: ShapeFileData = getKeyValue(shapeFiles)(city);
+
+    if (linesData && linesData.lines) {
+      res.status(200).json(linesData.lines);
     } else {
-      res.status(200).json(linesMTA);
+      res.status(404).end();
     }
   }
 };
