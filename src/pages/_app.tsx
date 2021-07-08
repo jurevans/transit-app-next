@@ -22,7 +22,7 @@ MyApp.getInitialProps = async (appContext: any) => {
 
   const responseStations = await fetch(`http://localhost:3000/api/stations/nyc`);
   const stations = await responseStations.json();
-  dispatch(setStations(stations));
+  dispatch(setStations(stations.features));
 
   const responseLines = await fetch(`http://localhost:3000/api/lines/nyc`);
   const lines = await responseLines.json();

@@ -20,8 +20,8 @@ const SelectCity: FC<Props> = (props: Props): ReactElement => {
       className={styles.select}
       value={city}
       onChange={onChange}>
-      {Object.keys(cities).map((city: string) => (
-        <option key={city} value={city}>{cities[city].label}</option>
+      {cities.map((config: any) => (
+        <option key={config.id} value={config.id}>{config.label}</option>
       ))}
     </select>
   )

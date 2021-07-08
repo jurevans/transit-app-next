@@ -1,4 +1,4 @@
-const stations = {"type":"FeatureCollection", "features":[
+{"type":"FeatureCollection", "features":[
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.66191915147105,45.51696025140995,0]},"properties":{"id":"1823","name":"SE M L King & Morrison","station":"SE M L King & Morrison","line":"AL","status":"Existing","type":"SC"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.66783721592905,45.530186544577184,0]},"properties":{"id":"1830","name":"Interstate/Rose Quarter","station":"Interstate/Rose Quarter","line":"Y","status":"Existing","type":"MAX"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.68208873685519,45.57710918294085,0]},"properties":{"id":"1837","name":"N Lombard TC","station":"N Lombard TC","line":"Y","status":"Existing","type":"MAX"}},
@@ -167,6 +167,4 @@ const stations = {"type":"FeatureCollection", "features":[
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.67959130999893,45.515161842828554,0]},"properties":{"id":"2978","name":"City Hall/SW 5th and Jefferson","station":"City Hall/SW 5th and Jefferson","line":"GO","status":"Existing","type":"MAX"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.67273381385343,45.50328702157642,0]},"properties":{"id":"2985","name":"SW Moody & Meade North","station":"SW Moody & Meade North","line":"NS/AL","status":"Existing","type":"SC"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-122.67279257915422,45.50311477282489,0]},"properties":{"id":"2992","name":"SW Moody & Meade South","station":"SW Moody & Meade South","line":"NS/BL","status":"Existing","type":"SC"}}
-]};
-
-export default stations;
+]}

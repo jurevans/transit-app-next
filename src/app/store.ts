@@ -1,12 +1,21 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  createImmutableStateInvariantMiddleware,
+} from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import rootReducer from '../features';
 import { useMemo } from 'react';
+
+// Ignore paths for static data
+const immutableInvariantMiddleware = createImmutableStateInvariantMiddleware({
+  ignoredPaths: ['stations', 'lines'],
+});
 
 const createStore = (preloadedState: any) => {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
+    middleware: [immutableInvariantMiddleware],
   });
 };
 

@@ -26,7 +26,6 @@ import {
   getInRange,
   getDurationForTransition,
   getZoomForTransition,
-  getKeyValue,
 } from '../../../helpers/functions';
 import settings from '../../../settings';
 import {
@@ -37,7 +36,7 @@ import {
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
-  StationsGeoData,
+  StationsGeoDataItem,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -48,11 +47,11 @@ const { cities, mapStyles } = settings;
 type Props = {
   city: string;
   mapStyle: any;
-  stations: StationsGeoData;
+  stations: [StationsGeoDataItem];
   lines: any;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoData, lines: any }): ReactElement => {
+const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: [StationsGeoDataItem], lines: any }): ReactElement => {
   const { city, mapStyle, stations, lines } = props;
 
   const dispatch = useAppDispatch();
@@ -84,7 +83,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     ],
   };
 
-  const [viewState, setViewState] = useState(initialViewState);
+  const [mapViewState, setViewState] = useState(initialViewState);
   const [tooltipData, updateTooltip] = useState(null);
 
   const handleHover = (data: any) => {
@@ -107,20 +106,20 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
   const goToPopup = (data: any) => {
     const duration = getDurationForTransition({
       minDuration: 375,
-      startLon: viewState.viewState.longitude,
+      startLon: mapViewState.viewState.longitude,
       endLon: data.coordinates[0],
-      startLat: viewState.viewState.latitude,
+      startLat: mapViewState.viewState.latitude,
       endLat: data.coordinates[1],
     });
 
     // Zoom in a little if need be
-    const oldZoom = viewState.viewState.zoom;
+    const oldZoom = mapViewState.viewState.zoom;
     const zoom = getZoomForTransition(oldZoom, 14);
 
     const newViewState = {
-      ...viewState,
+      ...mapViewState,
       viewState: {
-        ...viewState.viewState,
+        ...mapViewState.viewState,
         zoom,
         longitude: data.coordinates[0],
         latitude: data.coordinates[1],
@@ -157,7 +156,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
   };
 
   const handleViewStateChange = (data: any) => {
-    const layers = [...viewState.layers];
+    const layers = [...mapViewState.layers];
     const textLayerId = 'station-text-layer';
     // Determine if the TextLayer be added
     if (data.interactionState
@@ -175,7 +174,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     }
 
     const updatedState = {
-      ...viewState,
+      ...mapViewState,
       layers,
       viewState: {
         ...data.viewState,
@@ -193,14 +192,14 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     dispatch(updatedMapStyle(mapStyle));
 
     // Update TextLayer style:
-    const layers = [...viewState.layers];
+    const layers = [...mapViewState.layers];
     const textLayerId = 'station-text-layer';
     if (layers.some(layer => layer.id === textLayerId)) {
       const index = layers.map(layer => layer.id).indexOf(textLayerId);
       layers.splice(index, 1);
       layers.push(getTextLayer(getStationData(stations), mapStyle.label));
       setViewState({
-        ...viewState,
+        ...mapViewState,
         layers,
       });
     }
@@ -211,9 +210,9 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
       <DeckGL
         id="deck"
         ref={deckRef}
-        viewState={viewState.viewState}
+        viewState={mapViewState.viewState}
         onViewStateChange={handleViewStateChange}
-        layers={viewState.layers}
+        layers={mapViewState.layers}
         controller={true}
         ContextProvider={MapContext.Provider as ProviderExoticComponent<ProviderProps<any>>}
         onHover={(d: any) => handleHover(d)}
@@ -225,9 +224,9 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
         {isPopupOpen && <MapPopup city={city} data={popupData} />}
         {isStationDetailsOpen && <StationDetails city={city} data={stationDetailsData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
-        <NavigationControl style={{ right: 10,top: 10 }} />
-        <GeolocateControl style={{ right: 10, top: 110 }} />
-        <FullscreenControl style={{ right: 10, bottom: 10 }} />
+        <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
+        <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
+        <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>
       {tooltipData && <MapTooltip city={city} data={tooltipData} />}
     </div>

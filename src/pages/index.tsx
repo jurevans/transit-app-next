@@ -16,6 +16,7 @@ const ConfigurePage: FC = (): ReactElement => {
 
   const handleSelectCity = (e: React.ChangeEvent<any>) => {
     const { value } = e.target;
+    console.log('SELECT CITY VALUE', value);
     dispatch(fetchLines(value));
     dispatch(fetchStations(value));
     dispatch(updatedCity(value));

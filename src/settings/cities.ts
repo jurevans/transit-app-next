@@ -1,22 +1,23 @@
 import cities from '../../config/cities.config';
 
 export interface CitySettings {
-  [key: string]: {
-    settings: {
-      initialView: {
-        minZoom: number,
-        maxZoom: number,
-        bearing: number,
-        pitch: number,
-        zoom: number,
-        longitude: number,
-        latitude: number,
-      },
-      range: {
-        longitudeRange: number[],
-        latitudeRange: number[],
-      },
-    };
+  id: string,
+  label: string,
+  transitAuthority: string;
+  settings: {
+    initialView: {
+      minZoom: number,
+      maxZoom: number,
+      bearing: number,
+      pitch: number,
+      zoom: number,
+      longitude: number,
+      latitude: number,
+    },
+    range: {
+      longitudeRange: number[],
+      latitudeRange: number[],
+    },
   };
 };
 
@@ -27,37 +28,17 @@ const defaults = {
   pitch: 0,
 };
 
-/*
-const initalAccumulator: CitySettings = {};
-const citySettings: CitySettings = cities.reduce((newConfig, config) => {
-  newConfig[config.id] = {
-    ...config,
-    settings: {
-      initialView: {
-        ...defaults,
-        ...config.settings.initialView,
-      },
-      range: {
-        ...config.settings.range,
-      },
-    },
-  };
-  return newConfig;
-}, initalAccumulator);
-*/
-
 const citySettings = cities.map(config => ({
   ...config,
-    settings: {
-      initialView: {
-        ...defaults,
-        ...config.settings.initialView,
-      },
-      range: {
-        ...config.settings.range,
-      },
+  settings: {
+    initialView: {
+      ...defaults,
+      ...config.settings.initialView,
     },
-  }),
-);
+    range: {
+      ...config.settings.range,
+    },
+  },
+}));
 
 export default citySettings;

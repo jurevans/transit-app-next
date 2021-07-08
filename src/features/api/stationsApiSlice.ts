@@ -2,7 +2,7 @@
  * Api slice
  */
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { StationsGeoData } from '../../helpers/map';
+import { StationsGeoDataItem } from '../../helpers/map';
 
 const SERVER = 'http://localhost:3000';
 
@@ -25,7 +25,7 @@ export interface StationsState {
 };
 
 const initialState: StationsState = {
-  stations: {},
+  stations: [],
   loading: 'idle',
   error: null,
 };
@@ -40,7 +40,7 @@ const stationsApiSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchStations.fulfilled, (state, action: PayloadAction<StationsGeoData>) => {
+    builder.addCase(fetchStations.fulfilled, (state, action: PayloadAction<[StationsGeoDataItem]>) => {
       state.stations = action.payload;
       state.loading = 'succeeded';
     });

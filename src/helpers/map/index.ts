@@ -17,12 +17,13 @@ export interface StationsGeoDataItem {
     type: string;
     coordinates: number[];
   };
-}
+};
 
+/*
 export interface StationsGeoData {
   features: StationsGeoDataItem[];
 }
-
+*/
 export interface LinesGeoData {
   type: string;
   features: {
@@ -42,9 +43,9 @@ export interface LinesGeoData {
   };
 }
 
-export const getStationData = (data: StationsGeoData): any => {
-  if (data && data.features) {
-    return data.features.map((station: StationsGeoDataItem) => {
+export const getStationData = (data: [StationsGeoDataItem]): any => {
+  if (data) {
+    return data.map((station: StationsGeoDataItem) => {
       const properties = station.properties;
       const geometry = station.geometry;
       return {
@@ -78,7 +79,7 @@ export const getIcons = (city: string, line: string): any => {
   return icons.filter(iconObj => iconObj.icon !== null);
 };
 
-export const getScatterplotLayer = (city: string, data: StationsGeoData) => {
+export const getScatterplotLayer = (city: string, data: StationsGeoDataItem) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
     data,

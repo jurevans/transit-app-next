@@ -1,7 +1,7 @@
-import stationsTriMet from './TriMet/stations';
-import linesTriMet from './TriMet/lines';
-import stationsMTA from './MTA/stations';
-import linesMTA from './MTA/lines';
+import * as stationsTriMet from './TriMet/stations.json';
+import * as linesTriMet from './TriMet/lines.json';
+import * as stationsMTA from './MTA/stations.json';
+import * as linesMTA from './MTA/lines.json';
 
 export {
   stationsMTA,
