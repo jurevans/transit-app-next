@@ -8,11 +8,11 @@ interface CityState {
   range: any;
 }
 // Load the first city from the config
-const city = Object.keys(cities)[0];
+const cityConfig = cities[0];
 
 const initialState: CityState = {
-  value: city,
-  range: cities[city].settings.range,
+  value: cityConfig.id,
+  range: cityConfig.settings.range,
 };
 
 const citySlice = createSlice({
@@ -21,8 +21,9 @@ const citySlice = createSlice({
   reducers: {
     updatedCity(state, action: PayloadAction<string>) {
       const city = action.payload;
+      const cityConfig = cities.find(config => config.id === city) || cities[0];
       state.value = city;
-      state.range = cities[city].settings.range;
+      state.range = cityConfig.settings.range;
     },
   },
 });

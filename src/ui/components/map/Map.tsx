@@ -75,14 +75,14 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     layers: any[];
   };
 
-  const cityObject = getKeyValue(cities)(city);
+  const cityConfig = cities.find(config => config.id === city) || cities[0];
   const initialViewState: ViewState = { 
-    viewState: { ...cityObject.settings.initialView },
+    viewState: { ...cityConfig.settings.initialView },
     layers: [
       getLineLayer(city, lines),
       getScatterplotLayer(city, getStationData(stations)),
     ],
-  }
+  };
 
   const [viewState, setViewState] = useState(initialViewState);
   const [tooltipData, updateTooltip] = useState(null);
@@ -159,7 +159,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
   const handleViewStateChange = (data: any) => {
     const layers = [...viewState.layers];
     const textLayerId = 'station-text-layer';
-    // Should the TextLayer be added?
+    // Determine if the TextLayer be added
     if (data.interactionState
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
@@ -198,7 +198,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     if (layers.some(layer => layer.id === textLayerId)) {
       const index = layers.map(layer => layer.id).indexOf(textLayerId);
       layers.splice(index, 1);
-      layers.push(getTextLayer(getStationData(cities[city].settings.shapeFiles.stations), mapStyle.label));
+      layers.push(getTextLayer(getStationData(stations), mapStyle.label));
       setViewState({
         ...viewState,
         layers,

@@ -1,5 +1,5 @@
 import cities from '../../config/cities.config';
-import { StationsGeoData, LinesGeoData} from '../helpers/map';
+
 export interface CitySettings {
   [key: string]: {
     settings: {
@@ -16,10 +16,6 @@ export interface CitySettings {
         longitudeRange: number[],
         latitudeRange: number[],
       },
-      shapeFiles: {
-        lines: any, // LinesGeoData, // TODO: Getting inconsistent types in the data.
-        stations: StationsGeoData,
-      },
     };
   };
 };
@@ -31,6 +27,7 @@ const defaults = {
   pitch: 0,
 };
 
+/*
 const initalAccumulator: CitySettings = {};
 const citySettings: CitySettings = cities.reduce((newConfig, config) => {
   newConfig[config.id] = {
@@ -43,15 +40,12 @@ const citySettings: CitySettings = cities.reduce((newConfig, config) => {
       range: {
         ...config.settings.range,
       },
-      shapeFiles: {
-        ...config.settings.shapeFiles,
-      },
     },
   };
   return newConfig;
 }, initalAccumulator);
+*/
 
-/*
 const citySettings = cities.map(config => ({
   ...config,
     settings: {
@@ -62,13 +56,8 @@ const citySettings = cities.map(config => ({
       range: {
         ...config.settings.range,
       },
-      shapeFiles: {
-        ...config.settings.shapeFiles,
-      },
     },
   }),
 );
-*/
-
 
 export default citySettings;

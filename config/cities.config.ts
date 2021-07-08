@@ -1,10 +1,3 @@
-import {
-  stationsMTA,
-  linesMTA,
-  stationsTriMet,
-  linesTriMet,
-} from './shapefiles';
-
 const cities = [
   {
     id: 'nyc',
