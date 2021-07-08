@@ -21,10 +21,6 @@ const cities = [
         longitudeRange: [-74.2, -73.8],
         latitudeRange: [40.5, 40.9],
       },
-      shapeFiles: {
-        lines: linesMTA,
-        stations: stationsMTA,
-      },
     },
   },
   {
@@ -40,10 +36,7 @@ const cities = [
       range: {
         longitudeRange: [-122.73, -122.5],
         latitudeRange: [45.4, 45.6],
-      }, shapeFiles: {
-        lines: linesTriMet,
-        stations: stationsTriMet,
-      }
+      },
     },
   },
 ];

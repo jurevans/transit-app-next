@@ -24,7 +24,7 @@ const ConfigurePage: FC = (): ReactElement => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>React Transit App</title>
+        <title>Transit App Next - Dashboard</title>
         <meta name="description" content="Transit App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -35,7 +35,6 @@ const ConfigurePage: FC = (): ReactElement => {
         </h1>
         <div className={styles.grid}>
           <Link href="/map/"><a className={styles.card}>Map</a></Link>
-          <Link href="/dashboard/"><a className={styles.card}>Dashboard</a></Link>
         </div>
         <div className={styles.grid}>
           <SelectCity city={city} onChange={handleSelectCity} />

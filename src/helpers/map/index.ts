@@ -43,14 +43,16 @@ export interface LinesGeoData {
 }
 
 export const getStationData = (data: StationsGeoData): any => {
-  return data.features.map((station: StationsGeoDataItem) => {
-    const properties = station.properties;
-    const geometry = station.geometry;
-    return {
-      ...properties,
-      ...geometry,
-    }
-  })
+  if (data && data.features) {
+    return data.features.map((station: StationsGeoDataItem) => {
+      const properties = station.properties;
+      const geometry = station.geometry;
+      return {
+        ...properties,
+        ...geometry,
+      }
+    });
+  }
 };
 
 export const getLineColor = (city: string, lines: string, opacity: number): RGBAColor => {

@@ -37,6 +37,7 @@ import {
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
+  StationsGeoData,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -46,11 +47,13 @@ const { cities, mapStyles } = settings;
 
 type Props = {
   city: string;
-  mapStyle: string;
+  mapStyle: any;
+  stations: StationsGeoData;
+  lines: any;
 };
 
-const Map: FC<Props> = (props: { city: string }): ReactElement => {
-  const { city } = props;
+const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoData, lines: any }): ReactElement => {
+  const { city, mapStyle, stations, lines } = props;
 
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
@@ -58,38 +61,28 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const range = useAppSelector(state => state.city.range);
-  const mapStyle = useAppSelector(state => state.mapStyle.style);
-  const { stations } = useAppSelector(state => state.stations);
-  const { lines } = useAppSelector(state => state.lines);
 
   type ViewState = {
-    [key: string]: {
-      viewState: {
-        minZoom: number;
-        maxZoom: number;
-        bearing: number;
-        pitch: number;
-        zoom: number;
-        longitude: number;
-        latitude: number;
-      };
-      layers: any[];
-    }
+    viewState: {
+      minZoom: number;
+      maxZoom: number;
+      bearing: number;
+      pitch: number;
+      zoom: number;
+      longitude: number;
+      latitude: number;
+    };
+    layers: any[];
   };
 
-  // Use local state for DeckGL
-  const acc: ViewState = {};
-  const initialViewState: ViewState = Object.keys(cities).reduce((config, city) => {
-    const cityObject = getKeyValue(cities)(city);
-    config[city] = { 
-      viewState: { ...cityObject.settings.initialView },
-      layers: [
-        getLineLayer(city, lines),
-        getScatterplotLayer(city, getStationData(stations)),
-      ],
-    };
-    return config;
-  }, acc);
+  const cityObject = getKeyValue(cities)(city);
+  const initialViewState: ViewState = { 
+    viewState: { ...cityObject.settings.initialView },
+    layers: [
+      getLineLayer(city, lines),
+      getScatterplotLayer(city, getStationData(stations)),
+    ],
+  }
 
   const [viewState, setViewState] = useState(initialViewState);
   const [tooltipData, updateTooltip] = useState(null);
@@ -114,28 +107,25 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
   const goToPopup = (data: any) => {
     const duration = getDurationForTransition({
       minDuration: 375,
-      startLon: viewState[city].viewState.longitude,
+      startLon: viewState.viewState.longitude,
       endLon: data.coordinates[0],
-      startLat: viewState[city].viewState.latitude,
+      startLat: viewState.viewState.latitude,
       endLat: data.coordinates[1],
     });
 
     // Zoom in a little if need be
-    const oldZoom = viewState[city].viewState.zoom;
+    const oldZoom = viewState.viewState.zoom;
     const zoom = getZoomForTransition(oldZoom, 14);
 
     const newViewState = {
       ...viewState,
-      [city]: {
-        ...viewState[city],
-        viewState: {
-          ...viewState[city].viewState,
-          zoom,
-          longitude: data.coordinates[0],
-          latitude: data.coordinates[1],
-          transitionDuration: duration,
-          transitionInterpolator: new FlyToInterpolator(),
-        },
+      viewState: {
+        ...viewState.viewState,
+        zoom,
+        longitude: data.coordinates[0],
+        latitude: data.coordinates[1],
+        transitionDuration: duration,
+        transitionInterpolator: new FlyToInterpolator(),
       },
     };
 
@@ -150,7 +140,6 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
 
   const handleClick = (e: React.MouseEvent<any>) => {
     /* TODO: Do nothing if view is being dragged! */
-    /* NOTE: This does not work in fullscreen mode! */
     const pickInfo = deckRef.current?.pickObject({
       x: e.clientX,
       y: e.clientY,
@@ -168,14 +157,14 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
   };
 
   const handleViewStateChange = (data: any) => {
-    const layers = [...viewState[city].layers];
+    const layers = [...viewState.layers];
     const textLayerId = 'station-text-layer';
     // Should the TextLayer be added?
     if (data.interactionState
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
         if (!layers.some(layer => layer.id === textLayerId)) {
-          layers.push(getTextLayer(getStationData(cities[city].settings.shapeFiles.stations), mapStyle.label));
+          layers.push(getTextLayer(getStationData(stations), mapStyle.label));
         }
       } else {
         if (layers.some(layer => layer.id === textLayerId)) {
@@ -187,15 +176,12 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
 
     const updatedState = {
       ...viewState,
-      [city]: {
-        ...viewState[city],
-        layers,
-        viewState: {
-          ...data.viewState,
-          longitude: getInRange(data.viewState.longitude, range.longitudeRange),
-          latitude: getInRange(data.viewState.latitude, range.latitudeRange),
-        },
-      }
+      layers,
+      viewState: {
+        ...data.viewState,
+        longitude: getInRange(data.viewState.longitude, range.longitudeRange),
+        latitude: getInRange(data.viewState.latitude, range.latitudeRange),
+      },
     };
 
     setViewState(updatedState);
@@ -207,7 +193,7 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
     dispatch(updatedMapStyle(mapStyle));
 
     // Update TextLayer style:
-    const layers = [...viewState[city].layers];
+    const layers = [...viewState.layers];
     const textLayerId = 'station-text-layer';
     if (layers.some(layer => layer.id === textLayerId)) {
       const index = layers.map(layer => layer.id).indexOf(textLayerId);
@@ -215,10 +201,7 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
       layers.push(getTextLayer(getStationData(cities[city].settings.shapeFiles.stations), mapStyle.label));
       setViewState({
         ...viewState,
-        [city]: {
-          ...viewState[city],
-          layers,
-        }
+        layers,
       });
     }
   };
@@ -228,9 +211,9 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
       <DeckGL
         id="deck"
         ref={deckRef}
-        viewState={viewState[city].viewState}
+        viewState={viewState.viewState}
         onViewStateChange={handleViewStateChange}
-        layers={viewState[city].layers}
+        layers={viewState.layers}
         controller={true}
         ContextProvider={MapContext.Provider as ProviderExoticComponent<ProviderProps<any>>}
         onHover={(d: any) => handleHover(d)}

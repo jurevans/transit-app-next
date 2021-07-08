@@ -2,11 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import rootReducer from '../features';
 import { useMemo } from 'react';
-/*
-export const store = configureStore({
-  reducer: rootReducer,
-});
-*/
 
 const createStore = (preloadedState: any) => {
   return configureStore({
