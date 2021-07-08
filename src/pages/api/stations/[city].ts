@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 // import stationsMTA from '../../../config/shapefiles/MTA/stations';
 // import stationsTriMet from '../../../config/shapefiles/TriMet/stations';
-import { getKeyValue } from '../../helpers/functions';
-import shapeFiles from '../../../config/shapefiles';
-import { ShapeFileData } from '../../../config/shapefiles';
+import { getKeyValue } from '../../../helpers/functions';
+import shapeFiles from '../../../../config/shapefiles';
+import { ShapeFileData } from '../../../../config/shapefiles';
 
 type StationsRequest = {
   city: string;

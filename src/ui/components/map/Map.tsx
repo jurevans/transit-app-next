@@ -21,8 +21,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
 import { updatedStationDetails } from '../../../features/map/mapStationDetails';
-// import { useFetchStationsQuery } from '../../../features/api/stationsApiSlice';
-// import { useFetchLinesQuery } from '../../../features/api/linesApiSlice';
+
 import {
   getInRange,
   getDurationForTransition,
@@ -53,16 +52,16 @@ type Props = {
 const Map: FC<Props> = (props: { city: string }): ReactElement => {
   const { city } = props;
 
+  const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const range = useAppSelector(state => state.city.range);
   const mapStyle = useAppSelector(state => state.mapStyle.style);
-/*
-  const { data: stationData = {}, isFetching: isStationFetching } = useFetchStationsQuery(city);
-  const { data: linesData = {}, isFetching: isLinesFetching } = useFetchLinesQuery(city);
-*/
+  const { stations } = useAppSelector(state => state.stations);
+  const { lines } = useAppSelector(state => state.lines);
+
   type ViewState = {
     [key: string]: {
       viewState: {
@@ -77,6 +76,7 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
       layers: any[];
     }
   };
+
   // Use local state for DeckGL
   const acc: ViewState = {};
   const initialViewState: ViewState = Object.keys(cities).reduce((config, city) => {
@@ -84,8 +84,8 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
     config[city] = { 
       viewState: { ...cityObject.settings.initialView },
       layers: [
-        getLineLayer(city, cityObject.settings.shapeFiles.lines),
-        getScatterplotLayer(city, getStationData(cityObject.settings.shapeFiles.stations)),
+        getLineLayer(city, lines),
+        getScatterplotLayer(city, getStationData(stations)),
       ],
     };
     return config;
@@ -93,8 +93,6 @@ const Map: FC<Props> = (props: { city: string }): ReactElement => {
 
   const [viewState, setViewState] = useState(initialViewState);
   const [tooltipData, updateTooltip] = useState(null);
-
-  const dispatch = useAppDispatch();
 
   const handleHover = (data: any) => {
     let updates: any = {};

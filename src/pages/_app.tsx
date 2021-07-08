@@ -1,13 +1,39 @@
 import '../styles/globals.scss';
-import type { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
-import { store } from '../app/store';
+import { initializeStore, useStore } from '../app/store';
+import { setStations } from '../features/api/stationsApiSlice';
+import { setLines } from '../features/api/linesApiSlice';
+import App from 'next/app';
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp = (props: { Component: any, pageProps: any }) => {
+  const { Component, pageProps } = props;
+  const store = useStore(pageProps.initialReduxState);
   return (
     <Provider store={store}>
       <Component {...pageProps} />
     </Provider>
   );
+};
+
+MyApp.getInitialProps = async (appContext: any) => {
+  const appProps = await App.getInitialProps(appContext);
+  const reduxStore = initializeStore({});
+  const { dispatch } = reduxStore;
+
+  const responseStations = await fetch(`http://localhost:3000/api/stations/nyc`);
+  const stations = await responseStations.json();
+  dispatch(setStations(stations));
+
+  const responseLines = await fetch(`http://localhost:3000/api/lines/nyc`);
+  const lines = await responseLines.json();
+  dispatch(setLines(lines));
+
+  appProps.pageProps = {
+    ...appProps.pageProps,
+    initialReduxState: reduxStore.getState(),
+  };
+
+  return appProps;
 }
-export default MyApp
+
+export default MyApp;
