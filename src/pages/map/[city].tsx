@@ -1,8 +1,7 @@
-import { ContextType, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import Map from '../../ui/components/map/Map';
 import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
-import { ParsedUrlQuery } from 'querystring';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
 import { fetchStations } from '../../features/api/stationsApiSlice';
@@ -24,7 +23,7 @@ const MapPage: NextPage<Props> = (props: { stations: StationsGeoDataItem[], line
     <div>
       <Head>
         <title>Transit App Next - Map</title>
-        <meta name="description" content="Transit App" />
+        <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Map city={city} mapStyle={style} stations={stations} lines={lines} />
@@ -34,13 +33,11 @@ const MapPage: NextPage<Props> = (props: { stations: StationsGeoDataItem[], line
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
-  // TODO: Look into "Property 'city' does not exist on type 'ParsedUrlQuery | undefined'.",
-  // then make TypeScript happy.
-  const { city } = params;
+  const city = params?.city;
 
-  await store.dispatch(fetchStations(city));
-  await store.dispatch(fetchLines(city));
-  await store.dispatch(setCity(city));
+  await store.dispatch(fetchStations(city as string));
+  await store.dispatch(fetchLines(city as string));
+  await store.dispatch(setCity(city as string));
 
   const { stations } = store.getState();
   const { lines } = store.getState();
