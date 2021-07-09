@@ -14,7 +14,7 @@ interface MapStationDetailsState {
 }
 
 const initialState: MapStationDetailsState = {
-  data: null,
+  data: undefined,
   isOpen: false,
 };
 

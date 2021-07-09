@@ -47,12 +47,10 @@ const { cities, mapStyles } = settings;
 type Props = {
   city: string;
   mapStyle: any;
-  stations: [StationsGeoDataItem];
-  lines: any;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: [StationsGeoDataItem], lines: any }): ReactElement => {
-  const { city, mapStyle, stations, lines } = props;
+const Map: FC<Props> = (props: { city: string, mapStyle: any }): ReactElement => {
+  const { city, mapStyle } = props;
 
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
@@ -60,6 +58,8 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: [Station
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const range = useAppSelector(state => state.city.range);
+  const { lines } = useAppSelector(state => state.lines);
+  const { stations } = useAppSelector(state => state.stations);
 
   type ViewState = {
     viewState: {
@@ -158,7 +158,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: [Station
   const handleViewStateChange = (data: any) => {
     const layers = [...mapViewState.layers];
     const textLayerId = 'station-text-layer';
-    // Determine if the TextLayer be added
+    // Determine if the TextLayer should be added
     if (data.interactionState
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {

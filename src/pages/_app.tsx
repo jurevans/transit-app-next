@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { initializeStore, useStore } from '../app/store';
 import { setStations } from '../features/api/stationsApiSlice';
 import { setLines } from '../features/api/linesApiSlice';
-import App from 'next/app';
+import App, { AppContext } from 'next/app';
 
 const MyApp = (props: { Component: any, pageProps: any }) => {
   const { Component, pageProps } = props;
@@ -15,7 +15,7 @@ const MyApp = (props: { Component: any, pageProps: any }) => {
   );
 };
 
-MyApp.getInitialProps = async (appContext: any) => {
+MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
   const reduxStore = initializeStore({});
   const { dispatch } = reduxStore;
@@ -34,6 +34,6 @@ MyApp.getInitialProps = async (appContext: any) => {
   };
 
   return appProps;
-}
+};
 
 export default MyApp;

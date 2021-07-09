@@ -14,7 +14,7 @@ interface MapPopupState {
 }
 
 const initialState: MapPopupState = {
-  data: null,
+  data: undefined,
   isOpen: false,
 };
 

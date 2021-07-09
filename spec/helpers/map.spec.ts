@@ -6,7 +6,6 @@ import {
   getScatterplotLayer,
   getTooltipObjectLine,
   getTooltipObjectPlot,
-  StationsGeoData,
   StationsGeoDataItem,
 } from '../../src/helpers/map';
 
@@ -26,9 +25,7 @@ describe('getStationData', () => {
       },
     };
   
-    const stationData: StationsGeoData = {
-      features: [stationDataItem],
-    };
+    const stationData: StationsGeoDataItem[] = [stationDataItem];
   
     const expected = [{
       type: 'Point',

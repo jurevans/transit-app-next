@@ -40,7 +40,7 @@ const stationsApiSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchStations.fulfilled, (state, action: PayloadAction<[StationsGeoDataItem]>) => {
+    builder.addCase(fetchStations.fulfilled, (state, action: PayloadAction<StationsGeoDataItem[]>) => {
       state.stations = action.payload;
       state.loading = 'succeeded';
     });

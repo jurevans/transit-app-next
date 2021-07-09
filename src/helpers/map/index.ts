@@ -19,11 +19,6 @@ export interface StationsGeoDataItem {
   };
 };
 
-/*
-export interface StationsGeoData {
-  features: StationsGeoDataItem[];
-}
-*/
 export interface LinesGeoData {
   type: string;
   features: {
@@ -43,7 +38,7 @@ export interface LinesGeoData {
   };
 }
 
-export const getStationData = (data: [StationsGeoDataItem]): any => {
+export const getStationData = (data: StationsGeoDataItem[]): any => {
   if (data) {
     return data.map((station: StationsGeoDataItem) => {
       const properties = station.properties;
