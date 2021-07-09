@@ -7,7 +7,7 @@ const {
 } = process.env;
 
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     mapboxAccessToken: REACT_APP_MAPBOX_ACCESS_TOKEN,
     mtaAppId: REACT_APP_MTA_APP_ID,

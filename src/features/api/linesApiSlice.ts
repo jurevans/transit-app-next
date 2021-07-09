@@ -1,32 +1,22 @@
-/**
- * Api slice
- */
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
- 
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
+import { AppThunk } from '../../app/store';
+
 const SERVER = 'http://localhost:3000';
 
-export const fetchLines = createAsyncThunk(
-  'lines/fetchByCity',
-  async (city: string, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`${SERVER}/api/lines/${city}`);
-      return await response.json();
-    } catch (err) {
-      return rejectWithValue(err);
-    }
-  }
-);
+export const fetchLines = (city: string): AppThunk => async dispatch => {
+  const response = await fetch(`${SERVER}/api/lines/${city}`);
+  const lines = await response.json();
 
-export interface LinesState {
-  lines: any,
-  loading: 'idle' | 'pending' | 'succeeded' | 'failed';
-  error?: any;
+  dispatch(linesApiSlice.actions.setLines(lines));
 };
 
-const initialState: LinesState = {
-  lines: {},
-  loading: 'idle',
-  error: null,
+interface LinesData {
+  data: any;
+}
+
+const initialState: LinesData = {
+  data: [],
 };
 
 const linesApiSlice = createSlice({
@@ -34,11 +24,17 @@ const linesApiSlice = createSlice({
   initialState,
   reducers: {
     setLines(state, action: PayloadAction<any>) {
-      state.lines = action.payload;
-      state.loading = 'idle';
+      state.data = action.payload;
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: {
+    [HYDRATE]: (state, action: PayloadAction<any>) => {
+      return {
+        ...state,
+        data: action.payload.lines.data,
+      };
+    },
+    /*
     builder.addCase(fetchLines.fulfilled, (state, action: PayloadAction<any>) => {
       state.lines = action.payload;
       state.loading = 'succeeded';
@@ -50,6 +46,7 @@ const linesApiSlice = createSlice({
       state.error = action.error;
       state.loading = 'failed';
     });
+    */
   },
 });
 

@@ -1,8 +1,12 @@
 import { ReactElement } from 'react';
 import Map from '../../ui/components/map/Map';
 import { useAppSelector } from '../../app/hooks';
-import { NextPage, NextPageContext } from 'next';
+import { GetServerSideProps, NextPage, NextPageContext } from 'next';
 import Head from 'next/head';
+import { wrapper } from '../../app/store';
+import { fetchStations } from '../../features/api/stationsApiSlice';
+import { fetchLines } from '../../features/api/linesApiSlice';
+import { StationsGeoDataItem } from '../../helpers/map';
 /*
 import shapeFiles from '../../../data/shapeFiles';
 import { StationsGeoDataItem } from '../../helpers/map';
@@ -30,9 +34,15 @@ type Props = {
 };
 */
 
-const MapPage: NextPage = (): ReactElement => {
+type Props = {
+  stations: StationsGeoDataItem[],
+  lines: any;
+}
+
+const MapPage: NextPage<Props> = (props: { stations: StationsGeoDataItem[], lines: any }): ReactElement => {
   const city = useAppSelector(state => state.city.value);
   const { style } = useAppSelector(state => state.mapStyle);
+  const { stations, lines } = props;
 
   return (
     <div>
@@ -41,14 +51,26 @@ const MapPage: NextPage = (): ReactElement => {
         <meta name="description" content="Transit App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map city={city} mapStyle={style} />
+      <Map city={city} mapStyle={style} stations={stations} lines={lines} />
     </div>
   );
 };
 
-MapPage.getInitialProps = async (context: NextPageContext) => {
-  console.log('context', context);
-  return {};
-};
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(store => async () => {
+  // console.log('params', params);
+
+  await store.dispatch(fetchStations('nyc'));
+  await store.dispatch(fetchLines('nyc'));
+
+  const { stations } = store.getState();
+  const { lines } = store.getState();
+
+  return {
+    props: {
+      stations: stations.data,
+      lines: lines.data,
+    },
+  };
+})
 
 export default MapPage;

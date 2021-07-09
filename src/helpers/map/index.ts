@@ -39,7 +39,7 @@ export interface LinesGeoData {
 }
 
 export const getStationData = (data: StationsGeoDataItem[]): any => {
-  if (data) {
+  if (data && data.length > 0) {
     return data.map((station: StationsGeoDataItem) => {
       const properties = station.properties;
       const geometry = station.geometry;

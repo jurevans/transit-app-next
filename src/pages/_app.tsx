@@ -1,20 +1,17 @@
+import { wrapper } from '../app/store';
 import '../styles/globals.scss';
+/*
 import { Provider } from 'react-redux';
-import { initializeStore, useStore } from '../app/store';
 import { setStations } from '../features/api/stationsApiSlice';
 import { setLines } from '../features/api/linesApiSlice';
 import App, { AppContext } from 'next/app';
-
+*/
 const MyApp = (props: { Component: any, pageProps: any }) => {
   const { Component, pageProps } = props;
-  const store = useStore(pageProps.initialReduxState);
-  return (
-    <Provider store={store}>
-      <Component {...pageProps} />
-    </Provider>
-  );
+  return <Component {...pageProps} />;
 };
 
+/*
 MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
   const reduxStore = initializeStore({});
@@ -35,5 +32,6 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 
   return appProps;
 };
+*/
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);
