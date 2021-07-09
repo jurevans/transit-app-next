@@ -37,6 +37,7 @@ import {
   getTooltipObjectLine,
   getTooltipObjectPlot,
   StationsGeoDataItem,
+  LinesGeoData,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -47,10 +48,12 @@ const { cities, mapStyles } = settings;
 type Props = {
   city: string;
   mapStyle: any;
+  stations: StationsGeoDataItem[],
+  lines: LinesGeoData;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any }): ReactElement => {
-  const { city, mapStyle } = props;
+const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoDataItem[], lines: LinesGeoData}): ReactElement => {
+  const { city, mapStyle, stations, lines } = props;
 
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
@@ -58,8 +61,6 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any }): ReactElement =>
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const range = useAppSelector(state => state.city.range);
-  const { lines } = useAppSelector(state => state.lines);
-  const { stations } = useAppSelector(state => state.stations);
 
   type ViewState = {
     viewState: {
