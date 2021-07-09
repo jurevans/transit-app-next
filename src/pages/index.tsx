@@ -1,12 +1,12 @@
 import { FC, ReactElement } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import SelectCity from '../ui/components/map/SelectCity';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { updatedCity } from '../features/city/citySlice';
+import { setCity } from '../features/city/citySlice';
 import { fetchStations } from '../features/api/stationsApiSlice';
 import { fetchLines } from '../features/api/linesApiSlice';
 import styles from '../styles/pages/Configure.module.scss';
+import cities from '../settings/cities';
 
 const Dashboard: FC = (): ReactElement => {
   const city = useAppSelector(state => state.city.value);
@@ -17,7 +17,7 @@ const Dashboard: FC = (): ReactElement => {
 
     dispatch(fetchLines(value));
     dispatch(fetchStations(value));
-    dispatch(updatedCity(value));
+    dispatch(setCity(value));
   };
 
   return (
@@ -33,10 +33,12 @@ const Dashboard: FC = (): ReactElement => {
           transit-app-next
         </h1>
         <div className={styles.grid}>
-          <Link href="/map/"><a className={styles.card}>Map</a></Link>
+          <h4>Available maps:</h4>
         </div>
         <div className={styles.grid}>
-          <SelectCity city={city} onChange={handleSelectCity} />
+          {cities.map(config =>
+            <Link key={config.id} href={`/map/${config.id}`}><a className={styles.card}>{config.label} -{config.transitAuthority}</a></Link>
+          )}
         </div>
       </main>
 

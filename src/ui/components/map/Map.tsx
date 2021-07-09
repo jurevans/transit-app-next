@@ -37,6 +37,7 @@ import {
   getTooltipObjectLine,
   getTooltipObjectPlot,
   StationsGeoDataItem,
+  LinesGeoData,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -48,10 +49,10 @@ type Props = {
   city: string;
   mapStyle: any;
   stations: StationsGeoDataItem[],
-  lines: any;
+  lines: LinesGeoData;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoDataItem[], lines: any}): ReactElement => {
+const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoDataItem[], lines: LinesGeoData}): ReactElement => {
   const { city, mapStyle, stations, lines } = props;
 
   const dispatch = useAppDispatch();

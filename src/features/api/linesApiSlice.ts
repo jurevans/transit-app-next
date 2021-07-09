@@ -34,19 +34,6 @@ const linesApiSlice = createSlice({
         data: action.payload.lines.data,
       };
     },
-    /*
-    builder.addCase(fetchLines.fulfilled, (state, action: PayloadAction<any>) => {
-      state.lines = action.payload;
-      state.loading = 'succeeded';
-    });
-    builder.addCase(fetchLines.pending, (state) => {
-      state.loading = 'pending';
-    });
-    builder.addCase(fetchLines.rejected, (state, action) => {
-      state.error = action.error;
-      state.loading = 'failed';
-    });
-    */
   },
 });
 

@@ -35,19 +35,6 @@ const stationsApiSlice = createSlice({
         data: action.payload.stations.data,
       };
     },
-    /*
-    builder.addCase(fetchStations.fulfilled, (state, action: PayloadAction<StationsGeoDataItem[]>) => {
-      state.stations = action.payload;
-      state.loading = 'succeeded';
-    });
-    builder.addCase(fetchStations.pending, (state) => {
-      state.loading = 'pending';
-    });
-    builder.addCase(fetchStations.rejected, (state, action) => {
-      state.error = action.error;
-      state.loading = 'failed';
-    });
-    */
   },
 });
 

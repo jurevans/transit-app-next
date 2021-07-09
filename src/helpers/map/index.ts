@@ -19,23 +19,25 @@ export interface StationsGeoDataItem {
   };
 };
 
+export interface LinesGeoDataFeature {
+type: string;
+  geometry: {
+    type: string;
+    coordinates: number[];
+  };
+  properties: {
+    id: string;
+    name: string;
+    line: string;
+    passage: string;
+    status: string;
+    type: string;
+  };
+}
+
 export interface LinesGeoData {
   type: string;
-  features: {
-    type: string;
-    geometry: {
-      type: string;
-      coordinates: number[];
-    };
-    properties: {
-      id: string;
-      name: string;
-      line: string;
-      passage: string;
-      status: string;
-      type: string;
-    };
-  };
+  features: LinesGeoDataFeature[];
 }
 
 export const getStationData = (data: StationsGeoDataItem[]): any => {
@@ -54,7 +56,7 @@ export const getStationData = (data: StationsGeoDataItem[]): any => {
 export const getLineColor = (city: string, lines: string, opacity: number): RGBAColor => {
   const line = getLines(lines)[0];
 
-  return line && lineColors[city][line]
+  return lineColors[city] && lineColors[city][line]
     ? [...lineColors[city][line].rgb, opacity]
     : [160, 160, 160, opacity];
 };
@@ -162,7 +164,7 @@ export const isLinePicker = (data: PickerLineObject): boolean => {
   return !!object.properties;
 };
 
-export const getLineLayer = (city: string, data: any) => {
+export const getLineLayer = (city: string, data: LinesGeoData) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,
