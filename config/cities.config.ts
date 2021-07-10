@@ -14,6 +14,7 @@ const cities = [
         longitudeRange: [-74.2, -73.8],
         latitudeRange: [40.5, 40.9],
       },
+      serviceStatusEndpoint: 'http://web.mta.info/status/serviceStatus.txt',
     },
   },
   {

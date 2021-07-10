@@ -18,6 +18,7 @@ export interface CitySettings {
       longitudeRange: number[],
       latitudeRange: number[],
     },
+    serviceStatusEndpoint?: string;
   };
 };
 
@@ -31,6 +32,7 @@ const defaults = {
 const citySettings = cities.map(config => ({
   ...config,
   settings: {
+    ...config.settings,
     initialView: {
       ...defaults,
       ...config.settings.initialView,
