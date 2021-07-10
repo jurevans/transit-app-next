@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@deck.gl/core": "^8.4.20",
+    "@material-ui/core": "^4.12.1",
+    "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.6.0",
     "deck.gl": "^8.4.20",
     "mta-subway-bullets": "^0.5.1",

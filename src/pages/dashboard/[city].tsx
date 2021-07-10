@@ -3,6 +3,13 @@ import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { wrapper } from '../../app/store';
 import { setCity } from '../../features/city/citySlice';
 import cities from '../../settings/cities';
@@ -41,6 +48,8 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
         <title>Transit App Next - Dashboard - {cityConfig?.label} - {cityConfig?.transitAuthority}</title>
         <meta name="description" content="Transit App - Dashboard" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
       </Head>
       <main className={styles.main}>
         <h1 className={styles.title}>
@@ -53,12 +62,21 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
         </div>
         <div className="service-status">
           {lineStatuses.map((status: any, i: number) => (
-            <div key={i}>
-              {icons[i].map((icon: any, j: number) =>
-                <Image key={j} src={icon.icon} width={25} height={25} alt={icon.line} />
-              )}
-              <div dangerouslySetInnerHTML={{ __html: status.text }} />
-            </div>
+            <Accordion key={i}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${i}a-content`}
+                id={`panel${i}a-content`}>
+                {icons[i].map((icon: any, j: number) =>
+                  <Image key={j} src={icon.icon} width={25} height={25} alt={icon.line} />
+                )}
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                  <div dangerouslySetInnerHTML={{ __html: status.text }} />
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
           ))}
         </div>
       </main>
