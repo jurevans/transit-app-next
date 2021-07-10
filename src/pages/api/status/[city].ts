@@ -20,7 +20,7 @@ const handler = async (
     const config = cities.find(config => config.id === city);
 
     if (!config?.settings.serviceStatusEndpoint) {
-      res.status(404).end();
+      res.status(200).json(JSON.stringify([]));
     } else {
       const { serviceStatusEndpoint } = config.settings;
       // Fetch service status, then parse XML -> JSON, then return
@@ -29,8 +29,17 @@ const handler = async (
       const parser = new xml2js.Parser();
       // TODO: handle any errors:
       const result = await parser.parseStringPromise(xml);
+      const normalized = result.service.subway[0].line.map((status: any) => {
+        return {
+          date: status.Date[0],
+          time: status.Time[0],
+          name: status.name[0],
+          status: status.status[0],
+          text: status.text[0],
+        }
+      });
 
-      res.status(200).json(JSON.stringify(result));
+      res.status(200).json(JSON.stringify(normalized));
     }
   }
 };

@@ -25,15 +25,11 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
   const { city, serviceStatus } = props;
   const cityConfig = cities.find(config => config.id === city);
 
-  let lineStatuses = [];
   let icons: any[] = [];
 
   if (serviceStatus) {
-    const { subway } = serviceStatus?.service;
-    lineStatuses = subway[0].line;
-
-    icons = lineStatuses.map((status: any) => {
-      const originalName = status.name[0];
+    icons = serviceStatus.map((status: any) => {
+      const originalName = status.name;
       if (originalName === 'SIR') {
         return getIcons(city, originalName);
       } else {
@@ -60,8 +56,9 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
             <Link href={`/map/${cityConfig?.id}`}><a className={styles.card}>{cityConfig?.label} - {cityConfig?.transitAuthority} - Map</a></Link>
           </div>
         </div>
-        <div className="service-status">
-          {lineStatuses.map((status: any, i: number) => (
+        {serviceStatus && <div className="service-status">
+          <h2>Service Status</h2>
+          {serviceStatus.map((status: any, i: number) => (
             <Accordion key={i}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -69,14 +66,14 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
                 id={`panel${i}a-content`}>
                 {icons[i].map((icon: any, j: number) =>
                   <Image key={j} src={icon.icon} width={25} height={25} alt={icon.line} />
-                )}
+                )} {status.status !=='' && <span><strong>{status.status}</strong> {status.date} {status.time}</span>}
               </AccordionSummary>
               <AccordionDetails>
                 <div dangerouslySetInnerHTML={{ __html: status.text }} />
               </AccordionDetails>
             </Accordion>
           ))}
-        </div>
+        </div>}
       </main>
     </div>
   );
@@ -85,15 +82,10 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
   const cityId = params?.city;
-  const config = cities.find(config => config.id === cityId);
-  let serviceStatus = null;
 
-  if (config?.settings.serviceStatusEndpoint) {
-    // Get service status for dashboard:
-    const response = await fetch(`http://localhost:3000/api/status/${cityId}`);
-    serviceStatus = await response.json();
-  }
-
+  // Get service status for dashboard:
+  const response = await fetch(`http://localhost:3000/api/status/${cityId}`);
+  const serviceStatus = await response.json();
   await store.dispatch(setCity(cityId as string));
   const { city } = store.getState();
 
