@@ -72,9 +72,7 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
                 )}
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>
-                  <div dangerouslySetInnerHTML={{ __html: status.text }} />
-                </Typography>
+                <div dangerouslySetInnerHTML={{ __html: status.text }} />
               </AccordionDetails>
             </Accordion>
           ))}
