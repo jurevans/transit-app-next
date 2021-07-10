@@ -5,6 +5,7 @@ import mapStationDetailsReducer from './map/mapStationDetails';
 import cityReducer from './city/citySlice';
 import linesReducer from './api/linesApiSlice';
 import stationsReducer from './api/stationsApiSlice';
+import statusReducer from './api/statusApiSlice';
 
 const rootReducer = {
   dashboard: dashboardReducer,
@@ -14,6 +15,7 @@ const rootReducer = {
   city: cityReducer,
   lines: linesReducer,
   stations: stationsReducer,
+  status: statusReducer,
 };
 
 export default rootReducer;

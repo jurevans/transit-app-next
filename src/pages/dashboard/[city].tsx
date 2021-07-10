@@ -2,41 +2,21 @@ import { ReactElement } from 'react';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import Image from 'next/image';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ServiceStatus from '../../ui/components/dashboard/ServiceStatus';
 import { wrapper } from '../../app/store';
-import { setCity } from '../../features/city/citySlice';
+import { fetchServiceStatus } from '../../features/api/statusApiSlice';
 import cities from '../../settings/cities';
 import styles from '../../styles/pages/Dashboard.module.scss';
-import { getIcons } from '../../helpers/map';
+import { useAppSelector } from '../../app/hooks';
 
 type Props = {
   city: string;
-  serviceStatus: any;
 };
 
-const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: any }): ReactElement => {
-  const { city, serviceStatus } = props;
+const DashboardPage: NextPage<Props> = (props: { city: string }): ReactElement => {
+  const { city } = props;
   const cityConfig = cities.find(config => config.id === city);
-
-  let icons: any[] = [];
-
-  if (serviceStatus) {
-    icons = serviceStatus.map((status: any) => {
-      const originalName = status.name;
-      if (originalName === 'SIR') {
-        return getIcons(city, originalName);
-      } else {
-        return getIcons(city, originalName.split('').join('-'));
-      }
-    });
-  }
+  const { data: status } = useAppSelector(state => state.status);
 
   return (
     <div>
@@ -56,24 +36,7 @@ const DashboardPage: NextPage<Props> = (props: { city: string, serviceStatus: an
             <Link href={`/map/${cityConfig?.id}`}><a className={styles.card}>{cityConfig?.label} - {cityConfig?.transitAuthority} - Map</a></Link>
           </div>
         </div>
-        {serviceStatus && <div className="service-status">
-          <h2>Service Status</h2>
-          {serviceStatus.map((status: any, i: number) => (
-            <Accordion key={i}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${i}a-content`}
-                id={`panel${i}a-content`}>
-                {icons[i].map((icon: any, j: number) =>
-                  <Image key={j} src={icon.icon} width={25} height={25} alt={icon.line} />
-                )} {status.status !=='' && <span><strong>{status.status}</strong> {status.date} {status.time}</span>}
-              </AccordionSummary>
-              <AccordionDetails>
-                <div dangerouslySetInnerHTML={{ __html: status.text }} />
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </div>}
+        {status && <ServiceStatus city={city} status={status} />}
       </main>
     </div>
   );
@@ -84,15 +47,12 @@ export const getServerSideProps: GetServerSideProps =
   const cityId = params?.city;
 
   // Get service status for dashboard:
-  const response = await fetch(`http://localhost:3000/api/status/${cityId}`);
-  const serviceStatus = await response.json();
-  await store.dispatch(setCity(cityId as string));
+  await store.dispatch(fetchServiceStatus(cityId as string));
   const { city } = store.getState();
 
   return {
     props: {
       city: city.value,
-      serviceStatus,
     },
   };
 });
