@@ -11,10 +11,10 @@ type LinesRequest = {
 
 /**
  * API Route to load static data for lines
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
- const handler = (
+const handler = (
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) => {
