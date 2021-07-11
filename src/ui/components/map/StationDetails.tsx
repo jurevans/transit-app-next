@@ -1,10 +1,12 @@
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
-import { useAppDispatch } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import { getIcons } from '../../../helpers/map';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
+import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
 
 type Props = {
   city: string;
@@ -16,8 +18,19 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     city,
     data,
   } = props;
-
+  const { data: statuses } = useAppSelector(state => state.status);
   const dispatch = useAppDispatch();
+
+  // Re-fetch status data every minute
+  useEffect(() => {
+    const timer = setTimeout(
+      () => dispatch(fetchServiceStatus(city)),
+      60000,
+    );
+    return () => clearTimeout(timer);
+  });
+
+  const status = statuses.find((obj: any) => obj.name.search(data.line.split('-')[0]) !== -1);
 
   const handleClose = () => {
     dispatch(closeStationDetails());
@@ -30,7 +43,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     >
       <div className={styles.icons}>
         {data.line &&
-          getIcons(city, data.line).map(iconObj =>
+          getIcons(city, data.line).map((iconObj: any) =>
             <Image key={iconObj.line} src={iconObj.icon} alt={iconObj.line} width={56} height={56} />
           )}
       </div>
@@ -38,9 +51,17 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         <p className={styles.name}>{data.name}</p>
         {data.notes && <p className={styles.notes}>{data.notes}</p>}
         <div className={styles.status}>
+          {status &&
+            <span>
+              <Link href={`/dashboard/${city}`}><strong>{status.status}</strong></Link>&nbsp;
+              {status.date && <span>as of {status.date} {status.time}</span>}
+            </span>}
+        </div>
+        <div className={styles.upcoming}>
           <p>Upcoming trains (TBD)</p>
           {/* TODO */}
         </div>
+        
         <div className={styles.buttons}>
           <button onClick={handleClose}>Close</button>
         </div>

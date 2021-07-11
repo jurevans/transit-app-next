@@ -1,4 +1,4 @@
-import { ScatterplotLayer, GeoJsonLayer, TextLayer } from '@deck.gl/layers';
+import { ScatterplotLayer, GeoJsonLayer, TextLayer, LineLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
 import settings from '../../settings';
 import { getLines } from '../functions';
@@ -20,7 +20,7 @@ export interface StationsGeoDataItem {
 };
 
 export interface LinesGeoDataFeature {
-type: string;
+  type: string;
   geometry: {
     type: string;
     coordinates: number[];

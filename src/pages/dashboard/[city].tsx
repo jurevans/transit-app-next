@@ -8,6 +8,7 @@ import { fetchServiceStatus } from '../../features/api/statusApiSlice';
 import cities from '../../settings/cities';
 import styles from '../../styles/pages/Dashboard.module.scss';
 import { useAppSelector } from '../../app/hooks';
+import { getKeyValueFromArray } from '../../helpers/functions';
 
 type Props = {
   city: string;
@@ -15,7 +16,7 @@ type Props = {
 
 const DashboardPage: NextPage<Props> = (props: { city: string }): ReactElement => {
   const { city } = props;
-  const cityConfig = cities.find(config => config.id === city);
+  const cityConfig = getKeyValueFromArray('id', city, cities);
   const { data: status } = useAppSelector(state => state.status);
 
   return (

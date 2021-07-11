@@ -47,10 +47,20 @@ export const getDurationForTransition =
 export const getZoomForTransition = (oldZoom: number, minZoom: number): number =>
   oldZoom > minZoom ? oldZoom : minZoom;
 
-  /**
-   * getKeyValue - Returns the value of an Object at index "key"
-   * @param obj 
-   * @returns 
-   */
+/**
+ * getKeyValue - Returns the value of an Object at index "key"
+ * @param obj
+ * @returns {Function}
+ */
 export const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) =>
   obj[key];
+
+/**
+ * Get object from array identified by key === value
+ * @param {string} key
+ * @param {string} value
+ * @param array
+ * @returns {Object}
+ */
+export const getKeyValueFromArray = (key: string, value: string, array: any[]) => 
+  array.find(item => getKeyValue(item)(key) === value);
