@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import cities from '../../../settings/cities';
 import * as xml2js from 'xml2js';
+import cities from '../../../settings/cities';
+import { getKeyValueFromArray } from '../../../helpers/functions';
 
 type ServiceRequest = {
   city: string;
@@ -17,7 +18,7 @@ const handler = async (
 ) => {
   if (req.method === 'GET') {
     const { city } = req.query as ServiceRequest;
-    const config = cities.find(config => config.id === city);
+    const config = getKeyValueFromArray('id', city, cities);
 
     if (!config?.settings.serviceStatusEndpoint) {
       res.status(200).json(JSON.stringify([]));

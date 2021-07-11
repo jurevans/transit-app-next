@@ -20,7 +20,7 @@ export interface StationsGeoDataItem {
 };
 
 export interface LinesGeoDataFeature {
-type: string;
+  type: string;
   geometry: {
     type: string;
     coordinates: number[];

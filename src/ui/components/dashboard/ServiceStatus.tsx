@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { getIcons } from '../../../helpers/map';
 import { useAppDispatch } from '../../../app/hooks';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+
 type Props = {
   city: string;
   status: any[];

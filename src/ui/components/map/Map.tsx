@@ -21,11 +21,11 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
 import { updatedStationDetails } from '../../../features/map/mapStationDetails';
-
 import {
   getInRange,
   getDurationForTransition,
   getZoomForTransition,
+  getKeyValueFromArray,
 } from '../../../helpers/functions';
 import settings from '../../../settings';
 import {
@@ -75,7 +75,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     layers: any[];
   };
 
-  const cityConfig = cities.find(config => config.id === city) || cities[0];
+  const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
     viewState: { ...cityConfig.settings.initialView },
     layers: [
@@ -189,7 +189,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
 
   const handleStyleUpdate = (e: React.ChangeEvent<any>) => {
     // Find mapStyle:
-    const mapStyle = mapStyles.find(style => style.value === e.target.value) || mapStyles[0];
+    const mapStyle = getKeyValueFromArray('value', e.target.value, mapStyles);
     dispatch(updatedMapStyle(mapStyle));
 
     // Update TextLayer style:
