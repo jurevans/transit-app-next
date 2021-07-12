@@ -4,10 +4,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';
 
-type StationsRequest = {
-  city: string;
-};
-
 /**
 * API Route to load static data for lines
 * @param req
@@ -18,8 +14,6 @@ const handler = (
   res: NextApiResponse<any>
 ) => {
   if (req.method === 'GET') {
-    const { city } = req.query as StationsRequest;
-
     const makeRequest = async () => {
       const { MONGO_DB_CONNECT_STRING: uri } = process.env;
       const client = await new MongoClient(uri as string, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -30,11 +24,14 @@ const handler = (
         const db = await client.db('gtfs');
         const stations = await db.collection('stops');
         const response = await stations.aggregate([
+          // Match only subway stations:
           { $match: { location_type: '1' } },
+          // Get necessary fields only:
           {
             $project: {
-              id: "$stop_id",
-              name: "$stop_name",
+              _id: 0,
+              id: '$stop_id',
+              name: '$stop_name',
               coordinates: [
                 { $toDouble: '$stop_lon' },
                 { $toDouble: '$stop_lat' },
