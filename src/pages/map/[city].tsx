@@ -12,12 +12,13 @@ import { StationsGeoDataItem, LinesGeoData } from '../../helpers/map';
 type Props = {
   stations: StationsGeoDataItem[],
   lines: LinesGeoData;
+  test: any;
 }
 
-const MapPage: NextPage<Props> = (props: { stations: StationsGeoDataItem[], lines: LinesGeoData }): ReactElement => {
+const MapPage: NextPage<Props> = (props: Props): ReactElement => {
   const city = useAppSelector(state => state.city.value);
   const { style } = useAppSelector(state => state.mapStyle);
-  const { stations, lines } = props;
+  const { stations, lines, test } = props;
 
   return (
     <div>
@@ -26,7 +27,7 @@ const MapPage: NextPage<Props> = (props: { stations: StationsGeoDataItem[], line
         <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map city={city} mapStyle={style} stations={stations} lines={lines} />
+      <Map city={city} mapStyle={style} stations={stations} lines={lines} test={test} />
     </div>
   );
 };
@@ -42,10 +43,32 @@ export const getServerSideProps: GetServerSideProps =
   const { stations } = store.getState();
   const { lines } = store.getState();
 
+  const response: any = await fetch('http://localhost:3000/api/gtfs/lines/E');
+  const testing = await response.json();
+  const test = testing[0];
+
+  const inbound: any = [
+    {
+      ...test.route,
+      path: [...test.inbound]
+    }
+  ];
+
+  const outbound: any = [
+    {
+      ...test.route,
+      path: [...test.inbound],
+    }
+  ];
+
   return {
     props: {
       stations: stations.data,
       lines: lines.data,
+      test: {
+        inbound,
+        outbound,
+      }
     },
   };
 });

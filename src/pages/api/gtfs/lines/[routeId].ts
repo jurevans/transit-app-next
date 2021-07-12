@@ -122,19 +122,21 @@ const handler = (
             $project: {
               _id: 0,
               id: '$route.route_id',
-              name: '$route.route_short_name',
-              longName: '$route.route_long_name',
-              description: '$route.route_desc',
-              color: '$route.route_color',
-              textColor: '$route.route_text_color',
+              route: {
+                name: '$route.route_short_name',
+                longName: '$route.route_long_name',
+                description: '$route.route_desc',
+                color: '$route.route_color',
+                textColor: '$route.route_text_color',
+              },
               outbound: {
                 $map: {
                   input: '$outboundShapes',
                   as: 'shape',
                   in: [
                     { $toDouble: '$$shape.shape_pt_lon' },
-                    { $toDouble: '$$shape.shape_pt_lat' }
-                  ]
+                    { $toDouble: '$$shape.shape_pt_lat' },
+                  ],
                 },
               },
               inbound:  {
@@ -143,16 +145,17 @@ const handler = (
                   as: 'shape',
                   in: [
                     { $toDouble: '$$shape.shape_pt_lon' },
-                    { $toDouble: '$$shape.shape_pt_lat' }
-                  ]
+                    { $toDouble: '$$shape.shape_pt_lat' },
+                  ],
                 },
               },
             },
           },
         ]);
-        const data: any = await response.toArray();
 
+        const data: any = await response.toArray();
         res.status(200).json(data);
+
       } catch (e) {
         res.status(500).end();
       } finally {

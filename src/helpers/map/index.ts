@@ -1,7 +1,8 @@
-import { ScatterplotLayer, GeoJsonLayer, TextLayer } from '@deck.gl/layers';
+import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
+import { PathStyleExtension } from '@deck.gl/extensions';
 import settings from '../../settings';
-import { getLines } from '../functions';
+import { getLines, hexToRGBArray } from '../functions';
 
 const { lineColors, stationIcons } = settings;
 
@@ -181,6 +182,23 @@ export const getLineLayer = (city: string, data: LinesGeoData) => {
     getElevation: 30
   });
 };
+
+export const getPathLayer = (id: string='path-layer', data: any) => {
+  return new PathLayer({
+    id,
+    data,
+    pickable: true,
+    widthScale: 10,
+    widthMinPixels: 1,
+    rounded: true,
+    getPath: (d: any) => d.path,
+    getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
+    getWidth: () => 2,
+    // Just testing that I can dash if needed:
+    // getDashArray: [4, 3],
+    // extensions: [new PathStyleExtension({highPrecisionDash: true})]
+  });
+}
 
 const getTextLabelThemes = (mapStyleLabel: string): any => {
   switch (mapStyleLabel) {

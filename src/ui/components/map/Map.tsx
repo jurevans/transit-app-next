@@ -33,6 +33,7 @@ import {
   getLineLayer,
   getScatterplotLayer,
   getTextLayer,
+  getPathLayer,
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
@@ -50,11 +51,12 @@ type Props = {
   mapStyle: any;
   stations: StationsGeoDataItem[],
   lines: LinesGeoData;
+  test: any;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoDataItem[], lines: LinesGeoData}): ReactElement => {
-  const { city, mapStyle, stations, lines } = props;
-
+const Map: FC<Props> = (props: Props): ReactElement => {
+  const { city, mapStyle, stations, lines, test } = props;
+  const { inbound, outbound } = test;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
@@ -81,6 +83,8 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     layers: [
       getLineLayer(city, lines),
       getScatterplotLayer(city, getStationData(stations)),
+      // getPathLayer('path-layer-1', inbound),
+      // getPathLayer('path-layer-2', outbound),
     ],
   };
 

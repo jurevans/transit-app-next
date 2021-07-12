@@ -13,7 +13,7 @@ export const getInRange = (value: number, range: number[]): number => {
  * @param {string} value
  * @returns {Array}
  */
-export const getLines = (value: string): string[] => value.split('-');
+export const getLines = (value: string = ''): string[] => value.split('-');
 
 /**
  * getDurationForTransition - Get calculated duration based on difference between start/end lon/lat
@@ -64,3 +64,19 @@ export const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key
  */
 export const getKeyValueFromArray = (key: string, value: string, array: any[]) => 
   array.find(item => getKeyValue(item)(key) === value);
+
+/**
+ * hexToRGBArray - convert hex string to RGB array
+ * @param {string} hex
+ * @returns {Array}
+ */
+
+export const hexToRGBArray = (hex: string): number[] => {
+  hex = hex.toLowerCase();
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16),
+   ] : [175, 175, 175];
+};
