@@ -7,17 +7,19 @@ import { wrapper } from '../../app/store';
 import { fetchStations } from '../../features/api/stationsApiSlice';
 import { fetchLines } from '../../features/api/linesApiSlice';
 import { setCity } from '../../features/city/citySlice';
-import { StationsGeoDataItem, LinesGeoData } from '../../helpers/map';
+import { StationsGeoDataItem, LinesGeoData, getPathLayer } from '../../helpers/map';
 
 type Props = {
   stations: StationsGeoDataItem[],
   lines: LinesGeoData;
+  inboundData: any;
+  outboundData: any;
 }
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
   const city = useAppSelector(state => state.city.value);
   const { style } = useAppSelector(state => state.mapStyle);
-  const { stations, lines } = props;
+  const { stations, lines, inboundData, outboundData } = props;
 
   return (
     <div>
@@ -26,7 +28,7 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map city={city} mapStyle={style} stations={stations} lines={lines} />
+      <Map city={city} mapStyle={style} stations={stations} lines={lines} inboundData={inboundData} outboundData={outboundData} />
     </div>
   );
 };
@@ -42,30 +44,33 @@ export const getServerSideProps: GetServerSideProps =
   const { stations } = store.getState();
   const { lines } = store.getState();
 
-  // TODO: Move this out of getServerSideProps:
-/*
-  const response: any = await fetch('http://localhost:3000/api/gtfs/lines/E');
-  const testing = await response.json();
-  const test = testing[0];
+  const response: any = await fetch('http://localhost:3000/api/gtfs/lines/');
+  const results = await response.json();
 
-  const inbound: any = [
-    {
-      ...test.route,
-      path: [...test.inbound]
-    }
-  ];
+  const inboundData: any = [];
+  const outboundData: any = [];
 
-  const outbound: any = [
-    {
-      ...test.route,
-      path: [...test.inbound],
+  results.forEach((result: any) => {
+    if (result.inbound.length > 0) {
+      inboundData.push({
+        ...result.route,
+        path: result.inbound,
+      });
     }
-  ];
-*/
+    if (result.outbound.length > 0) {
+      outboundData.push({
+        ...result.route,
+        path: result.outbound,
+      });
+    }
+  });
+
   return {
     props: {
       stations: stations.data,
       lines: lines.data,
+      inboundData,
+      outboundData,
     },
   };
 });

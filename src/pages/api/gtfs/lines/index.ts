@@ -119,8 +119,8 @@
                _id: 0,
                id: '$route.route_id',
                route: {
-                 name: '$route.route_short_name',
-                 longName: '$route.route_long_name',
+                 line: '$route.route_short_name',
+                 name: '$route.route_long_name',
                  description: '$route.route_desc',
                  color: '$route.route_color',
                  textColor: '$route.route_text_color',

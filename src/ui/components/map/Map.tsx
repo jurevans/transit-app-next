@@ -32,6 +32,7 @@ import {
   getStationData,
   getLineLayer,
   getScatterplotLayer,
+  getPathLayer,
   getTextLayer,
   isLinePicker,
   getTooltipObjectLine,
@@ -50,10 +51,12 @@ type Props = {
   mapStyle: any;
   stations: StationsGeoDataItem[],
   lines: LinesGeoData;
+  inboundData: any;
+  outboundData: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { city, mapStyle, stations, lines } = props;
+  const { city, mapStyle, stations, lines, inboundData, outboundData } = props;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
@@ -74,16 +77,25 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: any[];
   };
 
+  // If I'm going to use individual layers for each line:
+/*
+  const inboundLayers: any = inboundData.map((data: any, i: number) =>
+    getPathLayer(`path-layer-inbound-${i}`, [data]));
+
+  const outboundLayers: any = outboundData.map((data: any, i: number) =>
+    getPathLayer(`path-layer-outbound-${i}`, [data]));
+*/
   const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
     viewState: { ...cityConfig.settings.initialView },
     layers: [
-      getLineLayer(city, lines),
+      //inboundLayers,
+      //outboundLayers,
+      getPathLayer('path-layer-inbound', inboundData),
+      getPathLayer('path-layer-outbound', outboundData),
       getScatterplotLayer(city, getStationData(stations)),
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
-      // getPathLayer('path-layer-1', inbound),
-      // getPathLayer('path-layer-2', outbound),
     ],
   };
 
