@@ -1,7 +1,7 @@
 /**
  * Deliver combined GTFS data for shapes, routes, trips to MapBox layers
- * TODO: Determine if /api/lines/[routeId] is even necessary, as this is
- * mostly a duplicate of /api/lines/
+ * TODO: Determine if /api/gtfs/lines/[routeId] is even necessary, as this is
+ * mostly a duplicate of /api/gtfs/lines/
  */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';
@@ -157,7 +157,6 @@ const handler = (
 
         const data: any = await response.toArray();
         res.status(200).json(data);
-
       } catch (e) {
         res.status(500).end();
       } finally {

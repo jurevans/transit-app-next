@@ -42,7 +42,7 @@ import {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 
-const { mapboxAccessToken } = process.env;
+const { mapBoxAccessToken } = process.env;
 const { cities, mapStyles } = settings;
 
 type Props = {
@@ -223,7 +223,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       >
         <MapGL
           mapStyle={mapStyle.value}
-          mapboxApiAccessToken={mapboxAccessToken}
+          mapboxApiAccessToken={mapBoxAccessToken}
         />
         {isPopupOpen && <MapPopup city={city} data={popupData} />}
         {isStationDetailsOpen && <StationDetails city={city} data={stationDetailsData} />}
