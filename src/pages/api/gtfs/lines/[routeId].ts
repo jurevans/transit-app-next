@@ -1,5 +1,7 @@
 /**
  * Deliver combined GTFS data for shapes, routes, trips to MapBox layers
+ * TODO: Determine if /api/lines/[routeId] is even necessary, as this is
+ * mostly a duplicate of /api/lines/
  */
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';

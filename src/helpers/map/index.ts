@@ -198,7 +198,7 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     // getDashArray: [4, 3],
     // extensions: [new PathStyleExtension({highPrecisionDash: true})]
   });
-}
+};
 
 const getTextLabelThemes = (mapStyleLabel: string): any => {
   switch (mapStyleLabel) {

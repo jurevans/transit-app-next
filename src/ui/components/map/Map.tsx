@@ -33,7 +33,6 @@ import {
   getLineLayer,
   getScatterplotLayer,
   getTextLayer,
-  getPathLayer,
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
@@ -51,12 +50,10 @@ type Props = {
   mapStyle: any;
   stations: StationsGeoDataItem[],
   lines: LinesGeoData;
-  test: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { city, mapStyle, stations, lines, test } = props;
-  const { inbound, outbound } = test;
+  const { city, mapStyle, stations, lines } = props;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
@@ -83,6 +80,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: [
       getLineLayer(city, lines),
       getScatterplotLayer(city, getStationData(stations)),
+      // TODO: When determining path-layer IDs, add these to global state to
+      // be referenced later, e.g., if we want to filter/alter any:
       // getPathLayer('path-layer-1', inbound),
       // getPathLayer('path-layer-2', outbound),
     ],
