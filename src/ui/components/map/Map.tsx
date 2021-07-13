@@ -42,7 +42,7 @@ import {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 
-const { mapboxAccessToken } = process.env;
+const { mapBoxAccessToken } = process.env;
 const { cities, mapStyles } = settings;
 
 type Props = {
@@ -52,9 +52,8 @@ type Props = {
   lines: LinesGeoData;
 };
 
-const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: StationsGeoDataItem[], lines: LinesGeoData}): ReactElement => {
+const Map: FC<Props> = (props: Props): ReactElement => {
   const { city, mapStyle, stations, lines } = props;
-
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
@@ -81,6 +80,10 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
     layers: [
       getLineLayer(city, lines),
       getScatterplotLayer(city, getStationData(stations)),
+      // TODO: When determining path-layer IDs, add these to global state to
+      // be referenced later, e.g., if we want to filter/alter any:
+      // getPathLayer('path-layer-1', inbound),
+      // getPathLayer('path-layer-2', outbound),
     ],
   };
 
@@ -220,7 +223,7 @@ const Map: FC<Props> = (props: { city: string, mapStyle: any, stations: Stations
       >
         <MapGL
           mapStyle={mapStyle.value}
-          mapboxApiAccessToken={mapboxAccessToken}
+          mapboxApiAccessToken={mapBoxAccessToken}
         />
         {isPopupOpen && <MapPopup city={city} data={popupData} />}
         {isStationDetailsOpen && <StationDetails city={city} data={stationDetailsData} />}
