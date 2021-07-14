@@ -39,7 +39,6 @@ const handler = (
             },
           },
         ]);
-
         const data = await response.toArray();
         res.status(200).json(data);
       } catch (e) {

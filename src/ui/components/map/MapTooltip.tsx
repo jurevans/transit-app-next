@@ -1,7 +1,7 @@
 import { FC, ReactElement, CSSProperties } from 'react';
 import Image from 'next/image';
-import { getIcons } from '../../../helpers/map';
-import styles from '../../../styles/components/map/MapTooltip.module.scss';
+import { getIcons } from 'src/helpers/map';
+import styles from 'src/styles/components/map/MapTooltip.module.scss';
 
 type Props = {
   city: string;

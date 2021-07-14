@@ -1,8 +1,8 @@
 import React, { FC, ReactElement } from 'react';
 import { HTMLOverlay } from 'react-map-gl';
-import settings from '../../../settings';
-import { MapStylesItem } from '../../../settings/mapStyles';
-import styles from '../../../styles/components/map/SelectMapStyle.module.scss';
+import settings from 'src/settings';
+import { MapStylesItem } from 'src/settings/mapStyles';
+import styles from 'src/styles/components/map/SelectMapStyle.module.scss';
 
 type Props = {
   mapStyle: MapStylesItem;

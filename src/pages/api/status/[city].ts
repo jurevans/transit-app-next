@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as xml2js from 'xml2js';
-import cities from '../../../settings/cities';
-import { getKeyValueFromArray } from '../../../helpers/functions';
+import cities from 'src/settings/cities';
+import { getKeyValueFromArray } from 'src/helpers/functions';
 
 type ServiceRequest = {
   city: string;

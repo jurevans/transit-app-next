@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
-import Map from '../../ui/components/map/Map';
-import { useAppSelector } from '../../app/hooks';
+import Map from '@/components/map/Map';
+import { useAppSelector } from 'src/app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import { wrapper } from '../../app/store';
-import { fetchStations } from '../../features/api/stationsApiSlice';
-import { fetchLines } from '../../features/api/linesApiSlice';
-import { setCity } from '../../features/city/citySlice';
-import { StationsGeoDataItem, LinesGeoData, getPathLayer } from '../../helpers/map';
+import { wrapper } from 'src/app/store';
+import { fetchStations } from 'src/features/api/stationsApiSlice';
+import { fetchLines } from 'src/features/api/linesApiSlice';
+import { setCity } from 'src/features/city/citySlice';
+import { StationsGeoDataItem, LinesGeoData, getPathLayer } from 'src/helpers/map';
 
 type Props = {
   stations: StationsGeoDataItem[],
@@ -44,13 +44,13 @@ export const getServerSideProps: GetServerSideProps =
   const { stations } = store.getState();
   const { lines } = store.getState();
 
-  const response: any = await fetch('http://localhost:3000/api/gtfs/lines/');
-  const results = await response.json();
+  const linesResponse: any = await fetch('http://localhost:3000/api/gtfs/lines/');
+  const linesResults = await linesResponse.json();
 
   const inboundData: any = [];
   const outboundData: any = [];
 
-  results.forEach((result: any) => {
+  linesResults.forEach((result: any) => {
     if (result.inbound.length > 0) {
       inboundData.push({
         ...result.route,
@@ -65,9 +65,12 @@ export const getServerSideProps: GetServerSideProps =
     }
   });
 
+  const stationsResponse: any = await fetch('http://localhost:3000/api/gtfs/stations');
+  const stationsResults: any = await stationsResponse.json();
+
   return {
     props: {
-      stations: stations.data,
+      stations: stationsResults,//stations.data,
       lines: lines.data,
       inboundData,
       outboundData,

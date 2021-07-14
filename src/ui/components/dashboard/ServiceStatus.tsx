@@ -6,9 +6,9 @@ import {
   AccordionDetails,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getIcons } from '../../../helpers/map';
-import { useAppDispatch } from '../../../app/hooks';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { getIcons } from 'src/helpers/map';
+import { useAppDispatch } from 'src/app/hooks';
+import { fetchServiceStatus } from 'src/features/api/statusApiSlice';
 
 type Props = {
   city: string;

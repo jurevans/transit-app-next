@@ -1,6 +1,6 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
-import { PathStyleExtension } from '@deck.gl/extensions';
+// import { PathStyleExtension } from '@deck.gl/extensions';
 import settings from '../../settings';
 import { getLines, hexToRGBArray } from '../functions';
 

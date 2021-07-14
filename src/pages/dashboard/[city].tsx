@@ -2,13 +2,13 @@ import { ReactElement } from 'react';
 import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import ServiceStatus from '../../ui/components/dashboard/ServiceStatus';
-import { wrapper } from '../../app/store';
-import { fetchServiceStatus } from '../../features/api/statusApiSlice';
-import cities from '../../settings/cities';
-import styles from '../../styles/pages/Dashboard.module.scss';
-import { useAppSelector } from '../../app/hooks';
-import { getKeyValueFromArray } from '../../helpers/functions';
+import ServiceStatus from '@/components/dashboard/ServiceStatus';
+import { wrapper } from 'src/app/store';
+import { fetchServiceStatus } from 'src/features/api/statusApiSlice';
+import cities from 'src/settings/cities';
+import styles from 'src/styles/pages/Dashboard.module.scss';
+import { useAppSelector } from 'src/app/hooks';
+import { getKeyValueFromArray } from 'src/helpers/functions';
 
 type Props = {
   city: string;

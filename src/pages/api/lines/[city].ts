@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getKeyValue } from '../../../helpers/functions';
-import shapeFiles from '../../../../data/shapeFiles';
-import { ShapeFileData } from '../../../../data/shapeFiles';
+import { getKeyValue } from 'src/helpers/functions';
+import shapeFiles from 'data/shapeFiles';
+import { ShapeFileData } from 'data/shapeFiles';
 
 type LinesRequest = {
   city: string;

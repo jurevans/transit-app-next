@@ -2,11 +2,11 @@ import { FC, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { closeStationDetails } from '../../../features/map/mapStationDetails';
-import { getIcons } from '../../../helpers/map';
-import styles from '../../../styles/components/map/StationDetails.module.scss';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { useAppDispatch, useAppSelector } from 'src/app/hooks';
+import { closeStationDetails } from 'src/features/map/mapStationDetails';
+import { getIcons } from 'src/helpers/map';
+import styles from 'src/styles/components/map/StationDetails.module.scss';
+import { fetchServiceStatus } from 'src/features/api/statusApiSlice';
 
 type Props = {
   city: string;

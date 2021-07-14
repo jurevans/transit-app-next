@@ -1,8 +1,8 @@
 import { FC, ReactElement } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import styles from '../styles/pages/Configure.module.scss';
-import cities from '../settings/cities';
+import styles from 'src/styles/pages/Configure.module.scss';
+import cities from 'src/settings/cities';
 
 const Home: FC = (): ReactElement => {
 

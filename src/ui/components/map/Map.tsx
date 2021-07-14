@@ -17,17 +17,17 @@ import MapTooltip from './MapTooltip';
 import MapPopup from './MapPopup';
 import SelectMapStyle from './SelectMapStyle';
 import StationDetails from './StationDetails';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
-import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
-import { updatedStationDetails } from '../../../features/map/mapStationDetails';
+import { useAppDispatch, useAppSelector } from 'src/app/hooks';
+import { openPopup, closePopup } from 'src/features/map/mapPopupSlice';
+import { updatedMapStyle } from 'src/features/mapStyle/mapStyleSlice';
+import { updatedStationDetails } from 'src/features/map/mapStationDetails';
 import {
   getInRange,
   getDurationForTransition,
   getZoomForTransition,
   getKeyValueFromArray,
-} from '../../../helpers/functions';
-import settings from '../../../settings';
+} from 'src/helpers/functions';
+import settings from 'src/settings';
 import {
   getStationData,
   getLineLayer,
@@ -39,9 +39,9 @@ import {
   getTooltipObjectPlot,
   StationsGeoDataItem,
   LinesGeoData,
-} from '../../../helpers/map';
+} from 'src/helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import styles from '../../../styles/components/map/Map.module.scss';
+import styles from 'src/styles/components/map/Map.module.scss';
 
 const { mapBoxAccessToken } = process.env;
 const { cities, mapStyles } = settings;
@@ -93,7 +93,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       //outboundLayers,
       getPathLayer('path-layer-inbound', inboundData),
       getPathLayer('path-layer-outbound', outboundData),
-      getScatterplotLayer(city, getStationData(stations)),
+      getScatterplotLayer(city, stations as any), //getStationData(stations)),
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
     ],

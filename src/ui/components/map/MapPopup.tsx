@@ -1,12 +1,12 @@
 import { FC, ReactElement } from 'react';
 import { Popup } from 'react-map-gl';
-import { closePopup } from '../../../features/map/mapPopupSlice';
-import { openStationDetails } from '../../../features/map/mapStationDetails';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { getIcons } from '../../../helpers/map';
+import { closePopup } from 'src/features/map/mapPopupSlice';
+import { openStationDetails } from 'src/features/map/mapStationDetails';
+import { fetchServiceStatus } from 'src/features/api/statusApiSlice';
+import { useAppDispatch, useAppSelector } from 'src/app/hooks';
+import { getIcons } from 'src/helpers/map';
 import Image from 'next/image';
-import styles from '../../../styles/components/map/MapPopup.module.scss';
+import styles from 'src/styles/components/map/MapPopup.module.scss';
 
 type Props = {
   city: string;
