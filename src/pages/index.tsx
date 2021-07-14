@@ -5,7 +5,6 @@ import styles from 'src/styles/pages/Configure.module.scss';
 import cities from 'src/settings/cities';
 
 const Home: FC = (): ReactElement => {
-
   return (
     <div className={styles.container}>
       <Head>

@@ -16,7 +16,10 @@
     "jsx": "preserve",
     "paths": {
       "@/components/*": ["src/ui/components/*"]
-    }
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "spec"]
