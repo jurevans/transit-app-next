@@ -70,9 +70,8 @@ export const getKeyValueFromArray = (key: string, value: string, array: any[]) =
  * @param {string} hex
  * @returns {Array}
  */
-
 export const hexToRGBArray = (hex: string): number[] => {
-  hex = hex.toLowerCase();
+  hex = (hex ? hex : 'dddddd').toLowerCase();
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? [
     parseInt(result[1], 16),

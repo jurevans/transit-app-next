@@ -39,8 +39,8 @@ export const getServerSideProps: GetServerSideProps =
   await store.dispatch(fetchLines(city as string));
   await store.dispatch(setCity(city as string));
 
-  const { stations } = store.getState();
-  const { lines } = store.getState();
+  //const { stations } = store.getState();
+  //const { lines } = store.getState();
 
   // TODO: Move this out of getServerSideProps:
 /*
@@ -62,10 +62,43 @@ export const getServerSideProps: GetServerSideProps =
     }
   ];
 */
+  const response: any = await fetch('http://localhost:5000/api/v1/routes/');
+  const data = await response.json();
+  //console.log(data);
+  let stations: any = [];
+  let lines: any = [];
+
+  data.forEach((route: any) => {
+    if (route.trip) {
+      stations = [
+        ...stations,
+        ...route.trip.stops.map((station: any) => {
+          return {
+            name: station.stopName,
+            line: route.routeShortName,
+            color: route.routeColor,
+            coordinates: [
+              station.stopLon,
+              station.stopLat,
+            ]
+          }})
+        ];
+
+      lines.push([{
+        line: route.routeId,
+        color: route.routeColor,
+        name: route.routeShortName,
+        longName: route.routeLongName,
+        description: route.routeDesc,
+        path: route.trip.path,
+      }])
+    }
+  });
+
   return {
     props: {
-      stations: stations.data,
-      lines: lines.data,
+      stations,
+      lines,
     },
   };
 });

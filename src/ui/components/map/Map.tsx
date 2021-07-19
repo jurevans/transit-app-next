@@ -38,6 +38,7 @@ import {
   getTooltipObjectPlot,
   StationsGeoDataItem,
   LinesGeoData,
+  getPathLayer,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -49,7 +50,7 @@ type Props = {
   city: string;
   mapStyle: any;
   stations: StationsGeoDataItem[],
-  lines: LinesGeoData;
+  lines: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
@@ -73,17 +74,15 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
     layers: any[];
   };
+  
+  const pathLayers = lines.map((line: any, i: number) => getPathLayer(`path-layer-${i}`, line));
 
   const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
     viewState: { ...cityConfig.settings.initialView },
     layers: [
-      getLineLayer(city, lines),
-      getScatterplotLayer(city, getStationData(stations)),
-      // TODO: When determining path-layer IDs, add these to global state to
-      // be referenced later, e.g., if we want to filter/alter any:
-      // getPathLayer('path-layer-1', inbound),
-      // getPathLayer('path-layer-2', outbound),
+      pathLayers,
+      getScatterplotLayer(city, stations),
     ],
   };
 
@@ -167,7 +166,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
         if (!layers.some(layer => layer.id === textLayerId)) {
-          layers.push(getTextLayer(getStationData(stations), mapStyle.label));
+          layers.push(getTextLayer(stations, mapStyle.label));
         }
       } else {
         if (layers.some(layer => layer.id === textLayerId)) {

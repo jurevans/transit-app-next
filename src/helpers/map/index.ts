@@ -1,6 +1,6 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
-import { PathStyleExtension } from '@deck.gl/extensions';
+// import { PathStyleExtension } from '@deck.gl/extensions';
 import settings from '../../settings';
 import { getLines, hexToRGBArray } from '../functions';
 
@@ -77,12 +77,12 @@ export const getIcons = (city: string, line: string): any => {
   return icons.filter(iconObj => iconObj.icon !== null);
 };
 
-export const getScatterplotLayer = (city: string, data: StationsGeoDataItem) => {
+export const getScatterplotLayer = (city: string, data: any) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
     data,
     opacity: 0.8,
-    stroked: true,
+    stroked: false,
     filled: true,
     pickable: true,
     radiusScale: 6,
@@ -91,20 +91,7 @@ export const getScatterplotLayer = (city: string, data: StationsGeoDataItem) => 
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => getLines(d.line).length,
-    getFillColor: (d: any) => getLineColor(city, d.line, 255),
-    getLineColor: (d: any) => {
-      const lines = getLines(d.line);
-      if (lines.length > 1) {
-        const firstLine = lines[0];
-        const secondLine = lines.find(line => line !== firstLine);
-        if (secondLine) {
-          return getLineColor(city, secondLine, 255);
-        }
-        return getLineColor(city, firstLine, 255);
-      } else {
-        return getLineColor(city, lines[0], 255);
-      }
-    }
+    getFillColor: (d: any) => [...hexToRGBArray(d.color), 255],
   });
 };
 
@@ -192,7 +179,7 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     widthMinPixels: 1,
     rounded: true,
     getPath: (d: any) => d.path,
-    getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
+    getColor: (d: any) => [...hexToRGBArray(d.color), 100] as any,
     getWidth: () => 2,
     // Just testing that I can dash if needed:
     // getDashArray: [4, 3],

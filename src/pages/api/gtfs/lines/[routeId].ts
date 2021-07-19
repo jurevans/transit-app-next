@@ -156,6 +156,7 @@ const handler = (
         ]);
 
         const data: any = await response.toArray();
+        // console.log(data);
         res.status(200).json(data);
       } catch (e) {
         res.status(500).end();

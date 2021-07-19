@@ -55,13 +55,13 @@ const stationIcons: StationIcons = {
     '6': {
       icon: mta_6,
     },
-    '6 Express': {
+    '6X': {
       icon: mta_6d,
     },
     '7': {
       icon: mta_7,
     },
-    '7 Express': {
+    '7X': {
       icon: mta_7d,
     },
     'A': {
@@ -80,6 +80,9 @@ const stationIcons: StationIcons = {
       icon: mta_e,
     },
     'F': {
+      icon: mta_f,
+    },
+    'FX': {
       icon: mta_f,
     },
     'G': {
