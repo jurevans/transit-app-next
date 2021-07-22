@@ -4,7 +4,6 @@ import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
-import { fetchStations } from '../../features/api/stationsApiSlice';
 import { fetchLines } from '../../features/api/linesApiSlice';
 import { setCity } from '../../features/city/citySlice';
 import { StationsGeoDataItem, LinesGeoData } from '../../helpers/map';
@@ -35,8 +34,8 @@ export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
   const city = params?.city;
 
-  await store.dispatch(fetchStations(city as string));
-  await store.dispatch(fetchLines(city as string));
+  // await store.dispatch(fetchStations(city as string));
+  //await store.dispatch(fetchLines(city as string));
   await store.dispatch(setCity(city as string));
 
   //const { stations } = store.getState();
@@ -62,28 +61,15 @@ export const getServerSideProps: GetServerSideProps =
     }
   ];
 */
-  const response: any = await fetch('http://localhost:5000/api/v1/routes/');
-  const data = await response.json();
-  //console.log(data);
-  let stations: any = [];
+/*
+  // NEW, GTFS routes - NOTE: This doesn't really look good
+  const routesResponse: any = await fetch('http://localhost:5000/api/v1/routes/');
+  const data = await routesResponse.json();
+
   let lines: any = [];
 
   data.forEach((route: any) => {
     if (route.trip) {
-      stations = [
-        ...stations,
-        ...route.trip.stops.map((station: any) => {
-          return {
-            name: station.stopName,
-            line: route.routeShortName,
-            color: route.routeColor,
-            coordinates: [
-              station.stopLon,
-              station.stopLat,
-            ]
-          }})
-        ];
-
       lines.push([{
         line: route.routeId,
         color: route.routeColor,
@@ -94,6 +80,12 @@ export const getServerSideProps: GetServerSideProps =
       }])
     }
   });
+*/
+  const stationsResponse: any = await fetch('http://localhost:5000/api/v1/routes/stations');
+  const stations = await stationsResponse.json();
+
+  const linesResponse: any = await fetch('http://localhost:5000/api/v1/shapes');
+  const lines = await linesResponse.json();
 
   return {
     props: {

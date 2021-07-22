@@ -52,6 +52,9 @@ const stationIcons: StationIcons = {
     '5': {
       icon: mta_5,
     },
+    '5X': {
+      icon: mta_5,
+    },
     '6': {
       icon: mta_6,
     },

@@ -49,7 +49,7 @@ const { cities, mapStyles } = settings;
 type Props = {
   city: string;
   mapStyle: any;
-  stations: StationsGeoDataItem[],
+  stations: any[],
   lines: any;
 };
 
@@ -75,14 +75,18 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: any[];
   };
   
-  const pathLayers = lines.map((line: any, i: number) => getPathLayer(`path-layer-${i}`, line));
+  // FOR NEW GTFS data
+  // const pathLayers = lines.map((line: any, i: number) => getPathLayer(`path-layer-${i}`, line));
 
   const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
     viewState: { ...cityConfig.settings.initialView },
     layers: [
-      pathLayers,
-      getScatterplotLayer(city, stations),
+      // TODO: When determining path-layer IDs, add these to global state to
+      // be referenced later, e.g., if we want to filter/alter any:
+      // pathLayers, // FOR NEW GTFS data
+      getLineLayer(lines),
+      getScatterplotLayer(stations),
     ],
   };
 
@@ -166,6 +170,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
         if (!layers.some(layer => layer.id === textLayerId)) {
+          // layers.push(getTextLayer(getStationData(stations), mapStyle.label));
           layers.push(getTextLayer(stations, mapStyle.label));
         }
       } else {

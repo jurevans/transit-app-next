@@ -1,6 +1,6 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
-// import { PathStyleExtension } from '@deck.gl/extensions';
+import { PathStyleExtension } from '@deck.gl/extensions';
 import settings from '../../settings';
 import { getLines, hexToRGBArray } from '../functions';
 
@@ -77,12 +77,12 @@ export const getIcons = (city: string, line: string): any => {
   return icons.filter(iconObj => iconObj.icon !== null);
 };
 
-export const getScatterplotLayer = (city: string, data: any) => {
+export const getScatterplotLayer = (data: any) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
     data,
     opacity: 0.8,
-    stroked: false,
+    stroked: true,
     filled: true,
     pickable: true,
     radiusScale: 6,
@@ -91,7 +91,23 @@ export const getScatterplotLayer = (city: string, data: any) => {
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => getLines(d.line).length,
-    getFillColor: (d: any) => [...hexToRGBArray(d.color), 255],
+    getFillColor: (d: any) => {
+      return d.colors
+        ? [...hexToRGBArray(d.colors.split('-')[0]), 255]
+        : [160, 160, 160, 255];
+    },
+    getLineColor: (d: any) => {
+      const colors = d.colors ? d.colors.split('-') : [];
+      let useColor = colors[0];
+
+      if (colors.length > 1) {
+        // Find an alternate color
+        const secondColor = colors.find((color: string) => color !== useColor);
+        useColor = secondColor || useColor;
+      }
+
+      return [...hexToRGBArray(useColor), 255];
+    }
   });
 };
 
@@ -152,21 +168,21 @@ export const isLinePicker = (data: PickerLineObject): boolean => {
   return !!object.properties;
 };
 
-export const getLineLayer = (city: string, data: LinesGeoData) => {
+export const getLineLayer = (data: LinesGeoData) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,
     pickable: true,
-    stroked: false,
-    filled: true,
-    extruded: true,
+    //stroked: false,
+    //filled: true,
+    //extruded: true,
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
-    getFillColor: [160, 160, 180, 100],
-    getLineColor: (d: any) => getLineColor(city, d.properties.name, 100),
+    //getFillColor: [160, 160, 180, 100],
+    getLineColor: (d: any) => [...hexToRGBArray(d.properties.color), 100],
     getRadius: 100,
     getLineWidth: 1,
-    getElevation: 30
+    //getElevation: 30
   });
 };
 
@@ -179,11 +195,13 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     widthMinPixels: 1,
     rounded: true,
     getPath: (d: any) => d.path,
-    getColor: (d: any) => [...hexToRGBArray(d.color), 100] as any,
+    getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
     getWidth: () => 2,
     // Just testing that I can dash if needed:
     // getDashArray: [4, 3],
     // extensions: [new PathStyleExtension({highPrecisionDash: true})]
+    getOffset: () => 1,
+    extensions: [new PathStyleExtension({ offset: true })]
   });
 };
 
