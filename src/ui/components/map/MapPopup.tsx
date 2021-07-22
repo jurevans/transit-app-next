@@ -59,7 +59,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         </div>
         <div className={styles.content}>
           <p className={styles.name}>{data.name}</p>
-          {data.notes && <p className={styles.notes}>{data.notes}</p>}
+          {data.longName && <p className={styles.longName}>{data.longName}</p>}
           <div className={styles.buttons}>
             <button onClick={handleOpenDetails}>Status</button>
             <button className={styles.close} onClick={handleClose}>Close</button>

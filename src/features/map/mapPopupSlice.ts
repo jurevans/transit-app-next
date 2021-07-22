@@ -4,7 +4,7 @@ interface MapPopupState {
   data?: {
     name: string;
     line: string;
-    notes?: string;
+    longname?: string;
     url?: string;
     isStation?: boolean;
     longitude: number;

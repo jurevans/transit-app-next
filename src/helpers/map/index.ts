@@ -4,46 +4,37 @@ import { PathStyleExtension } from '@deck.gl/extensions';
 import settings from '../../settings';
 import { getLines, hexToRGBArray } from '../functions';
 
-const { lineColors, stationIcons } = settings;
+const { stationIcons } = settings;
 
-export interface StationsGeoDataItem {
+export type Coordinate = [number, number];
+
+export interface Geometry {
+  type: 'LineString' | 'Point' | 'Polygon'; // There are others, but will not likely be used here
+  coordinates: Coordinate[];
+}
+
+export interface Feature {
   type: string;
+  geometry: Geometry;
   properties: {
     name: string;
-    line: string;
-    notes?: string;
+    color?: string;
+    description?: string;
     url?: string;
-  },
-  geometry: {
-    type: string;
-    coordinates: number[];
-  };
-};
-
-export interface LinesGeoDataFeature {
-  type: string;
-  geometry: {
-    type: string;
-    coordinates: number[];
-  };
-  properties: {
-    id: string;
-    name: string;
-    line: string;
-    passage: string;
-    status: string;
-    type: string;
-  };
+    id?: string;
+    routeid?: string;
+  }
 }
 
-export interface LinesGeoData {
+export interface FeatureCollection {
   type: string;
-  features: LinesGeoDataFeature[];
+  features: Feature[];
 }
 
-export const getStationData = (data: StationsGeoDataItem[]): any => {
+// OBSOLETE
+export const getStationData = (data: Feature[]): any => {
   if (data && data.length > 0) {
-    return data.map((station: StationsGeoDataItem) => {
+    return data.map((station: Feature) => {
       const properties = station.properties;
       const geometry = station.geometry;
       return {
@@ -54,20 +45,14 @@ export const getStationData = (data: StationsGeoDataItem[]): any => {
   }
 };
 
-export const getLineColor = (city: string, lines: string, opacity: number): RGBAColor => {
-  const line = getLines(lines)[0];
-
-  return lineColors[city] && lineColors[city][line]
-    ? [...lineColors[city][line].rgb, opacity]
-    : [160, 160, 160, opacity];
-};
-
+// OBSOLETE
 export const getIcon = (city: string, line: string): unknown => {
   return stationIcons[city] && stationIcons[city][line]
     ? stationIcons[city][line].icon
     : null;
 };
 
+// OBSOLETE - Remove when icons can be added to public assets
 export const getIcons = (city: string, line: string): any => {
   const lines = getLines(line);
   const icons = lines.map(line => ({
@@ -91,12 +76,12 @@ export const getScatterplotLayer = (data: any) => {
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => getLines(d.line).length,
-    getFillColor: (d: any) => {
+    getFillColor: (d: any): RGBAColor => {
       return d.colors
         ? [...hexToRGBArray(d.colors.split('-')[0]), 255]
         : [160, 160, 160, 255];
     },
-    getLineColor: (d: any) => {
+    getLineColor: (d: any): RGBAColor => {
       const colors = d.colors ? d.colors.split('-') : [];
       let useColor = colors[0];
 
@@ -118,25 +103,29 @@ export interface TooltipObject {
   notes?: string;
   isStation?: boolean;
   name?: string;
+  longName?: string;
 }
 
+// The diferences between the following two should be abstracted out:
 export interface PickerLineObject {
   x: number;
   y: number;
   object: {
     properties: {
       name: string;
+      longName?: string;
       x: number,
       y: number,
     },
   };
 }
-
+// Perhaps data for PickerPlot should follow "Feature" properties,
+// and then this interface can be consolidated with the above interface?
 export interface PickerPlotObject {
   object: {
     name: string;
-    line: string;
-    notes: string;
+    line: string; // Line should go. It was only useful to have for older data.
+    longName: string;
   };
   x: number;
   y: number;
@@ -146,17 +135,20 @@ export const getTooltipObjectLine = (data: PickerLineObject): TooltipObject => {
   const { x, y, object } = data;
   return {
     line: object.properties.name,
+    longName: object.properties.longName,
     x,
     y,
   };
 };
 
+// This could be consolidated into the above, or removed entirely
+// Data should be delivered in GeoJSON Feature & FeatureCollection format
 export const getTooltipObjectPlot = (data: PickerPlotObject): TooltipObject => {
   const { x, y, object } = data;
   return {
     name: object.name,
     line: object.line,
-    notes: object.notes,
+    longName: object.longName,
     isStation: true,
     x,
     y,
@@ -168,7 +160,7 @@ export const isLinePicker = (data: PickerLineObject): boolean => {
   return !!object.properties;
 };
 
-export const getLineLayer = (data: LinesGeoData) => {
+export const getGeoJsonLayer = (data: FeatureCollection) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,

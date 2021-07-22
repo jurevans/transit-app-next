@@ -30,15 +30,13 @@ import {
 import settings from '../../../settings';
 import {
   getStationData,
-  getLineLayer,
+  getGeoJsonLayer,
   getScatterplotLayer,
   getTextLayer,
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
-  StationsGeoDataItem,
-  LinesGeoData,
-  getPathLayer,
+  FeatureCollection,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -50,7 +48,7 @@ type Props = {
   city: string;
   mapStyle: any;
   stations: any[],
-  lines: any;
+  lines: FeatureCollection;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
@@ -85,7 +83,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
       // pathLayers, // FOR NEW GTFS data
-      getLineLayer(lines),
+      getGeoJsonLayer(lines),
       getScatterplotLayer(stations),
     ],
   };
@@ -95,7 +93,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
 
   const handleHover = (data: any) => {
     let updates: any = {};
-
     if (data.object && !isPopupOpen) {
       if (isLinePicker(data)) {
         updates = getTooltipObjectLine(data);

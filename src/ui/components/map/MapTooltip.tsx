@@ -24,6 +24,7 @@ const getStyles = (x: number, y: number): CSSProperties => {
 
 const MapTooltip: FC<Props> = (props: Props): ReactElement => {
   const { city, data } = props;
+
   const icons = getIcons(city, data.line).map((iconObj: any) =>
     <Image
       key={iconObj.line}
@@ -54,6 +55,9 @@ const MapTooltip: FC<Props> = (props: Props): ReactElement => {
       >
         <div className={styles.icons}>
           {icons}
+        </div>
+        <div>
+          {data.longName || data.name}
         </div>
       </div>
     );
