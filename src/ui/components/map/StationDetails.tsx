@@ -43,7 +43,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     >
       <div className={styles.icons}>
         {data.line &&
-          getIcons(city, data.line).map((iconObj: any) =>
+          getIcons(city, data.routes).map((iconObj: any) =>
             <Image key={iconObj.line} src={iconObj.icon} alt={iconObj.line} width={56} height={56} />
           )}
       </div>
@@ -61,6 +61,11 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
           <p>Upcoming trains (TBD)</p>
           {/* TODO */}
         </div>
+        <div>
+          {data.routes.map((station: any, i:number) =>
+            station.url && <div key={i}><a href={station.url} target="_blank"><span>{station.routeId} Service Schedule &raquo;</span></a></div>)
+          }
+        </div>
         
         <div className={styles.buttons}>
           <button onClick={handleClose}>Close</button>
@@ -71,7 +76,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
 
   return (
     <HTMLOverlay
-      captureDrag={true} // change to true once I figure out the height style issue
+      captureDrag={true}
       captureScroll={true}
       captureClick={true}
       captureDoubleClick={true}

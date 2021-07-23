@@ -45,7 +45,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
       >
         <div className={styles.icons}>
           {data.line &&
-            getIcons(city, data.line).map((iconObj: any) =>
+            getIcons(city, data.routes).map((iconObj: any) =>
               <Image
                 key={iconObj.line}
                 layout="fixed"

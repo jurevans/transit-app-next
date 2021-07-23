@@ -4,13 +4,12 @@ import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
-import { fetchLines } from '../../features/api/linesApiSlice';
 import { setCity } from '../../features/city/citySlice';
-import { StationsGeoDataItem, LinesGeoData } from '../../helpers/map';
+import { FeatureCollection } from '../../helpers/map';
 
 type Props = {
-  stations: StationsGeoDataItem[],
-  lines: LinesGeoData;
+  stations: any[],
+  lines: FeatureCollection;
 }
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
@@ -34,57 +33,12 @@ export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
   const city = params?.city;
 
-  // await store.dispatch(fetchStations(city as string));
-  //await store.dispatch(fetchLines(city as string));
   await store.dispatch(setCity(city as string));
 
-  //const { stations } = store.getState();
-  //const { lines } = store.getState();
-
-  // TODO: Move this out of getServerSideProps:
-/*
-  const response: any = await fetch('http://localhost:3000/api/gtfs/lines/E');
-  const testing = await response.json();
-  const test = testing[0];
-
-  const inbound: any = [
-    {
-      ...test.route,
-      path: [...test.inbound]
-    }
-  ];
-
-  const outbound: any = [
-    {
-      ...test.route,
-      path: [...test.inbound],
-    }
-  ];
-*/
-/*
-  // NEW, GTFS routes - NOTE: This doesn't really look good
-  const routesResponse: any = await fetch('http://localhost:5000/api/v1/routes/');
-  const data = await routesResponse.json();
-
-  let lines: any = [];
-
-  data.forEach((route: any) => {
-    if (route.trip) {
-      lines.push([{
-        line: route.routeId,
-        color: route.routeColor,
-        name: route.routeShortName,
-        longName: route.routeLongName,
-        description: route.routeDesc,
-        path: route.trip.path,
-      }])
-    }
-  });
-*/
   const stationsResponse: any = await fetch('http://localhost:5000/api/v1/routes/stations');
   const stations = await stationsResponse.json();
 
-  const linesResponse: any = await fetch('http://localhost:5000/api/v1/shapes');
+  const linesResponse: any = await fetch('http://localhost:5000/api/v1/shapes?geojson=true');
   const lines = await linesResponse.json();
 
   return {

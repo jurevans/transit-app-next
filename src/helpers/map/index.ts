@@ -32,20 +32,6 @@ export interface FeatureCollection {
 }
 
 // OBSOLETE
-export const getStationData = (data: Feature[]): any => {
-  if (data && data.length > 0) {
-    return data.map((station: Feature) => {
-      const properties = station.properties;
-      const geometry = station.geometry;
-      return {
-        ...properties,
-        ...geometry,
-      }
-    });
-  }
-};
-
-// OBSOLETE
 export const getIcon = (city: string, line: string): unknown => {
   return stationIcons[city] && stationIcons[city][line]
     ? stationIcons[city][line].icon
@@ -53,11 +39,10 @@ export const getIcon = (city: string, line: string): unknown => {
 };
 
 // OBSOLETE - Remove when icons can be added to public assets
-export const getIcons = (city: string, line: string): any => {
-  const lines = getLines(line);
-  const icons = lines.map(line => ({
-    icon: getIcon(city, line),
-    line,
+export const getIcons = (city: string, stations: any[]): any => {
+  const icons = stations.map(station => ({
+    icon: getIcon(city, station.routeId),
+    line: station.routeId,
   }));
   return icons.filter(iconObj => iconObj.icon !== null);
 };
@@ -97,13 +82,13 @@ export const getScatterplotLayer = (data: any) => {
 };
 
 export interface TooltipObject {
-  line: string;
   x: number;
   y: number;
-  notes?: string;
-  isStation?: boolean;
+  line?: string;
   name?: string;
   longName?: string;
+  routes?: any[];
+  isStation?: boolean;
 }
 
 // The diferences between the following two should be abstracted out:
@@ -124,8 +109,7 @@ export interface PickerLineObject {
 export interface PickerPlotObject {
   object: {
     name: string;
-    line: string; // Line should go. It was only useful to have for older data.
-    longName: string;
+    routes: any[]; // TODO: Need type here.
   };
   x: number;
   y: number;
@@ -147,8 +131,7 @@ export const getTooltipObjectPlot = (data: PickerPlotObject): TooltipObject => {
   const { x, y, object } = data;
   return {
     name: object.name,
-    line: object.line,
-    longName: object.longName,
+    routes: object.routes,
     isStation: true,
     x,
     y,
@@ -165,16 +148,11 @@ export const getGeoJsonLayer = (data: FeatureCollection) => {
     id: 'geojson-line-layer',
     data,
     pickable: true,
-    //stroked: false,
-    //filled: true,
-    //extruded: true,
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
-    //getFillColor: [160, 160, 180, 100],
     getLineColor: (d: any) => [...hexToRGBArray(d.properties.color), 100],
     getRadius: 100,
     getLineWidth: 1,
-    //getElevation: 30
   });
 };
 
@@ -189,9 +167,6 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     getPath: (d: any) => d.path,
     getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
     getWidth: () => 2,
-    // Just testing that I can dash if needed:
-    // getDashArray: [4, 3],
-    // extensions: [new PathStyleExtension({highPrecisionDash: true})]
     getOffset: () => 1,
     extensions: [new PathStyleExtension({ offset: true })]
   });
