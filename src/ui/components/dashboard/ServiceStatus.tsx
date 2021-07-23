@@ -6,23 +6,21 @@ import {
   AccordionDetails,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getIcons } from '../../../helpers/map';
-import { useAppDispatch } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
 
 type Props = {
-  city: string;
   status: any[];
 };
 
 const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
-  const { city, status } = props;
+  const { status } = props;
   const dispatch = useAppDispatch();
-
+  const { agencyId } = useAppSelector(state => state.agency);
   // Re-fetch status data every minute
   useEffect(() => {
     const timer = setTimeout(
-      () => dispatch(fetchServiceStatus(city)),
+      () => dispatch(fetchServiceStatus()),
       60000,
     );
     return () => clearTimeout(timer);
@@ -35,9 +33,9 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
       const { name } = status;
       // TODO: This following logic will be different when icon handling changes:
       if (name === 'SIR') {
-        return getIcons([{ routeId: name }]);
+        return ['SIR'];
       } else {
-        return getIcons(name.split('').map((routeId: string) => ({ routeId })));
+        return name.split('');
       }
     });
   }
@@ -51,11 +49,12 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls={`panel${i}a-content`}
             id={`panel${i}a-content`}>
-            {icons[i].map((icon: any, j: number) =>
-              <Image key={j} src={icon.icon} width={25} height={25} alt={icon.line} />
+            {icons[i].map((routeId: any, j: number) =>
+              <Image key={j} src={`/icons/${agencyId}/${routeId}.svg`} width={25} height={25} alt={routeId} />
             )} {status.status !=='' && <span><strong>{status.status}</strong> {status.date} {status.time}</span>}
           </AccordionSummary>
           <AccordionDetails>
+            {/* TODO: Parse status text and remove tags: */}
             <div dangerouslySetInnerHTML={{ __html: status.text }} />
           </AccordionDetails>
         </Accordion>

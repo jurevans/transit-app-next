@@ -42,10 +42,9 @@ import styles from '../../../styles/components/map/Map.module.scss';
 import mapDefaults from '../../../../config/map.config';
 
 const { mapBoxAccessToken } = process.env;
-const { cities, mapStyles } = settings;
+const {  mapStyles } = settings;
 
 type Props = {
-  city: string;
   mapStyle: any;
   stations: any[],
   lines: FeatureCollection;
@@ -53,7 +52,7 @@ type Props = {
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { city, mapStyle, stations, lines, location } = props;
+  const { mapStyle, stations, lines, location } = props;
   const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
@@ -95,7 +94,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: [
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
-      // pathLayers, // FOR NEW GTFS data
       getGeoJsonLayer(lines),
       getScatterplotLayer(stations),
     ],
@@ -239,8 +237,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
           mapStyle={mapStyle.value}
           mapboxApiAccessToken={mapBoxAccessToken}
         />
-        {isPopupOpen && <MapPopup city={city} data={popupData} />}
-        {isStationDetailsOpen && <StationDetails city={city} data={stationDetailsData} />}
+        {isPopupOpen && <MapPopup data={popupData} />}
+        {isStationDetailsOpen && <StationDetails data={stationDetailsData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
         <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />

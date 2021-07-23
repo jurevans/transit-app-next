@@ -21,8 +21,8 @@ const Home: FC = (): ReactElement => {
           <h4>Available cities:</h4>
         </div>
         <div className={styles.grid}>
-          <Link href={'/dashboard/nyc'}><a className={styles.card}>MTA - Dashboard</a></Link>
-          <Link href={'/map/nyc'}><a className={styles.card}>MTA - Map</a></Link>
+          <Link href={'/dashboard'}><a className={styles.card}>MTA - Dashboard</a></Link>
+          <Link href={'/map'}><a className={styles.card}>MTA - Map</a></Link>
         </div>
       </main>
 

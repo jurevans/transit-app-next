@@ -1,7 +1,7 @@
 import { FC, ReactElement, CSSProperties } from 'react';
 import Image from 'next/image';
-import { getIcons } from '../../../helpers/map';
 import styles from '../../../styles/components/map/MapTooltip.module.scss';
+import { useAppSelector } from '../../../app/hooks';
 
 type Props = {
   data: any; // TODO: We need a type here.
@@ -23,14 +23,14 @@ const getStyles = (x: number, y: number): CSSProperties => {
 
 const MapTooltip: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
-  // TODO: This isn't great, but will be removed when icon handling changes:
+  const { agencyId } = useAppSelector(state => state.agency);
   const routes = data.routes || [{ routeId: data.line }];
 
-  const icons = getIcons(routes).map((iconObj: any) =>
+  const icons = routes.map((route: any) =>
     <Image
-      key={iconObj.line}
-      src={iconObj.icon}
-      alt={iconObj.line}
+      key={route.routeId}
+      src={`/icons/${agencyId}/${route.routeId}.svg`}
+      alt={route.routeId}
       width={25}
       height={25}
     />

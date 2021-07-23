@@ -4,8 +4,8 @@ import { AppThunk } from '../../app/store';
 
 const SERVER = 'http://localhost:3000';
 
-export const fetchServiceStatus = (city: string): AppThunk => async dispatch => {
-  const response = await fetch(`${SERVER}/api/status/${city}`);
+export const fetchServiceStatus = (): AppThunk => async dispatch => {
+  const response = await fetch(`${SERVER}/api/status/`);
   const status = await response.json();
 
   dispatch(statusApiSlice.actions.setStatus(status));

@@ -4,20 +4,19 @@ import { closePopup } from '../../../features/map/mapPopupSlice';
 import { openStationDetails } from '../../../features/map/mapStationDetails';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { getIcons } from '../../../helpers/map';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/MapPopup.module.scss';
 
 type Props = {
-  city: string;
   data?: any;
 }
 
 const MapPopup:FC<Props> = (props: Props):ReactElement => {
-  const { city, data } = props;
+  const { data } = props;
   const dispatch = useAppDispatch();
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const statuses = useAppSelector(state => state.status.data);
+  const { agencyId } = useAppSelector(state => state.agency);
 
   const handleClose = () => {
     dispatch(closePopup());
@@ -27,7 +26,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
     if (!isStationDetailsOpen) {
       dispatch(openStationDetails(data));
       if (statuses.length === 0) {
-        dispatch(fetchServiceStatus(city));
+        dispatch(fetchServiceStatus());
       }
     }
   };
@@ -45,12 +44,12 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
       >
         <div className={styles.icons}>
           {data.line &&
-            getIcons(data.routes).map((iconObj: any) =>
+            data.routes.map((route: any) =>
               <Image
-                key={iconObj.line}
+                key={route.routeId}
                 layout="fixed"
-                src={iconObj.icon}
-                alt={iconObj.line}
+                src={`/icons/${agencyId}/${route.routeId}.svg`}
+                alt={route.routeId}
                 width={36}
                 height={36}
                 priority={true}

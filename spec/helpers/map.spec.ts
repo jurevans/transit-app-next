@@ -1,55 +1,38 @@
 import {
-  getStationData,
-  getIcon,
-  getLineColor,
-  getLineLayer,
-  getScatterplotLayer,
-  getTooltipObjectLine,
-  getTooltipObjectPlot,
-  StationsGeoDataItem,
+  getTextLabelTheme
 } from '../../src/helpers/map';
 
-describe('getStationData', () => {
-  test('Flattens the data within "properties" and "geometry"', () => {
-    const stationDataItem: StationsGeoDataItem = {
-      type: 'Point',
-      properties: {
-        name: '23 St',
-        line: '1-2',
-        notes: '1-all times, 2-nights',
-        url: '',
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [-73.9956570016487, 40.74408099989751],
-      },
+describe('getTextLabelTheme', () => {
+  it('Should return a Dark theme when "Dark" is provided', () => {
+    const expected = {
+      fontColor: [240, 240, 240, 255],
+      backgroundColor: [40, 40, 40],
     };
-  
-    const stationData: StationsGeoDataItem[] = [stationDataItem];
-  
-    const expected = [{
-      type: 'Point',
-      name: '23 St',
-      line: '1-2',
-      notes: '1-all times, 2-nights',
-      url: '',
-      coordinates: [-73.9956570016487, 40.74408099989751],
-    }];
 
-    const actual = getStationData(stationData);
+    const actual = getTextLabelTheme('Dark');
     expect(actual).toEqual(expected);
-  })
-});
-
-describe('getIcon', () => {
-  it('Returns null if no lines are found', () => {
-    const expected = null;
-    const actualWithInvalidCity = getIcon('denver', 'A');
-    const actualWithInvalidLine = getIcon('nyc', 'I');
-    expect(actualWithInvalidCity).toBe(expected);
-    expect(actualWithInvalidLine).toBe(expected);
   });
-});
+
+  it('Should return a default theme when no theme is provided', () => {
+    const expected = {
+      fontColor: [40, 40, 40, 255],
+      backgroundColor: [240, 240, 240],
+    };
+
+    const actual = getTextLabelTheme();
+    expect(actual).toEqual(expected);
+  });
+
+  it('Should return a default theme when any other theme is provided', () => {
+    const expected = {
+      fontColor: [40, 40, 40, 255],
+      backgroundColor: [240, 240, 240],
+    };
+
+    const actual = getTextLabelTheme('test theme');
+    expect(actual).toEqual(expected);
+  });
+})
 
 describe('getLineColor', () => {
 

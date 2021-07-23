@@ -4,7 +4,7 @@ import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
-import { setCity } from '../../features/city/citySlice';
+import { setAgency } from '../../features/agency/agencySlice';
 import { FeatureCollection } from '../../helpers/map';
 
 type Props = {
@@ -14,7 +14,6 @@ type Props = {
 };
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
-  const city = useAppSelector(state => state.city.value);
   const { style } = useAppSelector(state => state.mapStyle);
   const { stations, lines, location } = props;
 
@@ -26,7 +25,6 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Map
-        city={city}
         mapStyle={style}
         stations={stations}
         lines={lines}
@@ -37,20 +35,29 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
-  const city = params?.city;
 
-  await store.dispatch(setCity(city as string));
+  const API_URL = 'http://localhost:3000';
+
+  // Fetch agency:
+  const agencyResponse = await fetch(`${API_URL}/api/agency`);
+  const agencies: any[] = await agencyResponse.json();
+  const agency = agencies[0]; // For now, we're only concerned with the first item returned.
 
   // Fetch location data for agency:
-  const locationResponse = await fetch('http://localhost:3000/api/location');
+  const locationResponse = await fetch(`${API_URL}/api/agency/${agency.agencyId}`);
   const location: any = await locationResponse.json();
 
+  await store.dispatch(setAgency({
+    ...agency,
+    location,
+  }));
+
   // Fetch stations:
-  const stationsResponse: any = await fetch('http://localhost:5000/api/v1/stops');
+  const stationsResponse: any = await fetch(`${API_URL}/api/stations`);
   const stations = await stationsResponse.json();
 
   // Fetch route lines:
-  const linesResponse: any = await fetch('http://localhost:5000/api/v1/shapes?geojson=true');
+  const linesResponse: any = await fetch(`${API_URL}/api/lines`);
   const lines = await linesResponse.json();
 
   return {

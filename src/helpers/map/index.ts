@@ -1,10 +1,6 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
-import { PathStyleExtension } from '@deck.gl/extensions';
-import settings from '../../settings';
-import { getLines, hexToRGBArray } from '../functions';
-
-const { stationIcons } = settings;
+import { hexToRGBArray, RGBArray } from '../functions';
 
 export type Coordinate = [number, number];
 
@@ -31,22 +27,6 @@ export interface FeatureCollection {
   features: Feature[];
 }
 
-// OBSOLETE
-export const getIcon = (line: string): unknown => {
-  return stationIcons[line]
-    ? stationIcons[line].icon
-    : null;
-};
-
-// OBSOLETE - Remove when icons can be added to public assets
-export const getIcons = (stations: any[]): any => {
-  const icons = stations.map(station => ({
-    icon: getIcon(station.routeId),
-    line: station.routeId,
-  }));
-  return icons.filter(iconObj => iconObj.icon !== null);
-};
-
 export const getScatterplotLayer = (data: any) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
@@ -60,14 +40,15 @@ export const getScatterplotLayer = (data: any) => {
     radiusMaxPixels: 30,
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
-    getRadius: (d: any) => getLines(d.line).length,
+    getRadius: (d: any) => d.routes.length,
     getFillColor: (d: any): RGBAColor => {
-      return d.colors
-        ? [...hexToRGBArray(d.colors.split('-')[0]), 255]
-        : [160, 160, 160, 255];
+      const rgbArray: RGBArray = d.colors
+        ? hexToRGBArray(d.colors.split('-')[0])
+        : [160, 160, 160];
+      return [...rgbArray, 255];
     },
     getLineColor: (d: any): RGBAColor => {
-      const colors = d.colors ? d.colors.split('-') : [];
+      const colors = d.routes.map((route: any) => route.color);
       let useColor = colors[0];
 
       if (colors.length > 1) {
@@ -75,8 +56,8 @@ export const getScatterplotLayer = (data: any) => {
         const secondColor = colors.find((color: string) => color !== useColor);
         useColor = secondColor || useColor;
       }
-
-      return [...hexToRGBArray(useColor), 255];
+      const rgbArray: RGBArray = hexToRGBArray(useColor);
+      return [...rgbArray, 255];
     }
   });
 };
@@ -104,6 +85,7 @@ export interface PickerLineObject {
     },
   };
 }
+
 // Perhaps data for PickerPlot should follow "Feature" properties,
 // and then this interface can be consolidated with the above interface?
 export interface PickerPlotObject {
@@ -150,7 +132,10 @@ export const getGeoJsonLayer = (data: FeatureCollection) => {
     pickable: true,
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
-    getLineColor: (d: any) => [...hexToRGBArray(d.properties.color), 100],
+    getLineColor: (d: any) => {
+      const rgbArray: RGBArray = hexToRGBArray(d.properties.color);
+      return [...rgbArray, 100];
+    },
     getRadius: 100,
     getLineWidth: 1,
   });
@@ -165,14 +150,15 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     widthMinPixels: 1,
     rounded: true,
     getPath: (d: any) => d.path,
-    getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
+    getColor: (d: any): RGBAColor => {
+      const rgbArray: RGBArray = hexToRGBArray(d.color);
+      return [...rgbArray, 200];
+    },
     getWidth: () => 2,
-    getOffset: () => 1,
-    extensions: [new PathStyleExtension({ offset: true })]
   });
 };
 
-const getTextLabelThemes = (mapStyleLabel: string): any => {
+export const getTextLabelTheme = (mapStyleLabel?: string): any => {
   switch (mapStyleLabel) {
     case 'Dark':
       return {
@@ -188,7 +174,7 @@ const getTextLabelThemes = (mapStyleLabel: string): any => {
 };
 
 export const getTextLayer = (data: any, theme: string) => {
-  const textLabelTheme = getTextLabelThemes(theme);
+  const textLabelTheme = getTextLabelTheme(theme);
   const { fontColor, backgroundColor } = textLabelTheme;
 
   return new TextLayer({
