@@ -45,7 +45,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
       >
         <div className={styles.icons}>
           {data.line &&
-            getIcons(city, data.routes).map((iconObj: any) =>
+            getIcons(data.routes).map((iconObj: any) =>
               <Image
                 key={iconObj.line}
                 layout="fixed"
@@ -59,7 +59,11 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         </div>
         <div className={styles.content}>
           <p className={styles.name}>{data.name}</p>
-          {data.longName && <p className={styles.longName}>{data.longName}</p>}
+          <ul className={styles.longNameList}>
+            {data.routes.map((routeInfo: any, i: number) =>
+              <li key={i} className={styles.longName}>{routeInfo.longName}</li>
+            )}
+          </ul>
           <div className={styles.buttons}>
             <button onClick={handleOpenDetails}>Status</button>
             <button className={styles.close} onClick={handleClose}>Close</button>

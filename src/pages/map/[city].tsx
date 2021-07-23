@@ -10,12 +10,13 @@ import { FeatureCollection } from '../../helpers/map';
 type Props = {
   stations: any[],
   lines: FeatureCollection;
-}
+  location: any;
+};
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
   const city = useAppSelector(state => state.city.value);
   const { style } = useAppSelector(state => state.mapStyle);
-  const { stations, lines } = props;
+  const { stations, lines, location } = props;
 
   return (
     <div>
@@ -24,7 +25,12 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map city={city} mapStyle={style} stations={stations} lines={lines} />
+      <Map
+        city={city}
+        mapStyle={style}
+        stations={stations}
+        lines={lines}
+        location={location} />
     </div>
   );
 };
@@ -35,9 +41,22 @@ export const getServerSideProps: GetServerSideProps =
 
   await store.dispatch(setCity(city as string));
 
-  const stationsResponse: any = await fetch('http://localhost:5000/api/v1/routes/stations');
+  // Fetch the agency for this feed:
+  const agenciesResponse: any = await fetch('http://localhost:5000/api/v1/agency');
+  const agencies = await agenciesResponse.json();
+  const agency = agencies[0]; // For now, we assume we only have one
+  const agencyId = agency.agencyId;
+
+  // Fetch location data for agency:
+  const locationResponse = await fetch(`http://localhost:5000/api/v1/agency/${agencyId}`);
+  const locationData: any = await locationResponse.json();
+  const location = locationData[0];
+
+  // Fetch stations:
+  const stationsResponse: any = await fetch('http://localhost:5000/api/v1/stops');
   const stations = await stationsResponse.json();
 
+  // Fetch route lines:
   const linesResponse: any = await fetch('http://localhost:5000/api/v1/shapes?geojson=true');
   const lines = await linesResponse.json();
 
@@ -45,6 +64,7 @@ export const getServerSideProps: GetServerSideProps =
     props: {
       stations,
       lines,
+      location,
     },
   };
 });

@@ -35,9 +35,9 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
       const { name } = status;
       // TODO: This following logic will be different when icon handling changes:
       if (name === 'SIR') {
-        return getIcons(city, [{ routeId: name }]);
+        return getIcons([{ routeId: name }]);
       } else {
-        return getIcons(city, name.split('').map((routeId: string) => ({ routeId })));
+        return getIcons(name.split('').map((routeId: string) => ({ routeId })));
       }
     });
   }

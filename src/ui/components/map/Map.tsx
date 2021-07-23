@@ -29,7 +29,6 @@ import {
 } from '../../../helpers/functions';
 import settings from '../../../settings';
 import {
-  getStationData,
   getGeoJsonLayer,
   getScatterplotLayer,
   getTextLayer,
@@ -40,6 +39,7 @@ import {
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
+import mapDefaults from '../../../../config/map.config';
 
 const { mapBoxAccessToken } = process.env;
 const { cities, mapStyles } = settings;
@@ -49,16 +49,23 @@ type Props = {
   mapStyle: any;
   stations: any[],
   lines: FeatureCollection;
+  location: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { city, mapStyle, stations, lines } = props;
+  const { city, mapStyle, stations, lines, location } = props;
+  const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
-  const range = useAppSelector(state => state.city.range);
+
+  // Define the range constraints for which the user can drag the map:
+  const range = {
+    latitudeRange: [latitude - .25, latitude + .25],
+    longitudeRange: [longitude - .25, longitude + .25],
+  }
 
   type ViewState = {
     viewState: {
@@ -72,13 +79,13 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
     layers: any[];
   };
-  
-  // FOR NEW GTFS data
-  // const pathLayers = lines.map((line: any, i: number) => getPathLayer(`path-layer-${i}`, line));
 
-  const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
-    viewState: { ...cityConfig.settings.initialView },
+    viewState: {
+      ...mapDefaults,
+      longitude,
+      latitude,
+    },
     layers: [
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
@@ -202,7 +209,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     if (layers.some(layer => layer.id === textLayerId)) {
       const index = layers.map(layer => layer.id).indexOf(textLayerId);
       layers.splice(index, 1);
-      layers.push(getTextLayer(getStationData(stations), mapStyle.label));
+      layers.push(getTextLayer(stations, mapStyle.label));
       setViewState({
         ...mapViewState,
         layers,
@@ -233,7 +240,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
         <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>
-      {tooltipData && <MapTooltip city={city} data={tooltipData} />}
+      {tooltipData && <MapTooltip data={tooltipData} />}
     </div>
   );
 };

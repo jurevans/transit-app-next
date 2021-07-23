@@ -4,7 +4,6 @@ import { getIcons } from '../../../helpers/map';
 import styles from '../../../styles/components/map/MapTooltip.module.scss';
 
 type Props = {
-  city: string;
   data: any; // TODO: We need a type here.
 };
 
@@ -23,11 +22,11 @@ const getStyles = (x: number, y: number): CSSProperties => {
 };
 
 const MapTooltip: FC<Props> = (props: Props): ReactElement => {
-  const { city, data } = props;
+  const { data } = props;
   // TODO: This isn't great, but will be removed when icon handling changes:
   const routes = data.routes || [{ routeId: data.line }];
 
-  const icons = getIcons(city, routes).map((iconObj: any) =>
+  const icons = getIcons(routes).map((iconObj: any) =>
     <Image
       key={iconObj.line}
       src={iconObj.icon}

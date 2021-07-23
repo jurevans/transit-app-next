@@ -43,7 +43,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     >
       <div className={styles.icons}>
         {data.line &&
-          getIcons(city, data.routes).map((iconObj: any) =>
+          getIcons(data.routes).map((iconObj: any) =>
             <Image key={iconObj.line} src={iconObj.icon} alt={iconObj.line} width={56} height={56} />
           )}
       </div>

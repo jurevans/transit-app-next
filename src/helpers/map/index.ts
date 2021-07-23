@@ -32,16 +32,16 @@ export interface FeatureCollection {
 }
 
 // OBSOLETE
-export const getIcon = (city: string, line: string): unknown => {
-  return stationIcons[city] && stationIcons[city][line]
-    ? stationIcons[city][line].icon
+export const getIcon = (line: string): unknown => {
+  return stationIcons[line]
+    ? stationIcons[line].icon
     : null;
 };
 
 // OBSOLETE - Remove when icons can be added to public assets
-export const getIcons = (city: string, stations: any[]): any => {
+export const getIcons = (stations: any[]): any => {
   const icons = stations.map(station => ({
-    icon: getIcon(city, station.routeId),
+    icon: getIcon(station.routeId),
     line: station.routeId,
   }));
   return icons.filter(iconObj => iconObj.icon !== null);

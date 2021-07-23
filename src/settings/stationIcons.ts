@@ -28,108 +28,99 @@ import mta_sir from 'mta-subway-bullets/build/png/sir.png';
 
 type StationIcons = {
   [key: string]: {
-    [key: string]: {
-      icon: unknown,
-    },
+    icon: unknown,
   },
 };
-
+// NOTE: This is going away!
 /* TODO: Add express route icons */
 const stationIcons: StationIcons = {
-  nyc: {
-    '1': {
-      icon: mta_1,
-    },
-    '2': {
-      icon: mta_2,
-    },
-    '3': {
-      icon: mta_3,
-    },
-    '4': {
-      icon: mta_4,
-    },
-    '5': {
-      icon: mta_5,
-    },
-    '5X': {
-      icon: mta_5,
-    },
-    '6': {
-      icon: mta_6,
-    },
-    '6X': {
-      icon: mta_6d,
-    },
-    '7': {
-      icon: mta_7,
-    },
-    '7X': {
-      icon: mta_7d,
-    },
-    'A': {
-      icon: mta_a,
-    },
-    'B': {
-      icon: mta_b,
-    },
-    'C': {
-      icon: mta_c,
-    },
-    'D': {
-      icon: mta_d,
-    },
-    'E': {
-      icon: mta_e,
-    },
-    'F': {
-      icon: mta_f,
-    },
-    'FX': {
-      icon: mta_f,
-    },
-    'G': {
-      icon: mta_g,
-    },
-    'J': {
-      icon: mta_j,
-    },
-    'L': {
-      icon: mta_l,
-    },
-    'M': {
-      icon: mta_m,
-    },
-    'N': {
-      icon: mta_n,
-    },
-    'Q': {
-      icon: mta_q,
-    },
-    'R': {
-      icon: mta_r,
-    },
-    'W': {
-      icon: mta_w,
-    },
-    'Z': {
-      icon: mta_z,
-    },
-    'S': {
-      icon: mta_s,
-    },
-    'SF': {
-      icon: mta_sf,
-    },
-    'SIR': {
-      icon: mta_sir,
-    },
+  '1': {
+    icon: mta_1,
   },
-  /*
-  portland: {
-
-  }
-  */
+  '2': {
+    icon: mta_2,
+  },
+  '3': {
+    icon: mta_3,
+  },
+  '4': {
+    icon: mta_4,
+  },
+  '5': {
+    icon: mta_5,
+  },
+  '5X': {
+    icon: mta_5,
+  },
+  '6': {
+    icon: mta_6,
+  },
+  '6X': {
+    icon: mta_6d,
+  },
+  '7': {
+    icon: mta_7,
+  },
+  '7X': {
+    icon: mta_7d,
+  },
+  'A': {
+    icon: mta_a,
+  },
+  'B': {
+    icon: mta_b,
+  },
+  'C': {
+    icon: mta_c,
+  },
+  'D': {
+    icon: mta_d,
+  },
+  'E': {
+    icon: mta_e,
+  },
+  'F': {
+    icon: mta_f,
+  },
+  'FX': {
+    icon: mta_f,
+  },
+  'G': {
+    icon: mta_g,
+  },
+  'J': {
+    icon: mta_j,
+  },
+  'L': {
+    icon: mta_l,
+  },
+  'M': {
+    icon: mta_m,
+  },
+  'N': {
+    icon: mta_n,
+  },
+  'Q': {
+    icon: mta_q,
+  },
+  'R': {
+    icon: mta_r,
+  },
+  'W': {
+    icon: mta_w,
+  },
+  'Z': {
+    icon: mta_z,
+  },
+  'S': {
+    icon: mta_s,
+  },
+  'SF': {
+    icon: mta_sf,
+  },
+  'SIR': {
+    icon: mta_sir,
+  },
 };
 
 export default stationIcons;
