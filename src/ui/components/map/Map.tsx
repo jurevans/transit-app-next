@@ -63,9 +63,15 @@ const Map: FC<Props> = (props: Props): ReactElement => {
 
   // Define the range constraints for which the user can drag the map:
   const range = {
-    latitudeRange: [latitude - .25, latitude + .25],
-    longitudeRange: [longitude - .25, longitude + .25],
-  }
+    longitudeRange: [
+      longitude - mapDefaults.range.lonMinOffset,
+      longitude + mapDefaults.range.lonMaxOffset,
+    ],
+    latitudeRange: [
+      latitude - mapDefaults.range.latMinOffset, 
+      latitude + mapDefaults.range.latMaxOffset,
+    ],
+  };
 
   type ViewState = {
     viewState: {
@@ -82,7 +88,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
 
   const initialViewState: ViewState = { 
     viewState: {
-      ...mapDefaults,
+      ...mapDefaults.initialView,
       longitude,
       latitude,
     },
