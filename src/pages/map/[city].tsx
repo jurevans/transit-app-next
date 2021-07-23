@@ -41,16 +41,9 @@ export const getServerSideProps: GetServerSideProps =
 
   await store.dispatch(setCity(city as string));
 
-  // Fetch the agency for this feed:
-  const agenciesResponse: any = await fetch('http://localhost:5000/api/v1/agency');
-  const agencies = await agenciesResponse.json();
-  const agency = agencies[0]; // For now, we assume we only have one
-  const agencyId = agency.agencyId;
-
   // Fetch location data for agency:
-  const locationResponse = await fetch(`http://localhost:5000/api/v1/agency/${agencyId}`);
-  const locationData: any = await locationResponse.json();
-  const location = locationData[0];
+  const locationResponse = await fetch('http://localhost:3000/api/location');
+  const location: any = await locationResponse.json();
 
   // Fetch stations:
   const stationsResponse: any = await fetch('http://localhost:5000/api/v1/stops');
