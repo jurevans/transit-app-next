@@ -8,6 +8,7 @@ import { fetchServiceStatus } from '../../features/api/statusApiSlice';
 import styles from '../../styles/pages/Dashboard.module.scss';
 import { useAppSelector } from '../../app/hooks';
 import { setAgency } from '../../features/agency/agencySlice';
+import { API_URL } from '../../../config/api.config';
 
 type Props = {
   status: any;
@@ -43,14 +44,11 @@ const DashboardPage: NextPage<Props> = (props: Props): ReactElement => {
 };
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
-
-    const API_URL = 'http://localhost:3000';
+  wrapper.getServerSideProps(store => async () => {
 
   // Fetch agency:
   const agencyResponse = await fetch(`${API_URL}/api/agency`);
-  const agencies: any[] = await agencyResponse.json();
-  const agency = agencies[0]; // For now, we're only concerned with the first item returned.
+  const agency = await agencyResponse.json();
 
   // Fetch location data for agency:
   const locationResponse = await fetch(`${API_URL}/api/agency/${agency.agencyId}`);
@@ -64,7 +62,7 @@ export const getServerSideProps: GetServerSideProps =
   // Get service status for dashboard:
   await store.dispatch(fetchServiceStatus());
   const { status } = store.getState();
-  
+
   return {
     props: {
       status: status.data,

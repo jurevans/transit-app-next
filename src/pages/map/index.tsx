@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { wrapper } from '../../app/store';
 import { setAgency } from '../../features/agency/agencySlice';
 import { FeatureCollection } from '../../helpers/map';
+import { API_URL } from '../../../config/api.config';
 
 type Props = {
   stations: any[],
@@ -36,13 +37,9 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
 
-  const API_URL = 'http://localhost:3000';
-
   // Fetch agency:
   const agencyResponse = await fetch(`${API_URL}/api/agency`);
-  const agencies: any[] = await agencyResponse.json();
-  const agency = agencies[0]; // For now, we're only concerned with the first item returned.
-
+  const agency = await agencyResponse.json();
   // Fetch location data for agency:
   const locationResponse = await fetch(`${API_URL}/api/agency/${agency.agencyId}`);
   const location: any = await locationResponse.json();
