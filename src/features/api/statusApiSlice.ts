@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { AppThunk } from '../../app/store';
-
-const SERVER = 'http://localhost:3000';
+import { API_URL } from '../../../config/api.config';
 
 export const fetchServiceStatus = (): AppThunk => async dispatch => {
-  const response = await fetch(`${SERVER}/api/status/`);
+  const response = await fetch(`${API_URL}/api/status/`);
   const status = await response.json();
 
   dispatch(statusApiSlice.actions.setStatus(status));

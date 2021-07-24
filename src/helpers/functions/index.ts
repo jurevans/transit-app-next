@@ -45,7 +45,7 @@ export const getZoomForTransition = (oldZoom: number, minZoom: number): number =
  * @param obj
  * @returns {Function}
  */
-export const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) =>
+export const getKeyValue = <T extends object, U extends keyof T>(obj: T): Function => (key: U) =>
   obj[key];
 
 /**
@@ -64,7 +64,7 @@ export const getKeyValueFromArray = (key: string, value: string, array: any[]) =
  * @returns {Array}
  */
 export type RGBArray = [number, number, number];
-export const hexToRGBArray = (hex: string): RGBArray => {
+export const hexToRGBArray = (hex?: string): RGBArray => {
   hex = (hex ? hex : 'dddddd').toLowerCase();
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? [

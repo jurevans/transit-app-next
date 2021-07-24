@@ -8,6 +8,7 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { getIconPath } from '../../../helpers/map';
 
 type Props = {
   status: any[];
@@ -50,7 +51,7 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
             aria-controls={`panel${i}a-content`}
             id={`panel${i}a-content`}>
             {icons[i].map((routeId: any, j: number) =>
-              <Image key={j} src={`/icons/${agencyId}/${routeId}.svg`} width={25} height={25} alt={routeId} />
+              <Image key={j} src={getIconPath(agencyId, routeId)} width={25} height={25} alt={routeId} />
             )} {status.status !=='' && <span><strong>{status.status}</strong> {status.date} {status.time}</span>}
           </AccordionSummary>
           <AccordionDetails>

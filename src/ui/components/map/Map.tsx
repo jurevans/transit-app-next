@@ -19,7 +19,7 @@ import SelectMapStyle from './SelectMapStyle';
 import StationDetails from './StationDetails';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
-import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
+import { updatedMapStyle } from '../../../features/map/mapStyleSlice';
 import { updatedStationDetails } from '../../../features/map/mapStationDetails';
 import {
   getInRange,

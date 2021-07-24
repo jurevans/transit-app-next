@@ -1,4 +1,4 @@
-import mapStyleReducer from './mapStyle/mapStyleSlice';
+import mapStyleReducer from './map/mapStyleSlice';
 import mapPopupReducer from './map/mapPopupSlice';
 import mapStationDetailsReducer from './map/mapStationDetails';
 import agencyReducer from './agency/agencySlice';

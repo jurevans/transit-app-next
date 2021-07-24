@@ -2,6 +2,7 @@ import { FC, ReactElement, CSSProperties } from 'react';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/MapTooltip.module.scss';
 import { useAppSelector } from '../../../app/hooks';
+import { getIconPath } from '../../../helpers/map';
 
 type Props = {
   data: any; // TODO: We need a type here.
@@ -29,7 +30,7 @@ const MapTooltip: FC<Props> = (props: Props): ReactElement => {
   const icons = routes.map((route: any) =>
     <Image
       key={route.routeId}
-      src={`/icons/${agencyId}/${route.routeId}.svg`}
+      src={getIconPath(agencyId, route.routeId)}
       alt={route.routeId}
       width={25}
       height={25}

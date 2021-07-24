@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { getIconPath } from '../../../helpers/map';
 
 type Props = {
   data?: any;
@@ -29,7 +30,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   });
 
   // TODO: This can be improved, perhaps displayed for each relevant line:
-  const status = statuses.find((obj: any) => obj.name.search(data.line.split('-')[0]) !== -1);
+  const status = statuses.find((obj: any) => obj.name.search(data.routes[0].name) !== -1);
 
   const handleClose = () => {
     dispatch(closeStationDetails());
@@ -44,7 +45,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         {data.routes.map((route: any) =>
           <Image
             key={route.routeId}
-            src={`/icons/${agencyId}/${route.routeId}.svg`}
+            src={getIconPath(agencyId, route.routeId)}
             alt={route.routeId}
             width={56}
             height={56} />

@@ -42,20 +42,15 @@ export const getScatterplotLayer = (data: any) => {
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => d.routes.length,
     getFillColor: (d: any): RGBAColor => {
-      const rgbArray: RGBArray = d.colors
-        ? hexToRGBArray(d.colors.split('-')[0])
-        : [160, 160, 160];
+      const rgbArray: RGBArray = hexToRGBArray(d.routes[0].color);
       return [...rgbArray, 255];
     },
     getLineColor: (d: any): RGBAColor => {
       const colors = d.routes.map((route: any) => route.color);
       let useColor = colors[0];
 
-      if (colors.length > 1) {
-        // Find an alternate color
-        const secondColor = colors.find((color: string) => color !== useColor);
-        useColor = secondColor || useColor;
-      }
+      const secondColor = colors.find((color: string) => color !== useColor);
+      useColor = secondColor || useColor;
       const rgbArray: RGBArray = hexToRGBArray(useColor);
       return [...rgbArray, 255];
     }
@@ -198,3 +193,12 @@ export const getTextLayer = (data: any, theme: string) => {
     opacity: 0.5,
   });
 };
+
+/**
+ * Get a formatted icon path based on agencyId and routeId
+ * @param {string} agencyId
+ * @param {string} routeId
+ * @returns {string}
+ */
+export const getIconPath = (agencyId: string, routeId: string) =>
+  `/icons/${agencyId}/${routeId}.svg`;

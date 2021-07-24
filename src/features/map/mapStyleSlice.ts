@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import mapStyles, { MapStylesItem }  from '../../settings/mapStyles';
 
 interface MapStyleState {
-  style: MapStylesItem,
+  style?: MapStylesItem,
 }
 
 const initialStyle = mapStyles.find(style => style.label === 'Dark');

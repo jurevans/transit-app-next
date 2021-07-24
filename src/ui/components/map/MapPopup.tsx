@@ -4,6 +4,7 @@ import { closePopup } from '../../../features/map/mapPopupSlice';
 import { openStationDetails } from '../../../features/map/mapStationDetails';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { getIconPath } from '../../../helpers/map';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/MapPopup.module.scss';
 
@@ -43,18 +44,17 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         onClick={e => e.stopPropagation()}
       >
         <div className={styles.icons}>
-          {data.line &&
-            data.routes.map((route: any) =>
-              <Image
-                key={route.routeId}
-                layout="fixed"
-                src={`/icons/${agencyId}/${route.routeId}.svg`}
-                alt={route.routeId}
-                width={36}
-                height={36}
-                priority={true}
-              />
-            )}
+          {data.routes.map((route: any) =>
+            <Image
+              key={route.routeId}
+              layout="fixed"
+              src={getIconPath(agencyId, route.routeId)}
+              alt={route.routeId}
+              width={36}
+              height={36}
+              priority={true}
+            />
+          )}
         </div>
         <div className={styles.content}>
           <p className={styles.name}>{data.name}</p>

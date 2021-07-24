@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 
 interface AgencyState {
-  data?: {
+  data: {
     feedIndex: number;
     agencyId: string;
     agencyName: string;
@@ -14,10 +14,10 @@ interface AgencyState {
       longitude: number;
       latitude: number;
     }
-  }
+  } | null
 }
 
-const initialState: AgencyState = {};
+const initialState: AgencyState = { data: null };
 
 const agencySlice = createSlice({
   name: 'agency',
