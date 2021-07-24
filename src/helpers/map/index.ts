@@ -1,83 +1,33 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
 import { RGBAColor } from "@deck.gl/core/utils/color";
-import { PathStyleExtension } from '@deck.gl/extensions';
-import settings from '../../settings';
-import { getLines, hexToRGBArray } from '../functions';
+import { hexToRGBArray, RGBArray } from '../functions';
 
-const { lineColors, stationIcons } = settings;
+export type Coordinate = [number, number];
 
-export interface StationsGeoDataItem {
+export interface Geometry {
+  type: 'LineString' | 'Point' | 'Polygon'; // There are others, but will not likely be used here
+  coordinates: Coordinate[];
+}
+
+export interface Feature {
   type: string;
+  geometry: Geometry;
   properties: {
     name: string;
-    line: string;
-    notes?: string;
+    color?: string;
+    description?: string;
     url?: string;
-  },
-  geometry: {
-    type: string;
-    coordinates: number[];
-  };
-};
-
-export interface LinesGeoDataFeature {
-  type: string;
-  geometry: {
-    type: string;
-    coordinates: number[];
-  };
-  properties: {
-    id: string;
-    name: string;
-    line: string;
-    passage: string;
-    status: string;
-    type: string;
-  };
-}
-
-export interface LinesGeoData {
-  type: string;
-  features: LinesGeoDataFeature[];
-}
-
-export const getStationData = (data: StationsGeoDataItem[]): any => {
-  if (data && data.length > 0) {
-    return data.map((station: StationsGeoDataItem) => {
-      const properties = station.properties;
-      const geometry = station.geometry;
-      return {
-        ...properties,
-        ...geometry,
-      }
-    });
+    id?: string;
+    routeid?: string;
   }
-};
+}
 
-export const getLineColor = (city: string, lines: string, opacity: number): RGBAColor => {
-  const line = getLines(lines)[0];
+export interface FeatureCollection {
+  type: string;
+  features: Feature[];
+}
 
-  return lineColors[city] && lineColors[city][line]
-    ? [...lineColors[city][line].rgb, opacity]
-    : [160, 160, 160, opacity];
-};
-
-export const getIcon = (city: string, line: string): unknown => {
-  return stationIcons[city] && stationIcons[city][line]
-    ? stationIcons[city][line].icon
-    : null;
-};
-
-export const getIcons = (city: string, line: string): any => {
-  const lines = getLines(line);
-  const icons = lines.map(line => ({
-    icon: getIcon(city, line),
-    line,
-  }));
-  return icons.filter(iconObj => iconObj.icon !== null);
-};
-
-export const getScatterplotLayer = (city: string, data: StationsGeoDataItem) => {
+export const getScatterplotLayer = (data: any) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
     data,
@@ -90,50 +40,52 @@ export const getScatterplotLayer = (city: string, data: StationsGeoDataItem) => 
     radiusMaxPixels: 30,
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
-    getRadius: (d: any) => getLines(d.line).length,
-    getFillColor: (d: any) => getLineColor(city, d.line, 255),
-    getLineColor: (d: any) => {
-      const lines = getLines(d.line);
-      if (lines.length > 1) {
-        const firstLine = lines[0];
-        const secondLine = lines.find(line => line !== firstLine);
-        if (secondLine) {
-          return getLineColor(city, secondLine, 255);
-        }
-        return getLineColor(city, firstLine, 255);
-      } else {
-        return getLineColor(city, lines[0], 255);
-      }
+    getRadius: (d: any) => d.routes.length,
+    getFillColor: (d: any): RGBAColor => {
+      const rgbArray: RGBArray = hexToRGBArray(d.routes[0].color);
+      return [...rgbArray, 255];
+    },
+    getLineColor: (d: any): RGBAColor => {
+      const colors = d.routes.map((route: any) => route.color);
+      let useColor = colors[0];
+
+      const secondColor = colors.find((color: string) => color !== useColor);
+      useColor = secondColor || useColor;
+      const rgbArray: RGBArray = hexToRGBArray(useColor);
+      return [...rgbArray, 255];
     }
   });
 };
 
 export interface TooltipObject {
-  line: string;
   x: number;
   y: number;
-  notes?: string;
-  isStation?: boolean;
   name?: string;
+  longName?: string;
+  routes?: any[];
+  isStation?: boolean;
 }
 
+// The diferences between the following two should be abstracted out:
 export interface PickerLineObject {
   x: number;
   y: number;
   object: {
     properties: {
-      name: string;
+      name: string,
+      longName: string,
       x: number,
       y: number,
     },
   };
 }
 
+// Perhaps data for PickerPlot should follow "Feature" properties,
+// and then this interface can be consolidated with the above interface?
 export interface PickerPlotObject {
   object: {
     name: string;
-    line: string;
-    notes: string;
+    routes: any[]; // TODO: Need type here.
   };
   x: number;
   y: number;
@@ -142,18 +94,20 @@ export interface PickerPlotObject {
 export const getTooltipObjectLine = (data: PickerLineObject): TooltipObject => {
   const { x, y, object } = data;
   return {
-    line: object.properties.name,
+    name: object.properties.name,
+    longName: object.properties.longName,
     x,
     y,
   };
 };
 
+// This could be consolidated into the above, or removed entirely
+// Data should be delivered in GeoJSON Feature & FeatureCollection format
 export const getTooltipObjectPlot = (data: PickerPlotObject): TooltipObject => {
   const { x, y, object } = data;
   return {
     name: object.name,
-    line: object.line,
-    notes: object.notes,
+    routes: object.routes,
     isStation: true,
     x,
     y,
@@ -165,21 +119,19 @@ export const isLinePicker = (data: PickerLineObject): boolean => {
   return !!object.properties;
 };
 
-export const getLineLayer = (city: string, data: LinesGeoData) => {
+export const getGeoJsonLayer = (data: FeatureCollection) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,
     pickable: true,
-    stroked: false,
-    filled: true,
-    extruded: true,
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
-    getFillColor: [160, 160, 180, 100],
-    getLineColor: (d: any) => getLineColor(city, d.properties.name, 100),
+    getLineColor: (d: any) => {
+      const rgbArray: RGBArray = hexToRGBArray(d.properties.color);
+      return [...rgbArray, 100];
+    },
     getRadius: 100,
     getLineWidth: 1,
-    getElevation: 30
   });
 };
 
@@ -192,15 +144,15 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     widthMinPixels: 1,
     rounded: true,
     getPath: (d: any) => d.path,
-    getColor: (d: any) => [...hexToRGBArray(d.color), 200] as any,
+    getColor: (d: any): RGBAColor => {
+      const rgbArray: RGBArray = hexToRGBArray(d.color);
+      return [...rgbArray, 200];
+    },
     getWidth: () => 2,
-    // Just testing that I can dash if needed:
-    // getDashArray: [4, 3],
-    // extensions: [new PathStyleExtension({highPrecisionDash: true})]
   });
 };
 
-const getTextLabelThemes = (mapStyleLabel: string): any => {
+export const getTextLabelTheme = (mapStyleLabel?: string): any => {
   switch (mapStyleLabel) {
     case 'Dark':
       return {
@@ -216,7 +168,7 @@ const getTextLabelThemes = (mapStyleLabel: string): any => {
 };
 
 export const getTextLayer = (data: any, theme: string) => {
-  const textLabelTheme = getTextLabelThemes(theme);
+  const textLabelTheme = getTextLabelTheme(theme);
   const { fontColor, backgroundColor } = textLabelTheme;
 
   return new TextLayer({
@@ -240,3 +192,12 @@ export const getTextLayer = (data: any, theme: string) => {
     opacity: 0.5,
   });
 };
+
+/**
+ * Get a formatted icon path based on agencyId and routeId
+ * @param {string} agencyId
+ * @param {string} routeId
+ * @returns {string}
+ */
+export const getIconPath = (agencyId: string, routeId: string) =>
+  `/icons/${agencyId}/${routeId}.svg`;

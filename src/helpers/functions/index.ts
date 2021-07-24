@@ -9,13 +9,6 @@ export const getInRange = (value: number, range: number[]): number => {
 };
 
 /**
- * getLines - Split station line (e.g., B-D-F) into array of individual lines
- * @param {string} value
- * @returns {Array}
- */
-export const getLines = (value: string = ''): string[] => value.split('-');
-
-/**
  * getDurationForTransition - Get calculated duration based on difference between start/end lon/lat
  * @param props
  * @returns {number}
@@ -52,7 +45,7 @@ export const getZoomForTransition = (oldZoom: number, minZoom: number): number =
  * @param obj
  * @returns {Function}
  */
-export const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (key: U) =>
+export const getKeyValue = <T extends object, U extends keyof T>(obj: T): Function => (key: U) =>
   obj[key];
 
 /**
@@ -70,9 +63,9 @@ export const getKeyValueFromArray = (key: string, value: string, array: any[]) =
  * @param {string} hex
  * @returns {Array}
  */
-
-export const hexToRGBArray = (hex: string): number[] => {
-  hex = hex.toLowerCase();
+export type RGBArray = [number, number, number];
+export const hexToRGBArray = (hex?: string): RGBArray => {
+  hex = (hex ? hex : 'dddddd').toLowerCase();
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? [
     parseInt(result[1], 16),

@@ -2,10 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface MapPopupState {
   data?: {
-    name: string;
-    line: string;
-    notes?: string;
-    url?: string;
+    routes: any[],
     isStation?: boolean;
     longitude: number;
     latitude: number;

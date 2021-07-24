@@ -1,11 +1,11 @@
 import { FC, ReactElement, CSSProperties } from 'react';
 import Image from 'next/image';
-import { getIcons } from '../../../helpers/map';
 import styles from '../../../styles/components/map/MapTooltip.module.scss';
+import { useAppSelector } from '../../../app/hooks';
+import { getIconPath } from '../../../helpers/map';
 
 type Props = {
-  city: string;
-  data: any;
+  data: any; // TODO: We need a type here.
 };
 
 const computedStyles: CSSProperties = {
@@ -23,12 +23,15 @@ const getStyles = (x: number, y: number): CSSProperties => {
 };
 
 const MapTooltip: FC<Props> = (props: Props): ReactElement => {
-  const { city, data } = props;
-  const icons = getIcons(city, data.line).map((iconObj: any) =>
+  const { data } = props;
+  const { agencyId } = useAppSelector(state => state.agency);
+  const routes = data.routes || [{ routeId: data.name }];
+
+  const icons = routes.map((route: any) =>
     <Image
-      key={iconObj.line}
-      src={iconObj.icon}
-      alt={iconObj.line}
+      key={route.routeId}
+      src={getIconPath(agencyId, route.routeId)}
+      alt={route.routeId}
       width={25}
       height={25}
     />
@@ -54,6 +57,9 @@ const MapTooltip: FC<Props> = (props: Props): ReactElement => {
       >
         <div className={styles.icons}>
           {icons}
+        </div>
+        <div>
+          {data.longName || data.name}
         </div>
       </div>
     );

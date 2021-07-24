@@ -19,7 +19,7 @@ import SelectMapStyle from './SelectMapStyle';
 import StationDetails from './StationDetails';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
-import { updatedMapStyle } from '../../../features/mapStyle/mapStyleSlice';
+import { updatedMapStyle } from '../../../features/map/mapStyleSlice';
 import { updatedStationDetails } from '../../../features/map/mapStationDetails';
 import {
   getInRange,
@@ -29,37 +29,48 @@ import {
 } from '../../../helpers/functions';
 import settings from '../../../settings';
 import {
-  getStationData,
-  getLineLayer,
+  getGeoJsonLayer,
   getScatterplotLayer,
   getTextLayer,
   isLinePicker,
   getTooltipObjectLine,
   getTooltipObjectPlot,
-  StationsGeoDataItem,
-  LinesGeoData,
+  FeatureCollection,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
+import mapDefaults from '../../../../config/map.config';
 
 const { mapBoxAccessToken } = process.env;
-const { cities, mapStyles } = settings;
+const {  mapStyles } = settings;
 
 type Props = {
-  city: string;
   mapStyle: any;
-  stations: StationsGeoDataItem[],
-  lines: LinesGeoData;
+  stations: any[],
+  lines: FeatureCollection;
+  location: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { city, mapStyle, stations, lines } = props;
+  const { mapStyle, stations, lines, location } = props;
+  const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
   const popupData = useAppSelector(state => state.mapPopup.data);
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
-  const range = useAppSelector(state => state.city.range);
+
+  // Define the range constraints for which the user can drag the map:
+  const range = {
+    longitudeRange: [
+      longitude - mapDefaults.range.lonMinOffset,
+      longitude + mapDefaults.range.lonMaxOffset,
+    ],
+    latitudeRange: [
+      latitude - mapDefaults.range.latMinOffset, 
+      latitude + mapDefaults.range.latMaxOffset,
+    ],
+  };
 
   type ViewState = {
     viewState: {
@@ -74,16 +85,17 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: any[];
   };
 
-  const cityConfig = getKeyValueFromArray('id', city, cities);
   const initialViewState: ViewState = { 
-    viewState: { ...cityConfig.settings.initialView },
+    viewState: {
+      ...mapDefaults.initialView,
+      longitude,
+      latitude,
+    },
     layers: [
-      getLineLayer(city, lines),
-      getScatterplotLayer(city, getStationData(stations)),
       // TODO: When determining path-layer IDs, add these to global state to
       // be referenced later, e.g., if we want to filter/alter any:
-      // getPathLayer('path-layer-1', inbound),
-      // getPathLayer('path-layer-2', outbound),
+      getGeoJsonLayer(lines),
+      getScatterplotLayer(stations),
     ],
   };
 
@@ -92,7 +104,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
 
   const handleHover = (data: any) => {
     let updates: any = {};
-
     if (data.object && !isPopupOpen) {
       if (isLinePicker(data)) {
         updates = getTooltipObjectLine(data);
@@ -167,7 +178,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
         if (!layers.some(layer => layer.id === textLayerId)) {
-          layers.push(getTextLayer(getStationData(stations), mapStyle.label));
+          // layers.push(getTextLayer(getStationData(stations), mapStyle.label));
+          layers.push(getTextLayer(stations, mapStyle.label));
         }
       } else {
         if (layers.some(layer => layer.id === textLayerId)) {
@@ -201,7 +213,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     if (layers.some(layer => layer.id === textLayerId)) {
       const index = layers.map(layer => layer.id).indexOf(textLayerId);
       layers.splice(index, 1);
-      layers.push(getTextLayer(getStationData(stations), mapStyle.label));
+      layers.push(getTextLayer(stations, mapStyle.label));
       setViewState({
         ...mapViewState,
         layers,
@@ -225,14 +237,14 @@ const Map: FC<Props> = (props: Props): ReactElement => {
           mapStyle={mapStyle.value}
           mapboxApiAccessToken={mapBoxAccessToken}
         />
-        {isPopupOpen && <MapPopup city={city} data={popupData} />}
-        {isStationDetailsOpen && <StationDetails city={city} data={stationDetailsData} />}
+        {isPopupOpen && <MapPopup data={popupData} />}
+        {isStationDetailsOpen && <StationDetails data={stationDetailsData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
         <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
         <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>
-      {tooltipData && <MapTooltip city={city} data={tooltipData} />}
+      {tooltipData && <MapTooltip data={tooltipData} />}
     </div>
   );
 };

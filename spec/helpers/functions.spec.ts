@@ -1,6 +1,5 @@
 import {
   getInRange,
-  getLines,
   getDurationForTransition,
   getZoomForTransition,
 } from '../../src/helpers/functions';
@@ -24,20 +23,6 @@ describe('getInRange', () => {
     const expected = 50;
     const actual = getInRange(60, range);
     expect(actual).toBe(expected);
-  });
-});
-
-describe('getLines', () => {
-  it('Returns an array with a single line if a single line is provided', () => {
-    const expected = ['B'];
-    const actual = getLines('B');
-    expect(actual).toEqual(expected);
-  });
-
-  it('Returns an array of all lines', () => {
-    const expected = ['B', 'D', 'F'];
-    const actual = getLines('B-D-F');
-    expect(actual).toEqual(expected);
   });
 });
 

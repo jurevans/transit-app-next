@@ -4,20 +4,20 @@ import { closePopup } from '../../../features/map/mapPopupSlice';
 import { openStationDetails } from '../../../features/map/mapStationDetails';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { getIcons } from '../../../helpers/map';
+import { getIconPath } from '../../../helpers/map';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/MapPopup.module.scss';
 
 type Props = {
-  city: string;
   data?: any;
 }
 
 const MapPopup:FC<Props> = (props: Props):ReactElement => {
-  const { city, data } = props;
+  const { data } = props;
   const dispatch = useAppDispatch();
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const statuses = useAppSelector(state => state.status.data);
+  const { agencyId } = useAppSelector(state => state.agency);
 
   const handleClose = () => {
     dispatch(closePopup());
@@ -27,7 +27,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
     if (!isStationDetailsOpen) {
       dispatch(openStationDetails(data));
       if (statuses.length === 0) {
-        dispatch(fetchServiceStatus(city));
+        dispatch(fetchServiceStatus());
       }
     }
   };
@@ -44,22 +44,25 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         onClick={e => e.stopPropagation()}
       >
         <div className={styles.icons}>
-          {data.line &&
-            getIcons(city, data.line).map((iconObj: any) =>
-              <Image
-                key={iconObj.line}
-                layout="fixed"
-                src={iconObj.icon}
-                alt={iconObj.line}
-                width={36}
-                height={36}
-                priority={true}
-              />
-            )}
+          {data.routes.map((route: any) =>
+            <Image
+              key={route.routeId}
+              layout="fixed"
+              src={getIconPath(agencyId, route.routeId)}
+              alt={route.routeId}
+              width={36}
+              height={36}
+              priority={true}
+            />
+          )}
         </div>
         <div className={styles.content}>
           <p className={styles.name}>{data.name}</p>
-          {data.notes && <p className={styles.notes}>{data.notes}</p>}
+          <ul className={styles.longNameList}>
+            {data.routes.map((routeInfo: any, i: number) =>
+              <li key={i} className={styles.longName}>{routeInfo.longName}</li>
+            )}
+          </ul>
           <div className={styles.buttons}>
             <button onClick={handleOpenDetails}>Status</button>
             <button className={styles.close} onClick={handleClose}>Close</button>

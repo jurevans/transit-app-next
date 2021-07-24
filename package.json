@@ -19,7 +19,6 @@
     "@reduxjs/toolkit": "^1.6.0",
     "deck.gl": "^8.4.20",
     "mongodb": "^3.6.10",
-    "mta-subway-bullets": "^0.5.1",
     "next": "11.0.1",
     "next-redux-wrapper": "^7.0.2",
     "react": "17.0.2",
@@ -30,7 +29,7 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@danmarshall/deckgl-typings": "^4.9.2",
+    "@danmarshall/deckgl-typings": "^4.9.3",
     "@types/enzyme": "^3.10.9",
     "@types/jest": "^26.0.24",
     "@types/mongodb": "^3.6.20",
