@@ -60,7 +60,6 @@ export const getScatterplotLayer = (data: any) => {
 export interface TooltipObject {
   x: number;
   y: number;
-  line?: string;
   name?: string;
   longName?: string;
   routes?: any[];
@@ -73,8 +72,8 @@ export interface PickerLineObject {
   y: number;
   object: {
     properties: {
-      name: string;
-      longName?: string;
+      name: string,
+      longName: string,
       x: number,
       y: number,
     },
@@ -95,7 +94,7 @@ export interface PickerPlotObject {
 export const getTooltipObjectLine = (data: PickerLineObject): TooltipObject => {
   const { x, y, object } = data;
   return {
-    line: object.properties.name,
+    name: object.properties.name,
     longName: object.properties.longName,
     x,
     y,
