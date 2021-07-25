@@ -25,7 +25,7 @@ const getStyles = (x: number, y: number): CSSProperties => {
 const MapTooltip: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { agencyId } = useAppSelector(state => state.agency);
-  const routes = data.routes || [{ routeId: data.name }];
+  const routes = data.routes || [{ routeId: data.routeId }];
 
   const icons = routes.map((route: any) =>
     <Image

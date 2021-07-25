@@ -32,9 +32,8 @@ import {
   getGeoJsonLayer,
   getScatterplotLayer,
   getTextLayer,
-  isLinePicker,
-  getTooltipObjectLine,
-  getTooltipObjectPlot,
+  isPlotPicker,
+  getTooltipObject,
   FeatureCollection,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -105,10 +104,10 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const handleHover = (data: any) => {
     let updates: any = {};
     if (data.object && !isPopupOpen) {
-      if (isLinePicker(data)) {
-        updates = getTooltipObjectLine(data);
+      if (isPlotPicker(data)) {
+        updates = getTooltipObject(data, true);
       } else {
-        updates = getTooltipObjectPlot(data);
+        updates = getTooltipObject(data);
       }
       updateTooltip(updates);
     } else {
