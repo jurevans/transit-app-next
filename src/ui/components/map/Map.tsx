@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import DeckGL, { FlyToInterpolator } from 'deck.gl';
+import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
   _MapContext as MapContext,
   NavigationControl,
@@ -228,9 +228,16 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         viewState={mapViewState.viewState}
         onViewStateChange={handleViewStateChange}
         layers={mapViewState.layers}
-        controller={true}
         ContextProvider={MapContext.Provider as ProviderExoticComponent<ProviderProps<any>>}
         onHover={(d: any) => handleHover(d)}
+        views={[
+          new MapView({
+            id: 'base-map',
+            controller: true,
+            inertia: true,
+            doubleClickZoom: false,
+          }),
+        ]}
       >
         <MapGL
           mapStyle={mapStyle.value}

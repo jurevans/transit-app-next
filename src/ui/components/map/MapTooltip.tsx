@@ -47,6 +47,9 @@ const MapTooltip: FC<Props> = (props: Props): ReactElement => {
           {icons}
         </div>
         <p className={styles.name}>{data.name}</p>
+        <p className={styles.route}>
+          {routes.map((route: any) => route.name).join(', ')}
+        </p>
       </div>
     );
   } else {
