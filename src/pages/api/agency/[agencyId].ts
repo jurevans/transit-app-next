@@ -19,8 +19,7 @@ const handler = async (
     
     // Fetch location data for agency:
     const locationResponse = await fetch(`${GTFS_API}/api/v1/agency/${agencyId}`);
-    const locationData: any = await locationResponse.json();
-    const location = locationData[0];
+    const location: any = await locationResponse.json();
 
     if (location) {
       res.status(200).json(location);
