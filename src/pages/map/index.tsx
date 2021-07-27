@@ -36,12 +36,19 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
+  // Fetch feeds:
+  const feedResponse = await fetch(`${API_URL}/api/feed`);
+  const feed = await feedResponse.json();
+  // In the future, there may be a configuration option to select which feed to load,
+  // identified by associated agency. For now, load the first one:
+  const { feedIndex, agencyId } = feed[0];
 
   // Fetch agency:
-  const agencyResponse = await fetch(`${API_URL}/api/agency`);
+  const agencyResponse = await fetch(`${API_URL}/api/agency/${feedIndex}?id=${agencyId}`);
   const agency = await agencyResponse.json();
-  // Fetch location data for agency:
-  const locationResponse = await fetch(`${API_URL}/api/agency/${agency.agencyId}`);
+
+  // Fetch location data for feed:
+  const locationResponse = await fetch(`${API_URL}/api/location/${feedIndex}`);
   const location: any = await locationResponse.json();
 
   await store.dispatch(setAgency({
@@ -50,11 +57,11 @@ export const getServerSideProps: GetServerSideProps =
   }));
 
   // Fetch stations:
-  const stationsResponse: any = await fetch(`${API_URL}/api/stations`);
+  const stationsResponse: any = await fetch(`${API_URL}/api/stations/${feedIndex}`);
   const stations = await stationsResponse.json();
 
   // Fetch route lines:
-  const linesResponse: any = await fetch(`${API_URL}/api/lines`);
+  const linesResponse: any = await fetch(`${API_URL}/api/lines/${feedIndex}`);
   const lines = await linesResponse.json();
 
   return {

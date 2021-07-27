@@ -2,6 +2,15 @@ import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/l
 import { RGBAColor } from "@deck.gl/core/utils/color";
 import { hexToRGBArray, RGBArray } from '../functions';
 
+export interface Route {
+  name: string;
+  color: string | null;
+  description: string;
+  url: string;
+  id: string;
+  routeId: string;
+}
+
 export type Coordinate = [number, number];
 
 export interface Geometry {
@@ -18,7 +27,8 @@ export interface Feature {
     description?: string;
     url?: string;
     id?: string;
-    routeid?: string;
+    routeId?: string;
+    routes?: Route[];
   }
 }
 
@@ -40,13 +50,13 @@ export const getScatterplotLayer = (data: any) => {
     radiusMaxPixels: 30,
     lineWidthMinPixels: 3,
     getPosition: (d: any) =>  d.coordinates,
-    getRadius: (d: any) => d.routes.length,
+    getRadius: (d: any) => d.properties.routes.length,
     getFillColor: (d: any): RGBAColor => {
-      const rgbArray: RGBArray = hexToRGBArray(d.routes[0].color);
+      const rgbArray: RGBArray = hexToRGBArray(d.properties.routes[0].color);
       return [...rgbArray, 255];
     },
     getLineColor: (d: any): RGBAColor => {
-      const colors = d.routes.map((route: any) => route.color);
+      const colors = d.properties.routes.map((route: any) => route.color);
       let useColor = colors[0];
 
       const secondColor = colors.find((color: string) => color !== useColor);
@@ -63,60 +73,42 @@ export interface TooltipObject {
   name?: string;
   longName?: string;
   routes?: any[];
+  routeId?: string;
   isStation?: boolean;
 }
 
 // The diferences between the following two should be abstracted out:
-export interface PickerLineObject {
+export interface PickerObject {
   x: number;
   y: number;
   object: {
     properties: {
       name: string,
       longName: string,
+      routes?: any[],
+      routeId?: string,
       x: number,
       y: number,
     },
   };
 }
 
-// Perhaps data for PickerPlot should follow "Feature" properties,
-// and then this interface can be consolidated with the above interface?
-export interface PickerPlotObject {
-  object: {
-    name: string;
-    routes: any[]; // TODO: Need type here.
-  };
-  x: number;
-  y: number;
-}
-
-export const getTooltipObjectLine = (data: PickerLineObject): TooltipObject => {
+export const getTooltipObject = (data: PickerObject, isStation?: boolean): TooltipObject => {
   const { x, y, object } = data;
   return {
     name: object.properties.name,
+    routes: object.properties.routes,
     longName: object.properties.longName,
-    x,
-    y,
-  };
-};
-
-// This could be consolidated into the above, or removed entirely
-// Data should be delivered in GeoJSON Feature & FeatureCollection format
-export const getTooltipObjectPlot = (data: PickerPlotObject): TooltipObject => {
-  const { x, y, object } = data;
-  return {
-    name: object.name,
-    routes: object.routes,
-    isStation: true,
+    routeId: object.properties.routeId,
+    isStation,
     x,
     y,
   };
 }
 
-export const isLinePicker = (data: PickerLineObject): boolean => {
+export const isPlotPicker = (data: PickerObject): boolean => {
   const { object } = data;
-  return !!object.properties;
+  return !!object.properties.routes;
 };
 
 export const getGeoJsonLayer = (data: FeatureCollection) => {

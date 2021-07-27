@@ -30,7 +30,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   });
 
   // TODO: This can be improved, perhaps displayed for each relevant line:
-  const status = statuses.find((obj: any) => obj.name.search(data.routes[0].name) !== -1);
+  const status = statuses.find((obj: any) => obj.name.search(data.properties.routes[0].name) !== -1);
 
   const handleClose = () => {
     dispatch(closeStationDetails());
@@ -42,7 +42,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       onClick={e => e.stopPropagation()}
     >
       <div className={styles.icons}>
-        {data.routes.map((route: any) =>
+        {data.properties.routes.map((route: any) =>
           <Image
             key={route.routeId}
             src={getIconPath(agencyId, route.routeId)}
@@ -52,12 +52,11 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         )}
       </div>
       <div className="station-details-content">
-        <p className={styles.name}>{data.name}</p>
-        {data.notes && <p className={styles.notes}>{data.notes}</p>}
+        <p className={styles.name}>{data.properties.name}</p>
         <div className={styles.status}>
           {status &&
             <span>
-              <Link href={`/dashboard/nyc`}><strong>{status.status}</strong></Link>&nbsp;
+              <Link href={`/dashboard`}><strong>{status.status}</strong></Link>&nbsp;
               {status.date && <span>as of {status.date} {status.time}</span>}
             </span>}
         </div>
@@ -66,7 +65,8 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
           {/* TODO */}
         </div>
         <div>
-          {data.routes.map((station: any, i:number) =>
+          <p>Schedules:</p>
+          {data.properties.routes.map((station: any, i:number) =>
             station.url && <div key={i}><a href={station.url} target="_blank"><span>{station.routeId} Service Schedule &raquo;</span></a></div>)
           }
         </div>

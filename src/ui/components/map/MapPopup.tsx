@@ -44,7 +44,7 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         onClick={e => e.stopPropagation()}
       >
         <div className={styles.icons}>
-          {data.routes.map((route: any) =>
+          {data.properties.routes.map((route: any) =>
             <Image
               key={route.routeId}
               layout="fixed"
@@ -57,10 +57,10 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
           )}
         </div>
         <div className={styles.content}>
-          <p className={styles.name}>{data.name}</p>
+          <p className={styles.name}>{data.properties.name}</p>
           <ul className={styles.longNameList}>
-            {data.routes.map((routeInfo: any, i: number) =>
-              <li key={i} className={styles.longName}>{routeInfo.longName}</li>
+            {data.properties.routes.map((routeInfo: any, i: number) =>
+              <li key={i} className={styles.longName}>{routeInfo.name} - {routeInfo.longName}</li>
             )}
           </ul>
           <div className={styles.buttons}>
