@@ -2,6 +2,15 @@ import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/l
 import { RGBAColor } from "@deck.gl/core/utils/color";
 import { hexToRGBArray, RGBArray } from '../functions';
 
+export interface Route {
+  name: string;
+  color: string | null;
+  description: string;
+  url: string;
+  id: string;
+  routeId: string;
+}
+
 export type Coordinate = [number, number];
 
 export interface Geometry {
@@ -18,7 +27,8 @@ export interface Feature {
     description?: string;
     url?: string;
     id?: string;
-    routeid?: string;
+    routeId?: string;
+    routes?: Route[];
   }
 }
 

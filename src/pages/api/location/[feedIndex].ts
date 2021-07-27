@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type LocationRequest = {
-  agencyId: string;
+  feedIndex: string;
 };
 
 /**
@@ -15,10 +15,10 @@ const handler = async (
 ) => {
   const { GTFS_API } = process.env;
   if (req.method === 'GET') {
-    const { agencyId } = req.query as LocationRequest;
-    
+    const { feedIndex } = req.query as LocationRequest;
+
     // Fetch location data for agency:
-    const locationResponse = await fetch(`${GTFS_API}/api/v1/agency/${agencyId}`);
+    const locationResponse = await fetch(`${GTFS_API}/api/v1/location/${feedIndex}`);
     const location: any = await locationResponse.json();
 
     if (location) {

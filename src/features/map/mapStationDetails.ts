@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Route } from "next/dist/next-server/server/router";
+import { Coordinate } from "../../helpers/map";
+
+interface MapStationDetailsData {
+  properties: {
+    name: string;
+    routes: Route[];
+  },
+  coordinates: Coordinate;
+}
 
 interface MapStationDetailsState {
-  data?: {
-    name: string;
-    line: string;
-    notes?: string;
-    url?: string;
-    isStation?: boolean;
-    longitude: number;
-    latitude: number;
-  },
+  data?: MapStationDetailsData,
   isOpen: boolean;
 }
 
@@ -21,10 +23,10 @@ const mapStationDetailsSlice = createSlice({
   name: 'map',
   initialState,
   reducers: {
-    updatedStationDetails(state, action: PayloadAction<any>) {
+    updatedStationDetails(state, action: PayloadAction<MapStationDetailsData>) {
       state.data = action.payload;
     },
-    openStationDetails(state, action: PayloadAction<any>) {
+    openStationDetails(state, action: PayloadAction<MapStationDetailsData>) {
       state.data = action.payload;
       state.isOpen = true;
     },

@@ -10,10 +10,11 @@ const handler = async (
  res: NextApiResponse<any>
 ) => {
   const { GTFS_API } = process.env;
-  if (req.method === 'GET') {
+  const { feedIndex, id } = req.query;
 
-    // Fetch agency data:
-    const agenciesResponse: any = await fetch(`${GTFS_API}/api/v1/agency`);
+  if (req.method === 'GET') {
+    // Fetch agency data for this feed:
+    const agenciesResponse: any = await fetch(`${GTFS_API}/api/v1/agency/${feedIndex}/id/${id}`);
     const agencies = await agenciesResponse.json();
 
     if (agencies) {
@@ -21,7 +22,7 @@ const handler = async (
     } else {
       res.status(500).json({ error: { details: 'There was an error retrieving agency data' } });
     }
- }
+  }
 };
 
 export default handler;

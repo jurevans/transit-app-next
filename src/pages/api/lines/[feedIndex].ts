@@ -10,8 +10,9 @@ const handler = async (
  res: NextApiResponse<any>
 ) => {
   const { GTFS_API } = process.env;
+  const { feedIndex } = req.query;
   if (req.method === 'GET') {
-    const endpoint = `${GTFS_API}/api/v1/shapes?geojson=true`;
+    const endpoint = `${GTFS_API}/api/v1/geo/${feedIndex}/shapes?geojson=true`;
     const linesResponse: any = await fetch(endpoint);
     const lines = await linesResponse.json();
 
