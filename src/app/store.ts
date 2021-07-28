@@ -3,25 +3,12 @@ import {
 } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
+import { createWrapper } from 'next-redux-wrapper';
 import rootReducer from '../features';
 
-import { createWrapper } from 'next-redux-wrapper';
-
-
 const makeStore = () => {
-  // Ignore paths for static data
-  const ignoredPaths = ['stations', 'lines'];
   return configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        immutableCheck: {
-          ignoredPaths,
-        },
-        serializableCheck: {
-          ignoredPaths,
-        }
-      }),
   });
 }
 

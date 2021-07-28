@@ -5,6 +5,7 @@ import {
   ReactElement,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
@@ -35,6 +36,7 @@ import {
   isPlotPicker,
   getTooltipObject,
   FeatureCollection,
+  PlotData,
 } from '../../../helpers/map';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
@@ -45,7 +47,7 @@ const {  mapStyles } = settings;
 
 type Props = {
   mapStyle: any;
-  stations: any[],
+  stations: PlotData[],
   lines: FeatureCollection;
   location: any;
 };
@@ -58,6 +60,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
+  const deckRef = useRef<DeckGL>(null);
+  const [tooltipData, updateTooltip] = useState(null);
 
   // Define the range constraints for which the user can drag the map:
   const range = {
@@ -84,7 +88,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     layers: any[];
   };
 
-  const initialViewState: ViewState = { 
+  const initialViewState: ViewState = useMemo(() => ({
     viewState: {
       ...mapDefaults.initialView,
       longitude,
@@ -96,26 +100,9 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       getGeoJsonLayer(lines),
       getScatterplotLayer(stations),
     ],
-  };
+  }), [lines, stations]);
 
   const [mapViewState, setViewState] = useState(initialViewState);
-  const [tooltipData, updateTooltip] = useState(null);
-
-  const handleHover = (data: any) => {
-    let updates: any = {};
-    if (data.object && !isPopupOpen) {
-      if (isPlotPicker(data)) {
-        updates = getTooltipObject(data, true);
-      } else {
-        updates = getTooltipObject(data);
-      }
-      updateTooltip(updates);
-    } else {
-      updateTooltip(null);
-    }
-  };
-
-  const deckRef = useRef<DeckGL>(null);
 
   const goToPopup = (data: any) => {
     const duration = getDurationForTransition({
@@ -151,6 +138,20 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     updateTooltip(null);
   };
 
+  const handleHover = (data: any) => {
+    let updates: any = {};
+    if (data.object && !isPopupOpen) {
+      if (isPlotPicker(data)) {
+        updates = getTooltipObject(data, true);
+      } else {
+        updates = getTooltipObject(data);
+      }
+      updateTooltip(updates);
+    } else {
+      updateTooltip(null);
+    }
+  };
+
   const handleClick = (e: React.MouseEvent<any>) => {
     /* TODO: Do nothing if view is being dragged! */
     const pickInfo = deckRef.current?.pickObject({
@@ -177,7 +178,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         && (data.interactionState.isZooming || data.interactionState.inTransition)) {
       if (data.viewState.zoom >= 14) {
         if (!layers.some(layer => layer.id === textLayerId)) {
-          // layers.push(getTextLayer(getStationData(stations), mapStyle.label));
           layers.push(getTextLayer(stations, mapStyle.label));
         }
       } else {
