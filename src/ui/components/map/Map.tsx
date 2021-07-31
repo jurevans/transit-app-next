@@ -133,7 +133,9 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
     const { id: stationId } = data.properties;
     const transfers = allTransfers[stationId];
-    const stationIds = transfers.map((transfer: any) => transfer.stopId);
+    const stationIds = transfers
+      ? transfers.map((transfer: any) => transfer.stopId)
+      : [stationId];
     setViewState(newViewState);
     dispatch(fetchGTFS(feedIndex, stationIds));
     setTimeout(() => {

@@ -27,7 +27,9 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const dispatch = useAppDispatch();
 
   // All station IDs
-  const stationIds = transfers.map((transfer: any) => transfer.stopId);
+  const stationIds = transfers
+    ? transfers.map((transfer: any) => transfer.stopId)
+    : [stationId];
 
   // Index all available stops for this station:
   const stopsForStation = stops
@@ -38,6 +40,8 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       }
       return obj;
     }, {});
+
+  let useTrains: any[] = [];
 
   useMemo(() => {
     if (Object.keys(realtimeData).length > 0) {
@@ -52,7 +56,13 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         }
         return trains;
       }, [])
-      console.log('TRAINS?', trains, stopsForStation);
+
+      const trainsWithHeadsigns = trains.map((train: any) => ({
+        ...train,
+        headsign: stopsForStation[train.stopId].headsign,
+      })).sort((a: any, b: any) => a.time - b.time);
+      console.log('TRAINS?', trains, trainsWithHeadsigns);
+      useTrains = trainsWithHeadsigns;
     }
   }, [realtimeData])
 
@@ -106,8 +116,23 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
             </span>}
         </div>
         <div className={styles.upcoming}>
-          <p>Upcoming trains (TBD)</p>
-          {/* TODO */}
+          <p>Upcoming trains</p>
+          <div className={styles.trainsContainer}>
+            <ul className={styles.trains}>
+            {useTrains.map((train: any, i: number) =>
+              <li key={i}>
+                <Image
+                  src={getIconPath(agencyId, train.route)}
+                  alt={train.route}
+                  width={20}
+                  height={20} />
+                <span>
+                  {train.headsign}
+                </span>
+              </li>
+            )}
+            </ul>
+          </div>
         </div>
         <div>
           <p>Schedules:</p>
