@@ -41,6 +41,7 @@ import {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 import mapDefaults from '../../../../config/map.config';
+import { fetchGTFS } from '../../../features/gtfs/gtfsSlice';
 
 const { mapBoxAccessToken } = process.env;
 const {  mapStyles } = settings;
@@ -60,6 +61,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
+  const allTransfers = useAppSelector(state => state.stations.transfers);
+  const { feedIndex } = useAppSelector(state => state.agency);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
 
@@ -128,8 +131,11 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         transitionInterpolator: new FlyToInterpolator(),
       },
     };
-
+    const { id: stationId } = data.properties;
+    const transfers = allTransfers[stationId];
+    const stationIds = transfers.map((transfer: any) => transfer.stopId);
     setViewState(newViewState);
+    dispatch(fetchGTFS(feedIndex, stationIds));
     setTimeout(() => {
       dispatch(openPopup(data));
       dispatch(updatedStationDetails(data));

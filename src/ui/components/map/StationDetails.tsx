@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect } from 'react';
+import { FC, ReactElement, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
 import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { fetchGTFS } from '../../../features/gtfs/gtfsSlice';
 import { getIconPath } from '../../../helpers/map';
 
 type Props = {
@@ -13,18 +14,62 @@ type Props = {
 }
 
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
-  const {
-    data,
-  } = props;
+  const { data } = props;
   const { data: statuses } = useAppSelector(state => state.status);
+
+  const { id: stationId } = data.properties;
   const { agencyId } = useAppSelector(state => state.agency);
+  const transfers = useAppSelector(state => state.stations.transfers[stationId]);
+  const { stops } = useAppSelector(state => state.stations);
+  const { feedIndex } = useAppSelector(state => state.agency);
+  const { data: realtimeData } = useAppSelector(state => state.gtfs);
+
   const dispatch = useAppDispatch();
+
+  // All station IDs
+  const stationIds = transfers.map((transfer: any) => transfer.stopId);
+
+  // Index all available stops for this station:
+  const stopsForStation = stops
+    .filter((stop: any) => stationIds.indexOf(stop.stopId) > -1)
+    .reduce((obj: any, stop: any) => {
+      for (const stopId in stop.stops) {
+        obj[stopId] = stop.stops[stopId];
+      }
+      return obj;
+    }, {});
+
+  useMemo(() => {
+    if (Object.keys(realtimeData).length > 0) {
+      const realTime = stationIds.map((id: string) => realtimeData[id]);
+      // Get all trains for available stops:
+      const trains = realTime.reduce((trains: any, station: any) => {
+        if (station) {
+          trains = [
+            ...trains,
+            ...station.trains,
+          ];
+        }
+        return trains;
+      }, [])
+      console.log('TRAINS?', trains, stopsForStation);
+    }
+  }, [realtimeData])
 
   // Re-fetch status data every minute
   useEffect(() => {
     const timer = setTimeout(
       () => dispatch(fetchServiceStatus()),
       60000,
+    );
+    return () => clearTimeout(timer);
+  });
+
+  // Re-fetch GTFS-realtime data every 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(
+      () => dispatch(fetchGTFS(feedIndex, stationIds)),
+      30000,
     );
     return () => clearTimeout(timer);
   });

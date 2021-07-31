@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { NextPage, GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { NextPage, GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import ServiceStatus from '../../ui/components/dashboard/ServiceStatus';
@@ -7,7 +7,7 @@ import { wrapper } from '../../app/store';
 import { fetchServiceStatus } from '../../features/api/statusApiSlice';
 import styles from '../../styles/pages/Dashboard.module.scss';
 import { useAppSelector } from '../../app/hooks';
-import { setAgency } from '../../features/agency/agencySlice';
+import { setAgency } from '../../features/api/agencySlice';
 import { API_URL } from '../../../config/api.config';
 
 type Props = {
