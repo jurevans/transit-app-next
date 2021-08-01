@@ -77,10 +77,9 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     const routes: any[] = [];
     stationIds.forEach((id: string) => {
       const station = realtimeData[id];
-      const { routes: stationRoutes } = station;
+      const stationRoutes = station ? station.routes : [];
       stationRoutes.forEach((route: string) => {
         if (routes.indexOf(route) < 0) {
-          console.log('ADD ROUTE', route)
           routes.push(route);
         }
       })
