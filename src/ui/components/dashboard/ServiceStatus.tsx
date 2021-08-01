@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { fetchServiceStatus } from '../../../features/api/statusSlice';
 import { getIconPath } from '../../../helpers/map';
 
 type Props = {

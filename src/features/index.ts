@@ -1,8 +1,10 @@
 import mapStyleReducer from './map/mapStyleSlice';
 import mapPopupReducer from './map/mapPopupSlice';
 import mapStationDetailsReducer from './map/mapStationDetails';
-import agencyReducer from './agency/agencySlice';
-import statusReducer from './api/statusApiSlice';
+import agencyReducer from './api/agencySlice';
+import statusReducer from './api/statusSlice';
+import stationsReducer from './api/stationsSlice';
+import gtfsReducer from './gtfs/gtfsSlice';
 
 const rootReducer = {
   mapPopup: mapPopupReducer,
@@ -10,6 +12,8 @@ const rootReducer = {
   mapStationDetails: mapStationDetailsReducer,
   agency: agencyReducer,
   status: statusReducer,
+  stations: stationsReducer,
+  gtfs: gtfsReducer,
 };
 
 export default rootReducer;

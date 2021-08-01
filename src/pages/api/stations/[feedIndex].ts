@@ -39,6 +39,7 @@ const handler = async (
         coordinates: feature.geometry.coordinates,
         properties: {
           name: properties.name,
+          id: properties.id,
           routes,
         },
       };

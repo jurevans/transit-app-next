@@ -37,7 +37,15 @@ export interface FeatureCollection {
   features: Feature[];
 }
 
-export const getScatterplotLayer = (data: any) => {
+export interface PlotData {
+  properties: {
+    name: string;
+    routes: Route[];
+  },
+  coordinates: Coordinate;
+}
+
+export const getScatterplotLayer = (data: PlotData[]) => {
   return new ScatterplotLayer({
     id: 'stations-scatterplot-layer',
     data,
@@ -77,7 +85,6 @@ export interface TooltipObject {
   isStation?: boolean;
 }
 
-// The diferences between the following two should be abstracted out:
 export interface PickerObject {
   x: number;
   y: number;
@@ -159,7 +166,7 @@ export const getTextLabelTheme = (mapStyleLabel?: string): any => {
   }
 };
 
-export const getTextLayer = (data: any, theme: string) => {
+export const getTextLayer = (data: PlotData[], theme: string) => {
   const textLabelTheme = getTextLabelTheme(theme);
   const { fontColor, backgroundColor } = textLabelTheme;
 
@@ -170,7 +177,7 @@ export const getTextLayer = (data: any, theme: string) => {
     billboard: true,
     sizeMaxPixels: 32,
     getPosition: (d: any) => d.coordinates,
-    getText: (d: any) => d.name,
+    getText: (d: any) => d.properties.name,
     getSize: 24,
     getAngle: 0,
     getTextAnchor: 'start',

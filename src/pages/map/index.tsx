@@ -4,7 +4,8 @@ import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
-import { setAgency } from '../../features/agency/agencySlice';
+import { setAgency } from '../../features/api/agencySlice';
+import { setStops, setTransfers } from '../../features/api/stationsSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 
@@ -63,6 +64,17 @@ export const getServerSideProps: GetServerSideProps =
   // Fetch route lines:
   const linesResponse: any = await fetch(`${API_URL}/api/lines/${feedIndex}`);
   const lines = await linesResponse.json();
+
+  // Fetch stops:
+  const stopsResponse: any = await fetch(`${API_URL}/api/stations/stops?feedIndex=${feedIndex}`);
+  const stops = await stopsResponse.json();
+
+  // Fetch transfers:
+  const transfersResponse: any = await fetch(`${API_URL}/api/stations/transfers?feedIndex=${feedIndex}`);
+  const transfers = await transfersResponse.json();
+
+  await store.dispatch(setStops(stops));
+  await store.dispatch(setTransfers(transfers));
 
   return {
     props: {

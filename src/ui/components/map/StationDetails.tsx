@@ -1,11 +1,13 @@
-import { FC, ReactElement, useEffect } from 'react';
+import { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
+import { DateTime } from 'luxon';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { fetchServiceStatus } from '../../../features/api/statusSlice';
+import { fetchGTFS } from '../../../features/gtfs/gtfsSlice';
 import { getIconPath } from '../../../helpers/map';
 
 type Props = {
@@ -13,12 +15,77 @@ type Props = {
 }
 
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
-  const {
-    data,
-  } = props;
+  const { data } = props;
   const { data: statuses } = useAppSelector(state => state.status);
+
+  const { id: stationId } = data.properties;
   const { agencyId } = useAppSelector(state => state.agency);
+  const transfers = useAppSelector(state => state.stations.transfers[stationId]);
+  const { stops } = useAppSelector(state => state.stations);
+  const { feedIndex } = useAppSelector(state => state.agency);
+  const { data: realtimeData } = useAppSelector(state => state.gtfs);
+
   const dispatch = useAppDispatch();
+
+  // All station IDs
+  const stationIds = transfers
+    ? transfers.map((transfer: any) => transfer.stopId)
+    : [stationId];
+
+  // Index all available stops for this station:
+  const stopsForStation = stops
+    .filter((stop: any) => stationIds.indexOf(stop.stopId) > -1)
+    .reduce((obj: any, stop: any) => {
+      for (const stopId in stop.stops) {
+        obj[stopId] = stop.stops[stopId];
+      }
+      return obj;
+    }, {});
+
+  const trains = useMemo(() => {
+    if (Object.keys(realtimeData).length > 0) {
+      const realTime = stationIds.map((id: string) => realtimeData[id]);
+      // Get all trains for available stops:
+      const trains = realTime.reduce((trains: any, station: any) => {
+        if (station) {
+          trains = [
+            ...trains,
+            ...station.trains,
+          ];
+        }
+        return trains;
+      }, []).sort((a: any, b: any) => a.time - b.time);
+
+      const now = DateTime.now().toSeconds();
+      const trainsWithHeadsigns = trains.map((train: any) => {
+        const minutes = (train.time - now) / 60;
+        const formattedMin = minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
+
+        return {
+          ...train,
+          minutes,
+          formattedMin,
+          headsign: stopsForStation[train.stopId].headsign,
+        };
+      });
+      return trainsWithHeadsigns;
+    }
+    return [];
+  }, [transfers, realtimeData])
+
+  const routes = useMemo(() => {
+    const routes: any[] = [];
+    stationIds.forEach((id: string) => {
+      const station = realtimeData[id];
+      const stationRoutes = station ? station.routes : [];
+      stationRoutes.forEach((route: string) => {
+        if (routes.indexOf(route) < 0) {
+          routes.push(route);
+        }
+      })
+    })
+    return routes;
+  }, [transfers, realtimeData])
 
   // Re-fetch status data every minute
   useEffect(() => {
@@ -29,7 +96,16 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     return () => clearTimeout(timer);
   });
 
-  // TODO: This can be improved, perhaps displayed for each relevant line:
+  // Re-fetch GTFS-realtime data every 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(
+      () => dispatch(fetchGTFS(feedIndex, stationIds)),
+      10000,
+    );
+    return () => clearTimeout(timer);
+  });
+
+  // TODO: Statuses will be replaced with real-time API (protobuf or json)
   const status = statuses.find((obj: any) => obj.name.search(data.properties.routes[0].name) !== -1);
 
   const handleClose = () => {
@@ -42,11 +118,11 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       onClick={e => e.stopPropagation()}
     >
       <div className={styles.icons}>
-        {data.properties.routes.map((route: any) =>
+        {routes.map((route: any) =>
           <Image
-            key={route.routeId}
-            src={getIconPath(agencyId, route.routeId)}
-            alt={route.routeId}
+            key={route}
+            src={getIconPath(agencyId, route)}
+            alt={route}
             width={56}
             height={56} />
         )}
@@ -61,8 +137,28 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
             </span>}
         </div>
         <div className={styles.upcoming}>
-          <p>Upcoming trains (TBD)</p>
-          {/* TODO */}
+          <p>Upcoming trains</p>
+          <div className={styles.trainsContainer}>
+            <ul className={styles.trains}>
+            {trains.map((train: any, i: number) =>
+              <li key={i} className={styles.train}>
+                <Image
+                    src={getIconPath(agencyId, train.route)}
+                    alt={train.route}
+                    width={30}
+                    height={30} />
+                <div className={styles.trainDetails}>
+                  <div className={styles.headsign}>
+                    {train.headsign}
+                  </div>
+                  <div className={styles.minutes}>
+                    {train.formattedMin}
+                  </div>
+                </div>
+              </li>
+            )}
+            </ul>
+          </div>
         </div>
         <div>
           <p>Schedules:</p>
