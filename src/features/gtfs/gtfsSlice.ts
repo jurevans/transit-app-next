@@ -32,17 +32,14 @@ const gtfsSlice = createSlice({
   initialState,
   reducers: {
     setGTFS(state, action: PayloadAction<any>) {
-      const { data, updated } = action.payload;
+      const { data } = action.payload;
       const newState: GTFSStateItem = {};
       if (data) {
         data.forEach((entity: Entity) => {
           newState[entity.id] = entity;
         });
       }
-      state.data = { 
-        ...state.data, // an idea I'm playing around with
-        ...newState,
-      };
+      state.data = newState;
     },
   },
 });
