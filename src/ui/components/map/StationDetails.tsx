@@ -2,6 +2,7 @@ import { FC, ReactElement, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
+import { DateTime } from 'luxon';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
@@ -41,9 +42,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       return obj;
     }, {});
 
-  let useTrains: any[] = [];
-
-  useMemo(() => {
+  const trains = useMemo(() => {
     if (Object.keys(realtimeData).length > 0) {
       const realTime = stationIds.map((id: string) => realtimeData[id]);
       // Get all trains for available stops:
@@ -55,16 +54,39 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
           ];
         }
         return trains;
-      }, [])
+      }, []).sort((a: any, b: any) => a.time - b.time);
 
-      const trainsWithHeadsigns = trains.map((train: any) => ({
-        ...train,
-        headsign: stopsForStation[train.stopId].headsign,
-      })).sort((a: any, b: any) => a.time - b.time);
-      console.log('TRAINS?', trains, trainsWithHeadsigns);
-      useTrains = trainsWithHeadsigns;
+      const now = DateTime.now().toSeconds();
+      const trainsWithHeadsigns = trains.map((train: any) => {
+        const minutes = (train.time - now) / 60;
+        const formattedMin = minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
+
+        return {
+          ...train,
+          minutes,
+          formattedMin,
+          headsign: stopsForStation[train.stopId].headsign,
+        };
+      });
+      return trainsWithHeadsigns;
     }
-  }, [realtimeData])
+    return [];
+  }, [transfers, realtimeData])
+
+  const routes = useMemo(() => {
+    const routes: any[] = [];
+    stationIds.forEach((id: string) => {
+      const station = realtimeData[id];
+      const { routes: stationRoutes } = station;
+      stationRoutes.forEach((route: string) => {
+        if (routes.indexOf(route) < 0) {
+          console.log('ADD ROUTE', route)
+          routes.push(route);
+        }
+      })
+    })
+    return routes;
+  }, [transfers, realtimeData])
 
   // Re-fetch status data every minute
   useEffect(() => {
@@ -79,12 +101,12 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   useEffect(() => {
     const timer = setTimeout(
       () => dispatch(fetchGTFS(feedIndex, stationIds)),
-      30000,
+      10000,
     );
     return () => clearTimeout(timer);
   });
 
-  // TODO: This can be improved, perhaps displayed for each relevant line:
+  // TODO: Statuses will be replaced with real-time API (protobuf or json)
   const status = statuses.find((obj: any) => obj.name.search(data.properties.routes[0].name) !== -1);
 
   const handleClose = () => {
@@ -97,11 +119,11 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       onClick={e => e.stopPropagation()}
     >
       <div className={styles.icons}>
-        {data.properties.routes.map((route: any) =>
+        {routes.map((route: any) =>
           <Image
-            key={route.routeId}
-            src={getIconPath(agencyId, route.routeId)}
-            alt={route.routeId}
+            key={route}
+            src={getIconPath(agencyId, route)}
+            alt={route}
             width={56}
             height={56} />
         )}
@@ -119,16 +141,21 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
           <p>Upcoming trains</p>
           <div className={styles.trainsContainer}>
             <ul className={styles.trains}>
-            {useTrains.map((train: any, i: number) =>
-              <li key={i}>
+            {trains.map((train: any, i: number) =>
+              <li key={i} className={styles.train}>
                 <Image
-                  src={getIconPath(agencyId, train.route)}
-                  alt={train.route}
-                  width={20}
-                  height={20} />
-                <span>
-                  {train.headsign}
-                </span>
+                    src={getIconPath(agencyId, train.route)}
+                    alt={train.route}
+                    width={30}
+                    height={30} />
+                <div className={styles.trainDetails}>
+                  <div className={styles.headsign}>
+                    {train.headsign}
+                  </div>
+                  <div className={styles.minutes}>
+                    {train.formattedMin}
+                  </div>
+                </div>
               </li>
             )}
             </ul>
