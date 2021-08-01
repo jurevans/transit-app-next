@@ -2,7 +2,7 @@ import { FC, ReactElement } from 'react';
 import { Popup } from 'react-map-gl';
 import { closePopup } from '../../../features/map/mapPopupSlice';
 import { openStationDetails } from '../../../features/map/mapStationDetails';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { fetchServiceStatus } from '../../../features/api/statusSlice';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getIconPath } from '../../../helpers/map';
 import Image from 'next/image';

@@ -5,7 +5,7 @@ import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { wrapper } from '../../app/store';
 import { setAgency } from '../../features/api/agencySlice';
-import { setStops, setTransfers } from '../../features/api/stationsApiSlice';
+import { setStops, setTransfers } from '../../features/api/stationsSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 

@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import ServiceStatus from '../../ui/components/dashboard/ServiceStatus';
 import { wrapper } from '../../app/store';
-import { fetchServiceStatus } from '../../features/api/statusApiSlice';
+import { fetchServiceStatus } from '../../features/api/statusSlice';
 import styles from '../../styles/pages/Dashboard.module.scss';
 import { useAppSelector } from '../../app/hooks';
 import { setAgency } from '../../features/api/agencySlice';

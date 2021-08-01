@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect, useMemo, useCallback } from 'react';
+import { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/map/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
-import { fetchServiceStatus } from '../../../features/api/statusApiSlice';
+import { fetchServiceStatus } from '../../../features/api/statusSlice';
 import { fetchGTFS } from '../../../features/gtfs/gtfsSlice';
 import { getIconPath } from '../../../helpers/map';
 
