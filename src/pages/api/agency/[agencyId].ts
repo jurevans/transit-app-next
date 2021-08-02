@@ -10,11 +10,11 @@ const handler = async (
  res: NextApiResponse<any>
 ) => {
   const { GTFS_API } = process.env;
-  const { feedIndex, id } = req.query;
+  const { feedIndex, agencyId } = req.query;
 
   if (req.method === 'GET') {
     // Fetch agency data for this feed:
-    const agenciesResponse: any = await fetch(`${GTFS_API}/api/v1/agency/${feedIndex}/id/${id}`);
+    const agenciesResponse: any = await fetch(`${GTFS_API}/api/v1/agency/${feedIndex}/id/${agencyId}`);
     const agencies = await agenciesResponse.json();
 
     if (agencies) {

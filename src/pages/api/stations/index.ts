@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 /**
 * API Route to load GTFS data for stations
-* @param req 
-* @param res 
+* @param req
+* @param res
 */
 const handler = async (
  req: NextApiRequest,
