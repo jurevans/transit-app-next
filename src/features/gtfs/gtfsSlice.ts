@@ -20,7 +20,7 @@ interface Entity {
 
 const initialState: GTFSState = { data: {} };
 
-export const fetchGTFS = (feedIndex: number, stationIds: string[]): AppThunk => async dispatch => {
+export const fetchGTFS = (feedIndex: number = 1, stationIds: string[]): AppThunk => async dispatch => {
   const response = await fetch(`${API_URL}/api/stations/gtfs/?feedIndex=${feedIndex}&id=${stationIds.join(',')}`);
   const data = await response.json();
 

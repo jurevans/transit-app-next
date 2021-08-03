@@ -123,8 +123,8 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
             key={route}
             src={getIconPath(agencyId, route)}
             alt={route}
-            width={56}
-            height={56} />
+            width={46}
+            height={46} />
         )}
       </div>
       <div className="station-details-content">

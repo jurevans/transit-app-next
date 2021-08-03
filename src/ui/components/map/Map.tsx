@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   useMemo,
+  useCallback,
 } from 'react';
 import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
@@ -178,7 +179,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     }
   };
 
-  const handleViewStateChange = (data: any) => {
+  const handleViewStateChange = useCallback((data: any) => {
     const layers = [...mapViewState.layers];
     const textLayerId = 'station-text-layer';
     // Determine if the TextLayer should be added
@@ -207,7 +208,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
 
     setViewState(updatedState);
-  };
+  }, []);
 
   const handleStyleUpdate = (e: React.ChangeEvent<any>) => {
     // Find mapStyle:
