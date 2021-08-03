@@ -29,7 +29,7 @@ const agencySlice = createSlice({
     [HYDRATE]: (state, action: PayloadAction<any>) => {
       return {
         ...state,
-        agency: action.payload.agency,
+        ...action.payload.agency.data,
       }
     },
   },
