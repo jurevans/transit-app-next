@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 
-interface AgencyState {
+interface AgencyData {
   feedIndex?: number;
   agencyId?: string;
   agencyName?: string;
@@ -15,14 +15,20 @@ interface AgencyState {
   };
 }
 
-const initialState: AgencyState = {};
+interface AgencyState {
+  data: AgencyData;
+}
+
+const initialState: AgencyState = {
+  data: {},
+};
 
 const agencySlice = createSlice({
   name: 'agency',
   initialState,
   reducers: {
     setAgency(state, action: PayloadAction<any>) {
-      state = action.payload;
+      state.data = action.payload;
     },
   },
   extraReducers: {
