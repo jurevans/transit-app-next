@@ -22,7 +22,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { agencyId = '', feedIndex } = useAppSelector(state => state.agency);
   const transfers = useAppSelector(state => state.stations.transfers[stationId]);
   const { stops } = useAppSelector(state => state.stations);
-  const { data: realtimeData } = useAppSelector(state => state.gtfs);
+  const realtimeData = useAppSelector(state => state.gtfs);
 
   const dispatch = useAppDispatch();
 

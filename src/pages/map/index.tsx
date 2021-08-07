@@ -6,6 +6,7 @@ import { useAppSelector } from '../../app/hooks';
 import { wrapper } from '../../app/store';
 import { setAgency } from '../../features/api/agencySlice';
 import { setStops, setTransfers } from '../../features/api/stationsSlice';
+import { setRoutes } from '../../features/api/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 
@@ -75,6 +76,12 @@ export const getServerSideProps: GetServerSideProps =
 
   await store.dispatch(setStops(stops));
   await store.dispatch(setTransfers(transfers));
+
+  // Fetch routes:
+  const routesResponse: any = await fetch(`${API_URL}/api/routes?feedIndex=${feedIndex}`);
+  const routes = await routesResponse.json();
+
+  await store.dispatch(setRoutes(routes));
 
   return {
     props: {

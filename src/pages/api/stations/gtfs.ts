@@ -22,7 +22,7 @@ const handler = async (
     } else {
       res.status(500).json({
         error: {
-          details: 'There was an error retrieving GTFS realtime data for stop IDs',
+          details: 'There was an error retrieving GTFS realtime data for station IDs',
         },
       });
     }

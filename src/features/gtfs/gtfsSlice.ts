@@ -2,12 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { API_URL } from "../../../config/api.config";
 import { AppThunk } from "../../app/store";
 
-interface GTFSStateItem {
-  [key: string]: any;
-}
-
 interface GTFSState {
-  data: GTFSStateItem;
+  [key: string]: any;
 }
 
 interface Entity {
@@ -18,7 +14,7 @@ interface Entity {
   routes: string[];
 }
 
-const initialState: GTFSState = { data: {} };
+const initialState: GTFSState = {};
 
 export const fetchGTFS = (feedIndex: number = 1, stationIds: string[]): AppThunk => async dispatch => {
   const response = await fetch(`${API_URL}/api/stations/gtfs/?feedIndex=${feedIndex}&id=${stationIds.join(',')}`);
@@ -33,13 +29,11 @@ const gtfsSlice = createSlice({
   reducers: {
     setGTFS(state, action: PayloadAction<any>) {
       const { data } = action.payload;
-      const newState: GTFSStateItem = {};
       if (data) {
         data.forEach((entity: Entity) => {
-          newState[entity.id] = entity;
+          state[entity.id] = entity;
         });
       }
-      state.data = newState;
     },
   },
 });
