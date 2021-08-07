@@ -26,8 +26,7 @@ const stopsApiSlice = createSlice({
     [HYDRATE] : (state, action: any) => {
       return {
         ...state,
-        stops: action.payload.stations.stops,
-        transfers: action.payload.stations.transfers,
+        ...action.payload.stations,
       };
     },
   },

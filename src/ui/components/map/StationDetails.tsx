@@ -12,17 +12,16 @@ import { getIconPath } from '../../../helpers/map';
 
 type Props = {
   data?: any;
-}
+};
 
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { data: statuses } = useAppSelector(state => state.status);
 
   const { id: stationId } = data.properties;
-  const { agencyId } = useAppSelector(state => state.agency);
+  const { agencyId = '', feedIndex } = useAppSelector(state => state.agency);
   const transfers = useAppSelector(state => state.stations.transfers[stationId]);
   const { stops } = useAppSelector(state => state.stations);
-  const { feedIndex } = useAppSelector(state => state.agency);
   const { data: realtimeData } = useAppSelector(state => state.gtfs);
 
   const dispatch = useAppDispatch();
@@ -71,7 +70,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       return trainsWithHeadsigns;
     }
     return [];
-  }, [transfers, realtimeData])
+  }, [transfers, realtimeData]);
 
   const routes = useMemo(() => {
     const routes: any[] = [];
@@ -85,7 +84,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       })
     })
     return routes;
-  }, [transfers, realtimeData])
+  }, [transfers, realtimeData]);
 
   // Re-fetch status data every minute
   useEffect(() => {
@@ -96,7 +95,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     return () => clearTimeout(timer);
   });
 
-  // Re-fetch GTFS-realtime data every 30 seconds
+  // Re-fetch GTFS-realtime data every 10 seconds
   useEffect(() => {
     const timer = setTimeout(
       () => dispatch(fetchGTFS(feedIndex, stationIds)),

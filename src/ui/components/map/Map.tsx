@@ -63,7 +63,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
   const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
   const allTransfers = useAppSelector(state => state.stations.transfers);
-  const { feedIndex } = useAppSelector(state => state.agency.data);
+  const { feedIndex } = useAppSelector(state => state.agency);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
 
