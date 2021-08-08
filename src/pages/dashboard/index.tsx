@@ -4,10 +4,10 @@ import Head from 'next/head';
 import Link from 'next/link';
 import ServiceStatus from '../../ui/components/dashboard/ServiceStatus';
 import { wrapper } from '../../app/store';
-import { fetchServiceStatus } from '../../features/api/statusSlice';
+import { fetchServiceStatus } from '../../features/realtime/statusSlice';
 import styles from '../../styles/pages/Dashboard.module.scss';
 import { useAppSelector } from '../../app/hooks';
-import { setAgency } from '../../features/api/agencySlice';
+import { setAgency } from '../../features/gtfs/agencySlice';
 import { API_URL } from '../../../config/api.config';
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 const DashboardPage: NextPage<Props> = (props: Props): ReactElement => {
 
   const { status } = props;
-  const { agencyId, agencyName } = useAppSelector(state => state.agency);
+  const { agencyId, agencyName } = useAppSelector(state => state.gtfs.agency);
 
   return (
     <div>
@@ -61,11 +61,11 @@ export const getServerSideProps: GetServerSideProps =
 
   // Get service status for dashboard:
   await store.dispatch(fetchServiceStatus());
-  const { status } = store.getState();
+  const { status } = store.getState().realtime;
 
   return {
     props: {
-      status: status.data,
+      status,
     },
   };
 });

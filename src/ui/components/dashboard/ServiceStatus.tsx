@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { fetchServiceStatus } from '../../../features/api/statusSlice';
+import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
 import { getIconPath } from '../../../helpers/map';
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
   const { status } = props;
   const dispatch = useAppDispatch();
-  const { agencyId } = useAppSelector(state => state.agency);
+  const { agencyId } = useAppSelector(state => state.gtfs.agency);
   // Re-fetch status data every minute
   useEffect(() => {
     const timer = setTimeout(

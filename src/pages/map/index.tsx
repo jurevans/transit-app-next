@@ -2,11 +2,10 @@ import { ReactElement } from 'react';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Map from '../../ui/components/map/Map';
-import { useAppSelector } from '../../app/hooks';
 import { wrapper } from '../../app/store';
-import { setAgency } from '../../features/api/agencySlice';
-import { setStops, setTransfers } from '../../features/api/stationsSlice';
-import { setRoutes } from '../../features/api/routesSlice';
+import { setAgency } from '../../features/gtfs/agencySlice';
+import { setStops, setTransfers } from '../../features/gtfs/stationsSlice';
+import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 
@@ -17,7 +16,6 @@ type Props = {
 };
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
-  const { style } = useAppSelector(state => state.mapStyle);
   const { stations, lines, location } = props;
 
   return (
@@ -28,7 +26,6 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Map
-        mapStyle={style}
         stations={stations}
         lines={lines}
         location={location} />

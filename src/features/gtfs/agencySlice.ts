@@ -1,19 +1,21 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
 
-interface AgencyState {
-  feedIndex?: number;
-  agencyId?: string;
-  agencyName?: string;
-  agencyUrl?: string;
-  agencyTimezone?: string;
-  agencyLang?: string;
-  agencyPhone?: string;
-  location?: {
+export interface Agency {
+  feedIndex: number;
+  agencyId: string;
+  agencyName: string;
+  agencyUrl: string;
+  agencyTimezone: string;
+  agencyLang: string;
+  agencyPhone: string;
+  location: {
     longitude: number;
     latitude: number;
   };
 }
+
+type AgencyState = Agency | any;
 
 const initialState: AgencyState = {};
 
@@ -21,7 +23,7 @@ const agencySlice = createSlice({
   name: 'agency',
   initialState,
   reducers: {
-    setAgency(state: any, action: PayloadAction<AgencyState>) {
+    setAgency(state: any, action: PayloadAction<Agency>) {
       const agency = action.payload;
       state.feedIndex = agency.feedIndex;
       state.agencyId = agency.agencyId;
@@ -34,10 +36,10 @@ const agencySlice = createSlice({
     },
   },
   extraReducers: {
-    [HYDRATE]: (state, action: PayloadAction<{agency: AgencyState}>) => {
+    [HYDRATE]: (state, action: PayloadAction<any>) => {
       return {
         ...state,
-        ...action.payload.agency,
+        ...action.payload.gtfs.agency,
       }
     },
   },

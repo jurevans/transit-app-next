@@ -1,21 +1,28 @@
-import mapStyleReducer from './map/mapStyleSlice';
-import mapPopupReducer from './map/mapPopupSlice';
-import mapStationDetailsReducer from './map/mapStationDetails';
-import agencyReducer from './api/agencySlice';
-import statusReducer from './api/statusSlice';
-import stationsReducer from './api/stationsSlice';
-import routesReducer from './api/routesSlice';
-import gtfsReducer from './gtfs/gtfsSlice';
+import { combineReducers } from '@reduxjs/toolkit';
+import mapStyleReducer from './ui/mapStyleSlice';
+import mapPopupReducer from './ui/mapPopupSlice';
+import stationDetailsReducer from './ui/mapStationDetails';
+import agencyReducer from './gtfs/agencySlice';
+import statusReducer from './realtime/statusSlice';
+import stationsReducer from './gtfs/stationsSlice';
+import routesReducer from './gtfs/routesSlice';
+import tripUpdatesReducer from './realtime/tripUpdatesSlice';
 
 const rootReducer = {
-  mapPopup: mapPopupReducer,
-  mapStyle: mapStyleReducer,
-  mapStationDetails: mapStationDetailsReducer,
-  agency: agencyReducer,
-  status: statusReducer,
-  stations: stationsReducer,
-  routes: routesReducer,
-  gtfs: gtfsReducer,
+  ui: combineReducers({
+    mapPopup: mapPopupReducer,
+    mapStyle: mapStyleReducer,
+    stationDetails: stationDetailsReducer,
+  }),
+  gtfs: combineReducers({
+    agency: agencyReducer,
+    stations: stationsReducer,
+    routes: routesReducer,
+  }),
+  realtime: combineReducers({
+    tripUpdates: tripUpdatesReducer,
+    status: statusReducer,
+  }),
 };
 
 export default rootReducer;

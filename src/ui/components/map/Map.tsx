@@ -20,9 +20,9 @@ import MapPopup from './MapPopup';
 import SelectMapStyle from './SelectMapStyle';
 import StationDetails from './StationDetails';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { openPopup, closePopup } from '../../../features/map/mapPopupSlice';
-import { updatedMapStyle } from '../../../features/map/mapStyleSlice';
-import { updatedStationDetails } from '../../../features/map/mapStationDetails';
+import { openPopup, closePopup } from '../../../features/ui/mapPopupSlice';
+import { updatedMapStyle } from '../../../features/ui/mapStyleSlice';
+import { updatedStationDetails } from '../../../features/ui/mapStationDetails';
 import {
   getInRange,
   getDurationForTransition,
@@ -42,30 +42,28 @@ import {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 import mapDefaults from '../../../../config/map.config';
-import { fetchGTFS } from '../../../features/gtfs/gtfsSlice';
+import { fetchTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
 
 const { mapBoxAccessToken } = process.env;
 const {  mapStyles } = settings;
 
 type Props = {
-  mapStyle: any;
   stations: PlotData[],
   lines: FeatureCollection;
   location: any;
 };
 
 const Map: FC<Props> = (props: Props): ReactElement => {
-  const { mapStyle, stations, lines, location } = props;
+  const { stations, lines, location } = props;
   const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
-  const popupData = useAppSelector(state => state.mapPopup.data);
-  const isPopupOpen = useAppSelector(state => state.mapPopup.isOpen);
-  const stationDetailsData = useAppSelector(state => state.mapStationDetails.data);
-  const isStationDetailsOpen = useAppSelector(state => state.mapStationDetails.isOpen);
-  const allTransfers = useAppSelector(state => state.stations.transfers);
-  const { feedIndex } = useAppSelector(state => state.agency);
+  const { data: popupData, isOpen: isPopupOpen } = useAppSelector(state => state.ui.mapPopup);
+  const { data: stationDetailsData, isOpen: isStationDetailsOpen } = useAppSelector(state => state.ui.stationDetails);
+  const allTransfers = useAppSelector(state => state.gtfs.stations.transfers);
+  const { feedIndex } = useAppSelector(state => state.gtfs.agency);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
+  const { style: mapStyle } = useAppSelector(state => state.ui.mapStyle);
 
   // Define the range constraints for which the user can drag the map:
   const range = {
@@ -138,7 +136,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       ? transfers.map((transfer: any) => transfer.stopId)
       : [stationId];
     setViewState(newViewState);
-    dispatch(fetchGTFS(feedIndex, stationIds));
+    dispatch(fetchTripUpdates(feedIndex, stationIds));
     setTimeout(() => {
       dispatch(openPopup(data));
       dispatch(updatedStationDetails(data));
@@ -208,7 +206,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
 
     setViewState(updatedState);
-  }, []);
+  }, [mapStyle, mapViewState]);
 
   const handleStyleUpdate = (e: React.ChangeEvent<any>) => {
     // Find mapStyle:

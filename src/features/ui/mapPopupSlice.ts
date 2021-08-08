@@ -15,7 +15,7 @@ const initialState: MapPopupState = {
 };
 
 const mapPopupSlice = createSlice({
-  name: 'map',
+  name: 'mapPopup',
   initialState,
   reducers: {
     openPopup(state, action: PayloadAction<any>) {

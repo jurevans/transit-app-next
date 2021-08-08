@@ -20,7 +20,7 @@ const initialState: MapStationDetailsState = {
 };
 
 const mapStationDetailsSlice = createSlice({
-  name: 'map',
+  name: 'mapStationDetails',
   initialState,
   reducers: {
     updatedStationDetails(state, action: PayloadAction<MapStationDetailsData>) {
