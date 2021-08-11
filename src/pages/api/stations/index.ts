@@ -9,12 +9,21 @@ const handler = async (
  req: NextApiRequest,
  res: NextApiResponse<any>
 ) => {
-  const { GTFS_API } = process.env;
+  const { GTFS_API, GTFS_API_KEY } = process.env;
   const { feedIndex } = req.query;
+
+  const headers: HeadersInit = {
+    'x-api-key': GTFS_API_KEY as string,
+  };
+
+  const options: RequestInit = {
+    method: 'GET',
+    headers,
+  };
 
   if (req.method === 'GET') {
     const endpoint = `${GTFS_API}/api/v1/geo/${feedIndex}/stops?geojson=true`;
-    const stationsResponse: any = await fetch(endpoint);
+    const stationsResponse: any = await fetch(endpoint, options);
     const stations = await stationsResponse.json();
 
     stations.features = stations.features.map((feature: any) => {

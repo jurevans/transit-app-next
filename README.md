@@ -8,10 +8,12 @@ which needs to be in the root of the project directory:
 ```
 REACT_APP_MAPBOX_ACCESS_TOKEN=XXXXXXXXXXXXXXXXXX
 GTFS_API=http://localhost:5000
+GTFS_API_KEY=XXXXXXXXXXXXXXXXXXXXXX
 ```
 
 - MapBox Access Token [MapBox Access Token Help](https://docs.mapbox.com/help/getting-started/access-tokens/)
 - URL pointing to the `transit-app-api` [backend](https://github.com/jurevans/transit-app-api/)
+- `GTFS_API_KEY` is required to authenticate all requests to the backend.
 
 You need a PostgreSQL database, with PostGIS extensions enabled, and it needs to be populated with a GTFS static feed, which are provided in a `.zip` file provided by the relevant transit authority. This can be imported using the [GTFS Sql Importer](https://github.com/fitnr/gtfs-sql-importer). I am developing this application with PostgreSQL 13/PostGIS 3, but this should work on PostgreSQL 9.5+ with PostGIS 2.2+ (according to the docs on `gtfs-sql-importer`).
 

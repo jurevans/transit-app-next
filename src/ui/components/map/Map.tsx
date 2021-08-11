@@ -43,6 +43,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 import mapDefaults from '../../../../config/map.config';
 import { fetchTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
+import { Transfer } from '../../../features/gtfs/stationsSlice';
 
 const { mapBoxAccessToken } = process.env;
 const {  mapStyles } = settings;
@@ -131,9 +132,10 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       },
     };
     const { id: stationId } = data.properties;
-    const transfers = allTransfers[stationId];
+    const transfers: Transfer[] = allTransfers[stationId];
+
     const stationIds = transfers
-      ? transfers.map((transfer: any) => transfer.stopId)
+      ? transfers.map((transfer: Transfer) => transfer.stopId)
       : [stationId];
     setViewState(newViewState);
     dispatch(fetchTripUpdates(feedIndex, stationIds));
@@ -206,7 +208,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     };
 
     setViewState(updatedState);
-  }, [mapStyle, mapViewState]);
+  }, [mapViewState, mapStyle]);
 
   const handleStyleUpdate = (e: React.ChangeEvent<any>) => {
     // Find mapStyle:
