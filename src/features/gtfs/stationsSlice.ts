@@ -1,14 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 
-export interface StationsState {
-  stops: any[],
-  transfers: any,
+export interface Stop {
+  stopId: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Transfer {
+  stopId: string;
+  time: number;
+}
+
+type Transfers = {
+  [key: string]: Transfer[];
+};
+
+type StationsState = {
+  stops: Stop[],
+  transfers: Transfers,
 };
 
 const initialState: StationsState = {
   stops: [],
-  transfers: null,
+  transfers: {},
 };
 
 const stopsApiSlice = createSlice({
@@ -23,11 +39,10 @@ const stopsApiSlice = createSlice({
     }
   },
   extraReducers: {
-    [HYDRATE] : (state, action: any) => {
+    [HYDRATE] : (state, action: PayloadAction<any>) => {
       return {
         ...state,
-        stops: action.payload.stations.stops,
-        transfers: action.payload.stations.transfers,
+        ...action.payload.gtfs.stations,
       };
     },
   },

@@ -30,7 +30,7 @@ const statusApiSlice = createSlice({
     [HYDRATE] : (state, action: any) => {
       return {
         ...state,
-        data: action.payload.status.data,
+        ...action.payload.realtime.status.data,
       };
     },
   },

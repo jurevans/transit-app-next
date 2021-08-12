@@ -7,17 +7,17 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { fetchServiceStatus } from '../../../features/api/statusSlice';
+import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
 import { getIconPath } from '../../../helpers/map';
 
 type Props = {
-  status: any[];
+  status: any;
 };
 
 const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
   const { status } = props;
   const dispatch = useAppDispatch();
-  const { agencyId } = useAppSelector(state => state.agency);
+  const { agencyId } = useAppSelector(state => state.gtfs.agency);
   // Re-fetch status data every minute
   useEffect(() => {
     const timer = setTimeout(
@@ -30,13 +30,22 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
   let icons: any[] = [];
   // TODO: This logic shouldn't go here. Perhaps a lookup can be provided in config to map appropriate icons.
   if (status) {
-    icons = status.map((status: any) => {
+    icons = status.data.map((status: any) => {
       const { name } = status;
-      // TODO: This following logic will be different when icon handling changes:
-      if (name === 'SIR') {
-        return ['SIR'];
-      } else {
-        return name.split('');
+      // TODO: These cases are metro-specific. This will probably change
+      // anyhow as GTFS-realtime status is implemented, and can probably
+      // use the same overrides present in the API config in
+      // transit-app-api. The discrepency is due to the realtime feeds
+      // (in the case of the NYC MTA) using routeShortName instead of routeId.
+      // Also, the NYC MTA has removed grouping of the routeIds in the
+      // GTFS feed, but this still remains in the XML feed:
+      switch (name) {
+        case 'SIR':
+          return ['SI'];
+        case 'S':
+          return ['GS'];
+        default:
+          return name.split('');
       }
     });
   }
@@ -44,7 +53,7 @@ const ServiceStatus: FC<Props> = (props: Props): ReactElement => {
   return (
     <div className="service-status">
       <h2>Service Status</h2>
-      {status.map((status: any, i: number) => (
+      {status.data.map((status: any, i: number) => (
         <Accordion key={i}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}

@@ -1,11 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-type LocationRequest = {
-  feedIndex: string;
-};
-
 /**
-* API Route to retrieve location based on data in GTFS agency table
+* API Route to retrieve GTFS real-time route data by ID
 * @param req 
 * @param res 
 */
@@ -14,6 +10,7 @@ const handler = async (
  res: NextApiResponse<any>
 ) => {
   const { GTFS_API, GTFS_API_KEY } = process.env;
+  const { feedIndex, routeId } = req.query;
 
   const headers: HeadersInit = {
     'x-api-key': GTFS_API_KEY as string,
@@ -24,13 +21,11 @@ const handler = async (
   };
 
   if (req.method === 'GET') {
-    const { feedIndex } = req.query as LocationRequest;
+    // Fetch real-time updates by routeId for this feed:
+    const routeResponse: any = await fetch(`${GTFS_API}/api/v1/gtfs/${feedIndex}/route/${routeId}`, options);
+    const route = await routeResponse.json();
 
-    // Fetch location data for agency:
-    const locationResponse = await fetch(`${GTFS_API}/api/v1/location/${feedIndex}`, options);
-    const location: any = await locationResponse.json();
-
-    res.status(200).json(location);
+    res.status(200).json(route);
   }
 };
 

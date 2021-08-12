@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import Map from '../../ui/components/map/Map';
-import { useAppSelector } from '../../app/hooks';
 import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import Map from '../../ui/components/map/Map';
 import { wrapper } from '../../app/store';
-import { setAgency } from '../../features/api/agencySlice';
-import { setStops, setTransfers } from '../../features/api/stationsSlice';
+import { setAgency } from '../../features/gtfs/agencySlice';
+import { setStops, setTransfers } from '../../features/gtfs/stationsSlice';
+import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 
@@ -16,7 +16,6 @@ type Props = {
 };
 
 const MapPage: NextPage<Props> = (props: Props): ReactElement => {
-  const { style } = useAppSelector(state => state.mapStyle);
   const { stations, lines, location } = props;
 
   return (
@@ -27,7 +26,6 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Map
-        mapStyle={style}
         stations={stations}
         lines={lines}
         location={location} />
@@ -45,7 +43,7 @@ export const getServerSideProps: GetServerSideProps =
   const { feedIndex, agencyId } = feed[0];
 
   // Fetch agency:
-  const agencyResponse = await fetch(`${API_URL}/api/agency/${feedIndex}?id=${agencyId}`);
+  const agencyResponse = await fetch(`${API_URL}/api/agency/${agencyId}?feedIndex=${feedIndex}`);
   const agency = await agencyResponse.json();
 
   // Fetch location data for feed:
@@ -58,11 +56,11 @@ export const getServerSideProps: GetServerSideProps =
   }));
 
   // Fetch stations:
-  const stationsResponse: any = await fetch(`${API_URL}/api/stations/${feedIndex}`);
+  const stationsResponse: any = await fetch(`${API_URL}/api/stations?feedIndex=${feedIndex}`);
   const stations = await stationsResponse.json();
 
   // Fetch route lines:
-  const linesResponse: any = await fetch(`${API_URL}/api/lines/${feedIndex}`);
+  const linesResponse: any = await fetch(`${API_URL}/api/lines?feedIndex=${feedIndex}`);
   const lines = await linesResponse.json();
 
   // Fetch stops:
@@ -75,6 +73,12 @@ export const getServerSideProps: GetServerSideProps =
 
   await store.dispatch(setStops(stops));
   await store.dispatch(setTransfers(transfers));
+
+  // Fetch routes:
+  const routesResponse: any = await fetch(`${API_URL}/api/routes?feedIndex=${feedIndex}`);
+  const routes = await routesResponse.json();
+
+  await store.dispatch(setRoutes(routes));
 
   return {
     props: {
