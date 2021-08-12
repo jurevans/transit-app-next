@@ -25,11 +25,7 @@ const handler = async (
     const linesResponse: any = await fetch(endpoint, options);
     const lines = await linesResponse.json();
 
-    if (lines) {
-      res.status(200).json(lines);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving route shape data' } });
-    }
+    res.status(200).json(lines);
  }
 };
 

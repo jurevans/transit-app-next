@@ -25,12 +25,8 @@ const handler = async (
     const transfersResponse: any = await fetch(endpoint, options);
     const transfers = await transfersResponse.json();
 
-    if (transfers) {
-      res.status(200).json(transfers);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving transfers' } });
-    }
- }
+    res.status(200).json(transfers);
+  }
 };
 
 export default handler;

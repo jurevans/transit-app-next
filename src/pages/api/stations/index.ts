@@ -54,11 +54,7 @@ const handler = async (
       };
     });
 
-    if (stations) {
-      res.status(200).json(stations.features);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving stations' } });
-    }
+    res.status(200).json(stations.features);
  }
 };
 

@@ -24,11 +24,7 @@ const handler = async (
     const feedsResponse: any = await fetch(`${GTFS_API}/api/v1/feed`, options);
     const feeds = await feedsResponse.json();
 
-    if (feeds) {
-      res.status(200).json(feeds);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving agency data' } });
-    }
+    res.status(200).json(feeds);
   }
 };
 

@@ -30,12 +30,8 @@ const handler = async (
     const locationResponse = await fetch(`${GTFS_API}/api/v1/location/${feedIndex}`, options);
     const location: any = await locationResponse.json();
 
-    if (location) {
-      res.status(200).json(location);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving location' } });
-    }
- }
+    res.status(200).json(location);
+  }
 };
 
 export default handler;

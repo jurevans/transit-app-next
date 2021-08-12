@@ -25,12 +25,8 @@ const handler = async (
     const stopsResponse: any = await fetch(endpoint, options);
     const stops = await stopsResponse.json();
 
-    if (stops) {
-      res.status(200).json(stops);
-    } else {
-      res.status(500).json({ error: { details: 'There was an error retrieving stops' } });
-    }
- }
+    res.status(200).json(stops);
+  }
 };
 
 export default handler;

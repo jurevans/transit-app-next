@@ -25,15 +25,7 @@ const handler = async (
     const gtfsResponse: any = await fetch(endpoint, options);
     const gtfs = await gtfsResponse.json();
 
-    if (gtfs) {
-      res.status(200).json(gtfs);
-    } else {
-      res.status(500).json({
-        error: {
-          details: 'There was an error retrieving GTFS realtime data for station IDs',
-        },
-      });
-    }
+    res.status(200).json(gtfs);
   }
 };
 
