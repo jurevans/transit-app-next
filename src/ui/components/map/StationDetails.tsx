@@ -1,8 +1,9 @@
-import { FC, ReactElement, useEffect, useMemo } from 'react';
+import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
 import { DateTime } from 'luxon';
+import socketIOClient from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/ui/mapStationDetails';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
@@ -110,6 +111,25 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const handleClose = () => {
     dispatch(closeStationDetails());
   };
+
+  const [response, setResponse] = useState([]);
+  useEffect(() => {
+    const socket = socketIOClient('http://localhost:5000');
+    socket.on('recieved_trip_updates', (data: any) => {
+       console.log('recieved_trip_updates', data);
+       setResponse(data);
+    });
+
+    if (data && data.hasOwnProperty('properties')) {
+      const { id: stationId, routes } = data.properties;
+      const routeIds = routes.map((route: any) => route.routeId);
+      socket.emit('trip_updates', { feedIndex, stationId, routeIds }, (data: any) => console.log(data));
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [data]);
 
   const redraw = () => (
     <div
