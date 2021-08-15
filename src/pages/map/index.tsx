@@ -8,6 +8,7 @@ import { setStops, setTransfers } from '../../features/gtfs/stationsSlice';
 import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
+import SocketManager from '../../ui/components/socket/SocketManager';
 
 type Props = {
   stations: any[],
@@ -25,10 +26,12 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map
-        stations={stations}
-        lines={lines}
-        location={location} />
+      <SocketManager>
+        <Map
+          stations={stations}
+          lines={lines}
+          location={location} />
+      </SocketManager>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import { FC, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { HTMLOverlay } from 'react-map-gl';
 import { DateTime } from 'luxon';
 import socketIOClient from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
@@ -10,25 +9,25 @@ import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
 import { getIconPath } from '../../../helpers/map';
 import { setTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
+import { useSocket } from '../socket/SocketContext';
 
 type Props = {
   data?: any;
 };
 
-const formatMin = (time: number) => {
-  const now = DateTime.now().toSeconds();
+const formatMin = (time: number, TZ: string) => {
+  const now = DateTime.now().setZone(TZ).toSeconds();
   const minutes = (time - now) / 60;
   return minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
 };
 
-const { gtfsApiUrl } = process.env;
-
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { data: statuses } = useAppSelector(state => state.realtime.status);
-  const { agencyId, feedIndex } = useAppSelector(state => state.gtfs.agency);
+  const { agencyId, feedIndex, agencyTimezone } = useAppSelector(state => state.gtfs.agency);
   const { routeIds, stopTimeUpdates } = useAppSelector(state => state.realtime.tripUpdates);
   const dispatch = useAppDispatch();
+  const { socket } = useSocket();
 
   // Re-fetch status data every minute
   useEffect(() => {
@@ -47,23 +46,19 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   };
 
   useEffect(() => {
-    const socket = socketIOClient(gtfsApiUrl as string);
-    socket.on('recieved_trip_updates', (data: any) => {
-       console.log('recieved_trip_updates', data);
-       dispatch(setTripUpdates(data));
-    });
-
     if (data && data.hasOwnProperty('properties')) {
       const { id: stationId } = data.properties;
-      socket.emit('trip_updates', { feedIndex, stationId }, (data: any) => console.log(data));
+      // Get real-time updates:
+      socket?.emit('trip_updates', { feedIndex, stationId }, (data: any) => console.log(data));
     }
 
     return () => {
-      socket.disconnect();
+      // Stop sending us updates:
+      socket?.emit('cancel_trip_updates');
     };
   }, [data]);
 
-  const redraw = () => (
+  return (
     <div
       className={styles.details}
       onClick={e => e.stopPropagation()}
@@ -79,7 +74,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         )}
       </div>
       <div className="station-details-content">
-        <p className={styles.name}>{data.properties.name}</p>
+        <p className={styles.name}>{data?.properties.name}</p>
         <div className={styles.status}>
           {status &&
             <span>
@@ -103,7 +98,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
                     {train.headsign}
                   </div>
                   <div className={styles.minutes}>
-                    {formatMin(train.time)}
+                    {formatMin(train.time, agencyTimezone)}
                   </div>
                 </div>
               </li>
@@ -113,28 +108,15 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         </div>
         <div>
           <p>Schedules:</p>
-          {data.properties.routes.map((station: any, i:number) =>
+          {data?.properties.routes.map((station: any, i:number) =>
             station.url && <div key={i}><a href={station.url} target="_blank"><span>{station.routeId} Service Schedule &raquo;</span></a></div>)
           }
         </div>
-        
         <div className={styles.buttons}>
           <button onClick={handleClose}>Close</button>
         </div>
       </div>
     </div>
-  );
-
-  return (
-    <HTMLOverlay
-      captureDrag={true}
-      captureScroll={true}
-      captureClick={true}
-      captureDoubleClick={true}
-      capturePointerMove={true}
-      redraw={redraw}
-      style={{ top: 10, width: 300, height: '50%', left: 10 }}
-    />
   );
 };
 

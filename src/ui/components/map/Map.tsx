@@ -243,12 +243,12 @@ const Map: FC<Props> = (props: Props): ReactElement => {
           mapboxApiAccessToken={mapBoxAccessToken}
         />
         {isPopupOpen && <MapPopup data={popupData} />}
-        {isStationDetailsOpen && <StationDetails data={stationDetailsData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
         <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
         <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>
+      {isStationDetailsOpen && <StationDetails data={stationDetailsData} />}
       {tooltipData && <MapTooltip data={tooltipData} />}
     </div>
   );
