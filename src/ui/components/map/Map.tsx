@@ -18,11 +18,11 @@ import MapGL, {
 import MapTooltip from './MapTooltip';
 import MapPopup from './MapPopup';
 import SelectMapStyle from './SelectMapStyle';
-import StationDetails from './StationDetails';
+import Details from './Details';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/ui/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/ui/mapStyleSlice';
-import { updatedStationDetails } from '../../../features/ui/mapStationDetails';
+import { updatedStationDetails } from '../../../features/ui/mapDetails';
 import {
   getInRange,
   getDurationForTransition,
@@ -57,7 +57,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
   const { data: popupData, isOpen: isPopupOpen } = useAppSelector(state => state.ui.mapPopup);
-  const { data: stationDetailsData, isOpen: isStationDetailsOpen } = useAppSelector(state => state.ui.stationDetails);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
   const { style: mapStyle } = useAppSelector(state => state.ui.mapStyle);
@@ -248,7 +247,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
         <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>
-      {isStationDetailsOpen && <StationDetails data={stationDetailsData} />}
+      <Details />
       {tooltipData && <MapTooltip data={tooltipData} />}
     </div>
   );

@@ -1,8 +1,7 @@
 import { FC, ReactElement } from 'react';
 import { Popup } from 'react-map-gl';
 import { closePopup } from '../../../features/ui/mapPopupSlice';
-import { openStationDetails } from '../../../features/ui/mapStationDetails';
-import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
+import { openStationDetails } from '../../../features/ui/mapDetails';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getIconPath } from '../../../helpers/map';
 import Image from 'next/image';
@@ -15,8 +14,7 @@ type Props = {
 const MapPopup:FC<Props> = (props: Props):ReactElement => {
   const { data } = props;
   const dispatch = useAppDispatch();
-  const isStationDetailsOpen = useAppSelector(state => state.ui.stationDetails.isOpen);
-  const statuses = useAppSelector(state => state.realtime.status.data);
+  const isStationDetailsOpen = useAppSelector(state => state.ui.stationDetails.isStationDetailsOpen);
   const { agencyId } = useAppSelector(state => state.gtfs.agency);
 
   const handleClose = () => {
@@ -26,9 +24,6 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
   const handleOpenDetails = () => {
     if (!isStationDetailsOpen) {
       dispatch(openStationDetails(data));
-      if (statuses.length === 0) {
-        dispatch(fetchServiceStatus());
-      }
     }
   };
 
