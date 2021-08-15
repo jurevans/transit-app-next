@@ -15,7 +15,10 @@ interface EntityPayload {
 }
 
 interface TripUpdatesState {
-  [key: string]: Entity;
+  stationId?: string;
+  transfers?: string[];
+  routeIds?: string[];
+  stopTimeUpdates?: any[];
 }
 
 const initialState: TripUpdatesState = {};
@@ -24,23 +27,23 @@ export const fetchTripUpdates = (feedIndex: number = 1, stationIds: string[]): A
   const response = await fetch(`${API_URL}/api/stations/gtfs/?feedIndex=${feedIndex}&id=${stationIds.join(',')}`);
   const data = await response.json();
 
-  dispatch(gtfsSlice.actions.setTripUpdates(data));
+  dispatch(tripUpdatesSlice.actions.setTripUpdates(data));
 };
 
-const gtfsSlice = createSlice({
+const tripUpdatesSlice = createSlice({
   name: 'tripUpdates',
   initialState,
   reducers: {
-    setTripUpdates(state, action: PayloadAction<EntityPayload>) {
-      const { data } = action.payload;
-      if (data) {
-        data.forEach((entity: Entity) => {
-          state[entity.id] = entity;
-        });
-      }
+    setTripUpdates(state, action: PayloadAction<any>) {
+      console.log(action.payload)
+      const { stationId, transfers, routeIds, stopTimeUpdates } = action.payload;
+      state.stationId = stationId;
+      state.transfers = transfers;
+      state.routeIds = routeIds;
+      state.stopTimeUpdates = stopTimeUpdates;
     },
   },
 });
 
-export const { setTripUpdates: setTripUpdates } = gtfsSlice.actions;
-export default gtfsSlice.reducer;
+export const { setTripUpdates: setTripUpdates } = tripUpdatesSlice.actions;
+export default tripUpdatesSlice.reducer;

@@ -42,8 +42,6 @@ import {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from '../../../styles/components/map/Map.module.scss';
 import mapDefaults from '../../../../config/map.config';
-import { fetchTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
-import { Transfer } from '../../../features/gtfs/stationsSlice';
 
 const { mapBoxAccessToken } = process.env;
 const {  mapStyles } = settings;
@@ -60,8 +58,6 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const dispatch = useAppDispatch();
   const { data: popupData, isOpen: isPopupOpen } = useAppSelector(state => state.ui.mapPopup);
   const { data: stationDetailsData, isOpen: isStationDetailsOpen } = useAppSelector(state => state.ui.stationDetails);
-  const allTransfers = useAppSelector(state => state.gtfs.stations.transfers);
-  const { feedIndex } = useAppSelector(state => state.gtfs.agency);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
   const { style: mapStyle } = useAppSelector(state => state.ui.mapStyle);
@@ -131,14 +127,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         transitionInterpolator: new FlyToInterpolator(),
       },
     };
-    const { id: stationId } = data.properties;
-    const transfers: Transfer[] = allTransfers[stationId];
 
-    const stationIds = transfers
-      ? transfers.map((transfer: Transfer) => transfer.stopId)
-      : [stationId];
     setViewState(newViewState);
-    dispatch(fetchTripUpdates(feedIndex, stationIds));
     setTimeout(() => {
       dispatch(openPopup(data));
       dispatch(updatedStationDetails(data));

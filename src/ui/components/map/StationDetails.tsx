@@ -1,4 +1,4 @@
-import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { HTMLOverlay } from 'react-map-gl';
@@ -6,101 +6,35 @@ import { DateTime } from 'luxon';
 import socketIOClient from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/ui/mapStationDetails';
-import styles from '../../../styles/components/map/StationDetails.module.scss';
 import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
-import { fetchTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
 import { getIconPath } from '../../../helpers/map';
+import { setTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
+import styles from '../../../styles/components/map/StationDetails.module.scss';
 
 type Props = {
   data?: any;
 };
 
+const formatMin = (time: number) => {
+  const now = DateTime.now().toSeconds();
+  const minutes = (time - now) / 60;
+  return minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
+};
+
+const { gtfsApiUrl } = process.env;
+
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { data: statuses } = useAppSelector(state => state.realtime.status);
-
-  const { id: stationId } = data.properties;
   const { agencyId, feedIndex } = useAppSelector(state => state.gtfs.agency);
-  const transfers = useAppSelector(state => state.gtfs.stations.transfers[stationId]);
-  const { stops } = useAppSelector(state => state.gtfs.stations);
-  const tripUpdates = useAppSelector(state => state.realtime.tripUpdates);
-
+  const { routeIds, stopTimeUpdates } = useAppSelector(state => state.realtime.tripUpdates);
   const dispatch = useAppDispatch();
-
-  // All station IDs
-  const stationIds = transfers
-    ? transfers.map((transfer: any) => transfer.stopId)
-    : [stationId];
-
-  // Index all available stops for this station:
-  const stopsForStation = stops
-    .filter((stop: any) => stationIds.indexOf(stop.stopId) > -1)
-    .reduce((obj: any, stop: any) => {
-      for (const stopId in stop.stops) {
-        obj[stopId] = stop.stops[stopId];
-      }
-      return obj;
-    }, {});
-
-  const trains = useMemo(() => {
-    if (Object.keys(tripUpdates).length > 0) {
-      const realTime = stationIds.map((id: string) => tripUpdates[id]);
-      // Get all trains for available stops:
-      const trains = realTime.reduce((trains: any, station: any) => {
-        if (station) {
-          trains = [
-            ...trains,
-            ...station.trains,
-          ];
-        }
-        return trains;
-      }, []).sort((a: any, b: any) => a.time - b.time);
-
-      const now = DateTime.now().toSeconds();
-      const trainsWithHeadsigns = trains.map((train: any) => {
-        const minutes = (train.time - now) / 60;
-        const formattedMin = minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
-
-        return {
-          ...train,
-          minutes,
-          formattedMin,
-          headsign: stopsForStation[train.stopId].headsign,
-        };
-      });
-      return trainsWithHeadsigns;
-    }
-    return [];
-  }, [transfers, tripUpdates]);
-
-  const routes = useMemo(() => {
-    const routes: any[] = [];
-    stationIds.forEach((id: string) => {
-      const station = tripUpdates[id];
-      const stationRoutes = station ? station.routes : [];
-      stationRoutes.forEach((route: string) => {
-        if (routes.indexOf(route) < 0) {
-          routes.push(route);
-        }
-      })
-    })
-    return routes;
-  }, [transfers, tripUpdates]);
 
   // Re-fetch status data every minute
   useEffect(() => {
     const timer = setTimeout(
       () => dispatch(fetchServiceStatus()),
       60000,
-    );
-    return () => clearTimeout(timer);
-  });
-
-  // Re-fetch GTFS-realtime data every 10 seconds
-  useEffect(() => {
-    const timer = setTimeout(
-      () => dispatch(fetchTripUpdates(feedIndex, stationIds)),
-      10000,
     );
     return () => clearTimeout(timer);
   });
@@ -112,18 +46,16 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
     dispatch(closeStationDetails());
   };
 
-  const [response, setResponse] = useState([]);
   useEffect(() => {
-    const socket = socketIOClient('http://localhost:5000');
+    const socket = socketIOClient(gtfsApiUrl as string);
     socket.on('recieved_trip_updates', (data: any) => {
        console.log('recieved_trip_updates', data);
-       setResponse(data);
+       dispatch(setTripUpdates(data));
     });
 
     if (data && data.hasOwnProperty('properties')) {
-      const { id: stationId, routes } = data.properties;
-      const routeIds = routes.map((route: any) => route.routeId);
-      socket.emit('trip_updates', { feedIndex, stationId, routeIds }, (data: any) => console.log(data));
+      const { id: stationId } = data.properties;
+      socket.emit('trip_updates', { feedIndex, stationId }, (data: any) => console.log(data));
     }
 
     return () => {
@@ -137,7 +69,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       onClick={e => e.stopPropagation()}
     >
       <div className={styles.icons}>
-        {routes.map((route: any) =>
+        {routeIds?.map((route: any) =>
           <Image
             key={route}
             src={getIconPath(agencyId, route)}
@@ -159,11 +91,11 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
           <p>Upcoming trains</p>
           <div className={styles.trainsContainer}>
             <ul className={styles.trains}>
-            {trains.map((train: any, i: number) =>
+            {stopTimeUpdates?.map((train: any, i: number) =>
               <li key={i} className={styles.train}>
                 <Image
-                    src={getIconPath(agencyId, train.route)}
-                    alt={train.route}
+                    src={getIconPath(agencyId, train.routeId)}
+                    alt={train.routeId}
                     width={30}
                     height={30} />
                 <div className={styles.trainDetails}>
@@ -171,7 +103,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
                     {train.headsign}
                   </div>
                   <div className={styles.minutes}>
-                    {train.formattedMin}
+                    {formatMin(train.time)}
                   </div>
                 </div>
               </li>
