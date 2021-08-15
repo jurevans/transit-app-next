@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 /**
  * getInRange - Return a Lat/Lon value within a specified range
  * @param {number} value
@@ -72,4 +74,18 @@ export const hexToRGBArray = (hex?: string): RGBArray => {
     parseInt(result[2], 16),
     parseInt(result[3], 16),
    ] : [175, 175, 175];
+};
+
+/**
+ * Given a time in seconds, return a formatted string denoting minutes,
+ * e.g., how many minutes until a train arrives, or "Now" if minutes
+ * is less than 1
+ * @param {number} time
+ * @param {string} timezone
+ * @returns {number}
+ */
+export const formatMinUntil = (time: number, timezone: string) => {
+  const now = DateTime.now().setZone(timezone).toSeconds();
+  const minutes = (time - now) / 60;
+  return minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
 };

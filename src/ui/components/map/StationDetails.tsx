@@ -1,13 +1,11 @@
 import { FC, ReactElement, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { DateTime } from 'luxon';
-import socketIOClient from 'socket.io-client';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { closeStationDetails } from '../../../features/ui/mapStationDetails';
 import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
 import { getIconPath } from '../../../helpers/map';
-import { setTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
+import { formatMinUntil } from '../../../helpers/functions';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
 import { useSocket } from '../socket/SocketContext';
 
@@ -15,19 +13,13 @@ type Props = {
   data?: any;
 };
 
-const formatMin = (time: number, TZ: string) => {
-  const now = DateTime.now().setZone(TZ).toSeconds();
-  const minutes = (time - now) / 60;
-  return minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
-};
-
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { data: statuses } = useAppSelector(state => state.realtime.status);
   const { agencyId, feedIndex, agencyTimezone } = useAppSelector(state => state.gtfs.agency);
-  const { routeIds, stopTimeUpdates } = useAppSelector(state => state.realtime.tripUpdates);
   const dispatch = useAppDispatch();
-  const { socket } = useSocket();
+  const { socket, tripUpdates } = useSocket();
+  const { routeIds, stopTimeUpdates } = tripUpdates;
 
   // Re-fetch status data every minute
   useEffect(() => {
@@ -39,7 +31,8 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   });
 
   // TODO: Statuses will be replaced with real-time API (protobuf or json)
-  const status = statuses.find((obj: any) => obj.name.search(data.properties.routes[0].name) !== -1);
+  const status = statuses.find((obj: any) =>
+    obj.name.search(data.properties.routes[0].name) !== -1);
 
   const handleClose = () => {
     dispatch(closeStationDetails());
@@ -98,7 +91,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
                     {train.headsign}
                   </div>
                   <div className={styles.minutes}>
-                    {formatMin(train.time, agencyTimezone)}
+                    {formatMinUntil(train.time, agencyTimezone)}
                   </div>
                 </div>
               </li>
@@ -108,8 +101,14 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
         </div>
         <div>
           <p>Schedules:</p>
-          {data?.properties.routes.map((station: any, i:number) =>
-            station.url && <div key={i}><a href={station.url} target="_blank"><span>{station.routeId} Service Schedule &raquo;</span></a></div>)
+          {data?.properties.routes.map((route: any, i:number) =>
+            route.url
+              && <div key={i}>
+                    <a href={route.url} target="_blank">
+                      <span>{route.routeId} Service Schedule &raquo;</span>
+                    </a>
+                  </div>
+            )
           }
         </div>
         <div className={styles.buttons}>
