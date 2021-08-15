@@ -1,11 +1,18 @@
 import { createContext, useContext } from 'react';
-import { IState } from './SocketManager';
+import * as SocketIOClient from 'socket.io-client';
 
-export const SocketContext = createContext({
+type ISocketContext = {
+  tripUpdates: any;
+  alerts: any;
+  vehiclePositions: any;
+  socket: SocketIOClient.Socket | null;
+};
+
+export const SocketContext = createContext<ISocketContext>({
   tripUpdates: {},
   alerts: {},
   vehiclePositions: {},
   socket: null,
-} as IState);
+});
 
 export const useSocket = () => useContext(SocketContext);

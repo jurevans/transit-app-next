@@ -1,91 +1,53 @@
-import { Component, ComponentType } from 'react';
-import { connect } from 'react-redux';
+import { FC, ReactElement, useState, useEffect } from 'react';
 import * as SocketIOClient from 'socket.io-client';
 import { SocketContext } from './SocketContext';
 import { setTripUpdates } from '../../../features/realtime/tripUpdatesSlice';
-const { gtfsApiUrl = 'http://localhost:3000' } = process.env;
+import { useAppDispatch } from '../../../app/hooks';
 
 type Props = {
   children: any;
-  setTripUpdates: any;
 };
 
-export type IState = {
-  tripUpdates: any;
-  alerts: any;
-  vehiclePositions: any;
-  socket: SocketIOClient.Socket | null;
+const { gtfsApiUrl = 'http://localhost:3000' } = process.env;
+const socket = SocketIOClient.io(gtfsApiUrl, {
+  transports: ['websocket'],
+  rejectUnauthorized: false,
+  secure: true,
+});
+
+const SocketManager: FC<Props> = (props: Props): ReactElement => {
+  const { children } = props;
+  const [tripUpdates, setTripUpdatesState] = useState({});
+  const [alerts, setAlertsState] = useState({});
+  const [vehiclePositions, setVehiclePositionsState] = useState({});
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    socket.on('received_trip_updates', (payload: any) => {
+      dispatch(setTripUpdates(payload));
+      setTripUpdatesState(payload);
+    });
+
+    socket.on('received_alerts', (payload: any) => {
+      setAlertsState(payload);
+    });
+
+    socket.on('received_vehicle_positions', (payload: any) => {
+      setVehiclePositionsState(payload);
+    });
+    () => socket.disconnect();
+  }, []);
+
+  return (
+    <SocketContext.Provider value={{
+      tripUpdates,
+      alerts,
+      vehiclePositions,
+      socket,
+    }}>
+      {children}
+    </SocketContext.Provider>
+  );
 };
-
-export class WrappedSocketManager extends Component<Props> {
-  state: IState = {
-    tripUpdates: {},
-    alerts: {},
-    vehiclePositions: {},
-    socket: null,
-  };
-  socket: SocketIOClient.Socket | null = null;
-
-  constructor(props: Props) {
-    super(props);
-
-    this.socket = SocketIOClient.io(gtfsApiUrl, {
-      transports: ['websocket'],
-      rejectUnauthorized: false,
-      secure: true,
-    });
-  
-    this.socket.on('received_trip_updates', (payload: any) => {
-      this.props.setTripUpdates(payload);
-      this.setState({
-        tripUpdates: payload,
-      });
-    });
-
-    this.socket.on('received_alerts', (payload: any) => {
-      this.setState({
-        alerts: payload.alerts,
-      });
-    });
-
-    this.socket.on('received_vehicle_positions', (payload: any) => {
-      this.setState({
-        vehiclePositions: payload.vehiclePositions,
-      });
-    });
-  }
-
-  componentWillUnmount () {
-    try {
-      this.socket !== null && this.socket.disconnect();
-    } catch (e) {
-      // socket not connected
-    }
-  }
-
-  render() {
-    const { tripUpdates, alerts, vehiclePositions } = this.state;
-    const { children } = this.props;
-
-    return (
-      <SocketContext.Provider value={{
-        tripUpdates,
-        alerts,
-        vehiclePositions,
-        socket: this.socket,
-      }}>
-        {children}
-      </SocketContext.Provider>
-    );
-  }
-}
-
-const mapDispatchToProps =  {
-  setTripUpdates,
-};
-
-export const SocketManager = connect(
-  null,
-  mapDispatchToProps)(WrappedSocketManager);
 
 export default SocketManager;
