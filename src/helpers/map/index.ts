@@ -119,7 +119,7 @@ export const getGeoJsonLayer = (data: FeatureCollection) => {
       const rgbArray: RGBArray = hexToRGBArray(d.properties.color);
       return [...rgbArray, 100];
     },
-    getRadius: 100,
+    getPointRadius: 100,
     getLineWidth: 1,
   });
 };
@@ -168,13 +168,13 @@ export const getTextLayer = (data: PlotData[], theme: string) => {
     sizeMaxPixels: 32,
     getPosition: (d: any) => d.coordinates,
     getText: (d: any) => d.properties.name,
-    getSize: 24,
+    getSize: 14,
     getAngle: 0,
     getTextAnchor: 'start',
     getAlignmentBaseline: 'center',
     getPixelOffset: [40, 0],
     getColor: fontColor,
-    backgroundColor: backgroundColor,
+    getBackgroundColor: () => backgroundColor,
     fontFamily: 'Arial, Helvetica, sans-serif',
     maxWidth: 500,
     wordBreak: 'break-word',
