@@ -1,11 +1,12 @@
-import React, { FC, ReactElement, useEffect } from 'react';
+import React, { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openRouteDetails } from '../../../features/ui/mapDetails';
 import { useSocket } from '../socket/SocketContext';
 import { getIconPath } from '../../../helpers/map';
-import { formatMinUntil } from '../../../helpers/functions';
+import { formatMinUntil, getSortedRoutes } from '../../../helpers/functions';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
+
 
 type Props = {
   data?: any;
@@ -14,9 +15,13 @@ type Props = {
 const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const { data } = props;
   const { agencyId, feedIndex, agencyTimezone } = useAppSelector(state => state.gtfs.agency);
+  const allRoutes = useAppSelector(state => state.gtfs.routes);
   const dispatch = useAppDispatch();
   const { socket, tripUpdates } = useSocket();
-  const { routeIds, stopTimeUpdates = [] } = tripUpdates;
+  const { routeIds = [], stopTimeUpdates = [] } = tripUpdates;
+
+  const routeObjs = routeIds.map((routeId: string) => allRoutes[routeId]);
+  const routes = useMemo(() => getSortedRoutes(routeObjs), [routeIds]);
 
   useEffect(() => {
     if (data && data.hasOwnProperty('properties')) {
@@ -39,14 +44,14 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
       className={styles.details}
     >
       <div className={styles.icons}>
-        {routeIds?.map((route: any) =>
+        {routes.map((route: any) =>
           <Image
-            key={route}
-            src={getIconPath(agencyId, route)}
+            key={route.routeId}
+            src={getIconPath(agencyId, route.routeId)}
             alt={route}
             width={46}
             height={46}
-            onClick={handleClick(agencyId, route)}
+            onClick={handleClick(agencyId, route.routeId)}
           />
         )}
       </div>

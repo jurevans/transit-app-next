@@ -89,3 +89,40 @@ export const formatMinUntil = (time: number, timezone: string) => {
   const minutes = (time - now) / 60;
   return minutes > 1 ? `${Math.round(minutes)} min` : 'Now';
 };
+
+/**
+ * Given an indexed routes Object or array, return a sorted array, with routes grouped
+ * by color
+ * @param routesObj
+ * @returns {any[]}
+ */
+export const getSortedRoutes = (routesObj: any) => {
+  // Check for object:
+  let routes: any[] = [];
+  const routesKeys = Object.keys(routesObj);
+  if (routesKeys.length > 0) {
+    routes = routesKeys.map((key: any) => routesObj[key])
+  }
+
+  // Sort by routeShortName initially:
+  routes.sort((a: any, b: any) => (a.routeShortName > b.routeShortName) ? -1 : 1);
+
+  // Group by color:
+  const groupedRoutes = routes.reduce((grouped: any, route: any) => {
+    const { routeColor } = route;
+    if (!grouped[routeColor]) {
+      grouped[routeColor] = [];
+    }
+    grouped[routeColor].push(route);
+    return grouped;
+  }, {});
+
+  // Flatten grouped arrays into a single array, then reverse:
+  return Object.keys(groupedRoutes)
+    .map((key: string) => groupedRoutes[key])
+    .reduce((arr: any[], routeArr: any[]) => {
+      arr.push(...routeArr);
+      return arr;
+    }, [])
+    .reverse();
+};

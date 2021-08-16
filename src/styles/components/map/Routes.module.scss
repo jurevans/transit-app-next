@@ -26,10 +26,23 @@
 
 .statusListItem {
   padding: 0;
-  margin: 0 0 20px 0;
+  margin: 0 0 12px 0;
+}
+
+.statusTextContainer {
+  display: flex;
+  margin-right: 10px;
 }
 
 .statusDateTime {
   font-size: 12px;
-  margin: 4px 0;
+  margin: 4px 0 0 auto;
+}
+
+.statusText {
+  display: block;
+  text-transform: lowercase;
+  &:first-letter {
+    text-transform: capitalize;
+  }
 }

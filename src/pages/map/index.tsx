@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Map from '../../ui/components/map/Map';
 import { wrapper } from '../../app/store';
 import { setAgency } from '../../features/gtfs/agencySlice';
-import { setStops, setTransfers } from '../../features/gtfs/stationsSlice';
 import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
@@ -65,17 +64,6 @@ export const getServerSideProps: GetServerSideProps =
   // Fetch route lines:
   const linesResponse: any = await fetch(`${API_URL}/api/lines?feedIndex=${feedIndex}`);
   const lines = await linesResponse.json();
-
-  // Fetch stops:
-  const stopsResponse: any = await fetch(`${API_URL}/api/stations/stops?feedIndex=${feedIndex}`);
-  const stops = await stopsResponse.json();
-
-  // Fetch transfers:
-  const transfersResponse: any = await fetch(`${API_URL}/api/stations/transfers?feedIndex=${feedIndex}`);
-  const transfers = await transfersResponse.json();
-
-  await store.dispatch(setStops(stops));
-  await store.dispatch(setTransfers(transfers));
 
   // Fetch routes:
   const routesResponse: any = await fetch(`${API_URL}/api/routes?feedIndex=${feedIndex}`);

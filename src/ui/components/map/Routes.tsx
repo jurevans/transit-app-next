@@ -1,12 +1,13 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, useMemo } from 'react';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/Routes.module.scss';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { getIconPath } from '../../../helpers/map';
+import { getSortedRoutes } from '../../../helpers/functions';
 import { openRouteDetails } from '../../../features/ui/mapDetails';
 
 const Routes: FC = (): ReactElement => {
-  const routes = useAppSelector((state: any) => state.gtfs.routes);
+  const routesObj = useAppSelector((state: any) => state.gtfs.routes);
   const { agencyId } = useAppSelector((state: any) => state.gtfs.agency);
   const { data: statusData } = useAppSelector((state: any) => state.realtime.status);
   const dispatch = useAppDispatch();
@@ -15,6 +16,8 @@ const Routes: FC = (): ReactElement => {
     dispatch(openRouteDetails({ agencyId, routeId }));
   };
 
+  // TODO: The following will be removed when Alerts are
+  // properly implemented:
   const statuses = statusData.map((status: any) => {
     const { name } = status;
     const routes = [];
@@ -31,19 +34,21 @@ const Routes: FC = (): ReactElement => {
     return {
       routes,
       ...status,
-    }
+    };
   });
+
+  const routes: any[] = useMemo(() => getSortedRoutes(routesObj), [routesObj]);
 
   return (
     <div className={styles.routes}>
       <ul className={styles.routeslist}>
-        {Object.keys(routes).map((key: string, i: number) =>
+        {routes.map((route: any, i: number) =>
           <li key={i}>
             <Image
-              src={getIconPath(agencyId, routes[key].routeId)}
+              src={getIconPath(agencyId, route.routeId)}
               width={46}
               height={46}
-              onClick={handleClick(agencyId, routes[key].routeId)}
+              onClick={handleClick(agencyId, route.routeId)}
             />
           </li>
         )}
@@ -64,10 +69,10 @@ const Routes: FC = (): ReactElement => {
                   />
                 )}
               </div>
-              <div className={styles.statusText}>
-                {status.status}
+              <div className={styles.statusTextContainer}>
+                <span className={styles.statusText}>{status.status}</span>
+                <span className={styles.statusDateTime}>{status.time} {status.date}</span>
               </div>
-              <p className={styles.statusDateTime}>{status.time} {status.date}</p>
             </li>
           )}
         </ul>
