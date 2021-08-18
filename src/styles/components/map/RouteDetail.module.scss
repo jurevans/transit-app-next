@@ -17,3 +17,26 @@
   display: flex;
   align-items: center;
 }
+
+.alerts {
+  display: flex;
+  flex-direction: column;
+}
+
+.alert {
+  padding: 0;
+}
+
+.alertHeader {
+  font-size: 18px;
+  padding: 20px 0;
+}
+
+.alertDescription {
+  font-size: 16px;
+}
+
+.alertDateTime {
+  font-size: 12px;
+  padding-top: 8px;
+}

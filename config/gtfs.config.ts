@@ -13,7 +13,7 @@ const gtfsConfig: Config = [
     // Specify route groupings if routes in feed are associated with
     // a line (e.g., NYC's MTA groups routes within historical lines)
     // using route IDs.
-    // NOTE: This is not a requirement:
+    // NOTE: This is optional:
     routeGroupings: [
       ['1', '2', '3'],
       ['4', '5', '6'],

@@ -76,26 +76,28 @@ const Routes: FC = (): ReactElement => {
 
   const makeAlerts = (alerts: any[]) => {
     return alerts.map((alert: any, i: number) => {
-      return <div key={i}>
-      <span className={styles.statusText}>
-        {alert.headerText}
-        {alert.routeId &&
-          <Image
-            src={getIconPath(agencyId, alert.routeId)}
-            width={20}
-            height={20}
-            className={styles.statusIcon}
-          />
-        }
-      </span>
-      <span className={styles.statusDateTime}>
+      return <div className={styles.statusItemContainer}>
+        <div className={styles.statusItem} key={i}>
+          <span className={styles.statusText}>
+            <span>{alert.headerText}</span>
+            {alert.routeId &&
+              <Image
+                src={getIconPath(agencyId, alert.routeId)}
+                width={16}
+                height={16}
+                className={styles.statusIcon}
+              />
+            }
+          </span>
+      </div>
+      <div className={styles.statusDateTime}>
         {alert.activePeriod.start
-          && DateTime.fromSeconds(alert.activePeriod.start).toLocaleString(DateTime.DATETIME_FULL)}
+          && DateTime.fromSeconds(alert.activePeriod.start).toLocaleString(DateTime.DATETIME_SHORT)}
         {(alert.activePeriod.end !== 0)
-          && <span> - {DateTime.fromSeconds(alert.activePeriod.end).toLocaleString(DateTime.DATETIME_FULL)}</span>}
-      </span>
+          && <>&nbsp;to {DateTime.fromSeconds(alert.activePeriod.end).toLocaleString(DateTime.DATETIME_SHORT)}</>}
+      </div>
     </div>
-    })
+    });
   };
 
   return (

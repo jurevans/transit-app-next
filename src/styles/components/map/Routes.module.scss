@@ -30,20 +30,23 @@
 }
 
 .statusTextContainer {
-  display: flex;
   margin-right: 10px;
 }
 
 .statusDateTime {
   font-size: 12px;
-  margin: 4px 0 0 auto;
+  margin: 8px 0;
+}
+
+.statusItemContainer {
+  margin-bottom: 8px;
+}
+
+.statusItem {
+  display: flex;
 }
 
 .statusText {
-  display: block;
-  text-transform: lowercase;
-
-  &:first-letter {
-    text-transform: capitalize;
-  }
+  display: flex;
+  align-items: center;
 }
