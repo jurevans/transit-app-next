@@ -65,7 +65,6 @@ const Routes: FC = (): ReactElement => {
                     width={20}
                     height={20}
                     className={styles.statusIcon}
-                    onClick={handleClick(agencyId, route)}
                   />
                 )}
               </div>

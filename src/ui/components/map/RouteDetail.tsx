@@ -30,16 +30,20 @@ const RouteDetail: FC<Props> = (props: Props): ReactElement => {
         />
         <h3>{route.routeLongName}</h3>
       </div>
-      <div className={styles.status}>
-        {/*status &&
-          <span>
-            <Link href={`/dashboard`}><strong>{status.status}</strong></Link>&nbsp;
-            {status.date && <span>as of {status.date} {status.time}</span>}
-        </span>*/}
+      <div>
+        <p>{route.routeDesc}</p>
       </div>
       <div>
         <a href={route.routeUrl} target="_blank">
-          <span>{route.routeId} Service Schedule &raquo;</span>
+          <span className={styles.routeServiceSchedule}>
+            <Image
+              src={getIconPath(agencyId, routeId)}
+              width={25}
+              height={25}
+              onClick={handleClick}
+            />
+            &nbsp;Subway Timetable (PDF) &raquo;
+          </span>
         </a>
       </div>
     </div>

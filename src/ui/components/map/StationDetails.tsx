@@ -7,7 +7,6 @@ import { getIconPath } from '../../../helpers/map';
 import { formatMinUntil, getSortedRoutes } from '../../../helpers/functions';
 import styles from '../../../styles/components/map/StationDetails.module.scss';
 
-
 type Props = {
   data?: any;
 };
