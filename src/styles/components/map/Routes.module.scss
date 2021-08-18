@@ -42,6 +42,7 @@
 .statusText {
   display: block;
   text-transform: lowercase;
+
   &:first-letter {
     text-transform: capitalize;
   }
