@@ -1,20 +1,30 @@
-import React, { FC, ReactElement, useMemo } from 'react';
+import React, { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import styles from '../../../styles/components/map/Routes.module.scss';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { useSocket } from '../socket/SocketContext';
 import { getIconPath } from '../../../helpers/map';
 import { getSortedRoutes } from '../../../helpers/functions';
 import { openRouteDetails } from '../../../features/ui/mapDetails';
 
 const Routes: FC = (): ReactElement => {
   const routesObj = useAppSelector((state: any) => state.gtfs.routes);
-  const { agencyId } = useAppSelector((state: any) => state.gtfs.agency);
+  const { agencyId, feedIndex } = useAppSelector((state: any) => state.gtfs.agency);
   const { data: statusData } = useAppSelector((state: any) => state.realtime.status);
   const dispatch = useAppDispatch();
+
+  const { socket, alerts } = useSocket();
 
   const handleClick = (agencyId: string, routeId: any) => () => {
     dispatch(openRouteDetails({ agencyId, routeId }));
   };
+
+  useEffect(() => {
+    socket?.emit('alerts', { feedIndex });
+    return () => {
+      socket?.emit('cancel_alerts');
+    };
+  }, []);
 
   // TODO: The following will be removed when Alerts are
   // properly implemented:

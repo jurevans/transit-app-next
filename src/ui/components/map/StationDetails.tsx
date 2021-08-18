@@ -17,7 +17,7 @@ const StationDetails: FC<Props> = (props: Props): ReactElement => {
   const allRoutes = useAppSelector(state => state.gtfs.routes);
   const dispatch = useAppDispatch();
   const { socket, tripUpdates } = useSocket();
-  const { routeIds = [], stopTimeUpdates = [] } = tripUpdates;
+  const { routeIds = [], stopTimeUpdates = [] } = tripUpdates[feedIndex] ? tripUpdates[feedIndex] : {};
 
   const routeObjs = routeIds.map((routeId: string) => allRoutes[routeId]);
   const routes = useMemo(() => getSortedRoutes(routeObjs), [routeIds]);

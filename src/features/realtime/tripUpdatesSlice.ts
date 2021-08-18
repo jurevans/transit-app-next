@@ -1,11 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface TripUpdatesState {
-  stationId?: string;
-  transfers?: string[];
-  routeIds?: string[];
-  stopTimeUpdates?: any[];
-}
+type TripUpdates = {
+  stationId: string;
+  transfers: string[];
+  routeIds: string[];
+  stopTimeUpdates: any[];
+};
+
+type TripUpdatesState = {
+  [key: string]: TripUpdates;
+};
 
 const initialState: TripUpdatesState = {};
 
@@ -14,11 +18,20 @@ const tripUpdatesSlice = createSlice({
   initialState,
   reducers: {
     setTripUpdates(state, action: PayloadAction<any>) {
-      const { stationId, transfers, routeIds, stopTimeUpdates } = action.payload;
-      state.stationId = stationId;
-      state.transfers = transfers;
-      state.routeIds = routeIds;
-      state.stopTimeUpdates = stopTimeUpdates;
+      const {
+        feedIndex,
+        stationId,
+        transfers,
+        routeIds,
+        stopTimeUpdates,
+      } = action.payload;
+
+      state[feedIndex] = {
+        stationId,
+        transfers,
+        routeIds,
+        stopTimeUpdates,
+      }
     },
   },
 });

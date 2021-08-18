@@ -7,6 +7,7 @@ import statusReducer from './realtime/statusSlice';
 import stationsReducer from './gtfs/stationsSlice';
 import routesReducer from './gtfs/routesSlice';
 import tripUpdatesReducer from './realtime/tripUpdatesSlice';
+import alertsReducer from './realtime/alertsSlice';
 
 const rootReducer = {
   ui: combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = {
   realtime: combineReducers({
     tripUpdates: tripUpdatesReducer,
     status: statusReducer,
+    alerts: alertsReducer,
   }),
 };
 

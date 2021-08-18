@@ -26,6 +26,7 @@ const Details: FC = (): ReactElement => {
     );
     return () => clearInterval(timer);
   }, []);
+
   return (
     <div
       className={styles.details}
