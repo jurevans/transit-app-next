@@ -35,8 +35,11 @@ const Routes: FC = (): ReactElement => {
   }, []);
 
   // TODO: Clean up this mess if possible:
+  // The following takes a configuration describing how to group routes together,
+  // along with all of the relevant alerts. If no configuration is present, simply
+  // don't group:
   const alertRoutes = useMemo(() => {
-    let alertRoutes: any[] = [];
+    const alertRoutes: any[] = [];
     if (alertsForFeed) {
       if (routeGroupings && routeGroupings.length > 0) {
         routeGroupings.forEach((routeGroup: any) => {
@@ -74,10 +77,10 @@ const Routes: FC = (): ReactElement => {
     return alertRoutes;
   }, [alertsForFeed]);
 
-  const makeAlerts = (alerts: any[]) => {
+  const makeAlerts = (alerts: any[]): ReactElement[] => {
     return alerts.map((alert: any, i: number) => {
-      return <div className={styles.statusItemContainer}>
-        <div className={styles.statusItem} key={i}>
+      return <div key={i} className={styles.statusItemContainer}>
+        <div className={styles.statusItem}>
           <span className={styles.statusText}>
             <span>{alert.headerText}</span>
             {alert.routeId &&

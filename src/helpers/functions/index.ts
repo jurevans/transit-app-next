@@ -126,3 +126,12 @@ export const getSortedRoutes = (routesObj: any) => {
     }, [])
     .reverse();
 };
+
+/**
+ * Strip all HTML tags from text
+ * @param {string} text
+ * @returns {string}
+ */
+export const stripTags = (text: string) => {
+  return text.replace(/(<([^>]+)>)/gi, '');
+};

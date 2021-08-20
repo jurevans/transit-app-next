@@ -1,4 +1,4 @@
-.routes {
+.route {
   font-family: Arial, Helvetica, sans-serif;
   width: auto;
   height: auto;
@@ -16,6 +16,11 @@
 .routeServiceSchedule {
   display: flex;
   align-items: center;
+}
+
+.alertsContainer {
+  height: 200px;
+  overflow-y: auto;
 }
 
 .alerts {
