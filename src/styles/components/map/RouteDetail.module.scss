@@ -1,0 +1,47 @@
+.route {
+  font-family: Arial, Helvetica, sans-serif;
+  width: auto;
+  height: auto;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+
+  h3 {
+    padding-left: 5px;
+  }
+}
+
+.routeServiceSchedule {
+  display: flex;
+  align-items: center;
+}
+
+.alertsContainer {
+  height: 200px;
+  overflow-y: auto;
+}
+
+.alerts {
+  display: flex;
+  flex-direction: column;
+}
+
+.alert {
+  padding: 0;
+}
+
+.alertHeader {
+  font-size: 18px;
+  padding: 20px 0;
+}
+
+.alertDescription {
+  font-size: 16px;
+}
+
+.alertDateTime {
+  font-size: 12px;
+  padding-top: 8px;
+}

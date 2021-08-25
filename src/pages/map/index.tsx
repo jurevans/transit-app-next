@@ -4,10 +4,10 @@ import Head from 'next/head';
 import Map from '../../ui/components/map/Map';
 import { wrapper } from '../../app/store';
 import { setAgency } from '../../features/gtfs/agencySlice';
-import { setStops, setTransfers } from '../../features/gtfs/stationsSlice';
 import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
+import SocketManager from '../../ui/components/socket/SocketManager';
 
 type Props = {
   stations: any[],
@@ -25,10 +25,12 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
         <meta name="description" content="Transit App - Map" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Map
-        stations={stations}
-        lines={lines}
-        location={location} />
+      <SocketManager>
+        <Map
+          stations={stations}
+          lines={lines}
+          location={location} />
+      </SocketManager>
     </div>
   );
 };
@@ -42,6 +44,11 @@ export const getServerSideProps: GetServerSideProps =
   // identified by associated agency. For now, load the first one:
   const { feedIndex, agencyId } = feed[0];
 
+  if (!feedIndex) {
+    return {
+      notFound: true,
+    };
+  }
   // Fetch agency:
   const agencyResponse = await fetch(`${API_URL}/api/agency/${agencyId}?feedIndex=${feedIndex}`);
   const agency = await agencyResponse.json();
@@ -62,17 +69,6 @@ export const getServerSideProps: GetServerSideProps =
   // Fetch route lines:
   const linesResponse: any = await fetch(`${API_URL}/api/lines?feedIndex=${feedIndex}`);
   const lines = await linesResponse.json();
-
-  // Fetch stops:
-  const stopsResponse: any = await fetch(`${API_URL}/api/stations/stops?feedIndex=${feedIndex}`);
-  const stops = await stopsResponse.json();
-
-  // Fetch transfers:
-  const transfersResponse: any = await fetch(`${API_URL}/api/stations/transfers?feedIndex=${feedIndex}`);
-  const transfers = await transfersResponse.json();
-
-  await store.dispatch(setStops(stops));
-  await store.dispatch(setTransfers(transfers));
 
   // Fetch routes:
   const routesResponse: any = await fetch(`${API_URL}/api/routes?feedIndex=${feedIndex}`);

@@ -54,24 +54,14 @@ export const getScatterplotLayer = (data: PlotData[]) => {
     filled: true,
     pickable: true,
     radiusScale: 6,
-    radiusMinPixels: 5,
+    radiusMinPixels: 3,
     radiusMaxPixels: 30,
-    lineWidthMinPixels: 3,
+    lineWidthMinPixels: 2,
+    lineWidthMaxPixels: 5,
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => d.properties.routes.length,
-    getFillColor: (d: any): RGBAColor => {
-      const rgbArray: RGBArray = hexToRGBArray(d.properties.routes[0].color);
-      return [...rgbArray, 255];
-    },
-    getLineColor: (d: any): RGBAColor => {
-      const colors = d.properties.routes.map((route: any) => route.color);
-      let useColor = colors[0];
-
-      const secondColor = colors.find((color: string) => color !== useColor);
-      useColor = secondColor || useColor;
-      const rgbArray: RGBArray = hexToRGBArray(useColor);
-      return [...rgbArray, 255];
-    }
+    getFillColor: (d: any): RGBAColor => [255, 255, 255, 255],
+    getLineColor: (d: any): RGBAColor => [0, 0, 0, 255],
   });
 };
 
@@ -118,18 +108,22 @@ export const isPlotPicker = (data: PickerObject): boolean => {
   return !!object.properties.routes;
 };
 
-export const getGeoJsonLayer = (data: FeatureCollection) => {
+export const getGeoJsonLayer = (data: FeatureCollection, selectedRouteId?: string) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,
     pickable: true,
-    lineWidthScale: 20,
+    lineWidthScale: 10,
     lineWidthMinPixels: 2,
     getLineColor: (d: any) => {
-      const rgbArray: RGBArray = hexToRGBArray(d.properties.color);
-      return [...rgbArray, 100];
+      const { color, routeId } = d.properties;
+      if (!selectedRouteId || routeId === selectedRouteId) {
+        const rgbArray: RGBArray = hexToRGBArray(color);
+        return [...rgbArray, 100];
+      }
+      return [160, 160, 160, 100];
     },
-    getRadius: 100,
+    getPointRadius: 100,
     getLineWidth: 1,
   });
 };
@@ -178,13 +172,13 @@ export const getTextLayer = (data: PlotData[], theme: string) => {
     sizeMaxPixels: 32,
     getPosition: (d: any) => d.coordinates,
     getText: (d: any) => d.properties.name,
-    getSize: 24,
+    getSize: 14,
     getAngle: 0,
     getTextAnchor: 'start',
     getAlignmentBaseline: 'center',
     getPixelOffset: [40, 0],
     getColor: fontColor,
-    backgroundColor: backgroundColor,
+    getBackgroundColor: () => backgroundColor,
     fontFamily: 'Arial, Helvetica, sans-serif',
     maxWidth: 500,
     wordBreak: 'break-word',
