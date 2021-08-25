@@ -7,6 +7,7 @@ import {
   useState,
   useMemo,
   useCallback,
+  useEffect,
 } from 'react';
 import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
@@ -22,7 +23,7 @@ import Details from './Details';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/ui/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/ui/mapStyleSlice';
-import { updatedStationDetails } from '../../../features/ui/mapDetails';
+import { openStationDetails, updatedStationDetails } from '../../../features/ui/mapDetails';
 import {
   getInRange,
   getDurationForTransition,
@@ -57,6 +58,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   const { longitude, latitude } = location;
   const dispatch = useAppDispatch();
   const { data: popupData, isOpen: isPopupOpen } = useAppSelector(state => state.ui.mapPopup);
+  const { routeId } = useAppSelector(state => state.ui.stationDetails.routeDetailsData);
+  const { isRouteDetailsOpen } = useAppSelector(state => state.ui.stationDetails);
   const deckRef = useRef<DeckGL>(null);
   const [tooltipData, updateTooltip] = useState(null);
   const { style: mapStyle } = useAppSelector(state => state.ui.mapStyle);
@@ -93,14 +96,12 @@ const Map: FC<Props> = (props: Props): ReactElement => {
       latitude,
     },
     layers: [
-      // TODO: When determining path-layer IDs, add these to global state to
-      // be referenced later, e.g., if we want to filter/alter any:
-      getGeoJsonLayer(lines),
       getScatterplotLayer(stations),
     ],
   }), [lines, stations]);
 
   const [mapViewState, setViewState] = useState(initialViewState);
+  const { layers, viewState } = mapViewState;
 
   const goToPopup = (data: any) => {
     const duration = getDurationForTransition({
@@ -131,6 +132,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     setTimeout(() => {
       dispatch(openPopup(data));
       dispatch(updatedStationDetails(data));
+      dispatch(openStationDetails(data));
     }, duration - 100);
 
     updateTooltip(null);
@@ -218,14 +220,43 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     }
   };
 
+  // Update GeoJsonLayer to highlight selected route
+  // TODO: This doesn't work, even though logically it really seems like it should.
+  // Removing layers updates the map, but, for some reason, replacing the
+  // GeoJSONLayer with one of a different configuration does not get reflected
+  // in the updated map state. This should be revisited in a future PR:
+  useEffect(() => {
+    const layerId = 'geojson-line-layer';
+    const layers = [...mapViewState.layers];
+
+    const index = layers.map(layer => layer.id).indexOf(layerId);
+    if (index > -1) {
+      layers.splice(index, 1);
+    }
+
+    if (isRouteDetailsOpen) {
+      // Highlight route color
+      layers.unshift(getGeoJsonLayer(lines, routeId));
+    } else {
+      // Show all route colors
+      layers.unshift(getGeoJsonLayer(lines));
+    }
+
+    setViewState({
+      ...mapViewState,
+      layers,
+    });
+
+  }, [isRouteDetailsOpen, routeId]);
+
   return (
     <div className={styles.map} onClick={handleClick} onContextMenu={event => event.preventDefault()}>
       <DeckGL
         id="deck"
         ref={deckRef}
-        viewState={mapViewState.viewState}
+        viewState={viewState}
         onViewStateChange={handleViewStateChange}
-        layers={mapViewState.layers}
+        layers={layers}
         ContextProvider={MapContext.Provider as ProviderExoticComponent<ProviderProps<any>>}
         onHover={(d: any) => handleHover(d)}
         views={[

@@ -108,7 +108,7 @@ export const isPlotPicker = (data: PickerObject): boolean => {
   return !!object.properties.routes;
 };
 
-export const getGeoJsonLayer = (data: FeatureCollection) => {
+export const getGeoJsonLayer = (data: FeatureCollection, selectedRouteId?: string) => {
   return new GeoJsonLayer({
     id: 'geojson-line-layer',
     data,
@@ -116,8 +116,12 @@ export const getGeoJsonLayer = (data: FeatureCollection) => {
     lineWidthScale: 10,
     lineWidthMinPixels: 2,
     getLineColor: (d: any) => {
-      const rgbArray: RGBArray = hexToRGBArray(d.properties.color);
-      return [...rgbArray, 100];
+      const { color, routeId } = d.properties;
+      if (!selectedRouteId || routeId === selectedRouteId) {
+        const rgbArray: RGBArray = hexToRGBArray(color);
+        return [...rgbArray, 100];
+      }
+      return [160, 160, 160, 100];
     },
     getPointRadius: 100,
     getLineWidth: 1,

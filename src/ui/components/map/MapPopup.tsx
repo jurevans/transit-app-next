@@ -1,10 +1,9 @@
 import { FC, ReactElement } from 'react';
 import { Popup } from 'react-map-gl';
+import Image from 'next/image';
 import { closePopup } from '../../../features/ui/mapPopupSlice';
-import { openStationDetails } from '../../../features/ui/mapDetails';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getIconPath } from '../../../helpers/map';
-import Image from 'next/image';
 import styles from '../../../styles/components/map/MapPopup.module.scss';
 
 type Props = {
@@ -14,17 +13,10 @@ type Props = {
 const MapPopup:FC<Props> = (props: Props):ReactElement => {
   const { data } = props;
   const dispatch = useAppDispatch();
-  const isStationDetailsOpen = useAppSelector(state => state.ui.stationDetails.isStationDetailsOpen);
   const { agencyId } = useAppSelector(state => state.gtfs.agency);
 
   const handleClose = () => {
     dispatch(closePopup());
-  };
-
-  const handleOpenDetails = () => {
-    if (!isStationDetailsOpen) {
-      dispatch(openStationDetails(data));
-    }
   };
 
   return (data &&
@@ -53,19 +45,13 @@ const MapPopup:FC<Props> = (props: Props):ReactElement => {
         </div>
         <div className={styles.content}>
           <p className={styles.name}>{data.properties.name}</p>
-          <ul className={styles.longNameList}>
-            {data.properties.routes.map((routeInfo: any, i: number) =>
-              <li key={i} className={styles.longName}>{routeInfo.name} - {routeInfo.longName}</li>
-            )}
-          </ul>
           <div className={styles.buttons}>
-            <button onClick={handleOpenDetails}>Status</button>
             <button className={styles.close} onClick={handleClose}>Close</button>
           </div>
         </div>
       </div>
     </Popup>
-  )
+  );
 };
 
 export default MapPopup;

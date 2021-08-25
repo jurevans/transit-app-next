@@ -44,6 +44,11 @@ export const getServerSideProps: GetServerSideProps =
   // identified by associated agency. For now, load the first one:
   const { feedIndex, agencyId } = feed[0];
 
+  if (!feedIndex) {
+    return {
+      notFound: true,
+    };
+  }
   // Fetch agency:
   const agencyResponse = await fetch(`${API_URL}/api/agency/${agencyId}?feedIndex=${feedIndex}`);
   const agency = await agencyResponse.json();
