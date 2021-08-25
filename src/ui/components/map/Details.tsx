@@ -17,16 +17,6 @@ const Details: FC = (): ReactElement => {
   const { agencyId, routeId } = useAppSelector((state: any) => state.ui.stationDetails.routeDetailsData)
   const dispatch = useAppDispatch();
 
-  // TODO: This will be removed once alerts are properly implemented
-  useEffect(() => {
-    dispatch(fetchServiceStatus());
-    const timer = setInterval(
-      () => dispatch(fetchServiceStatus()),
-      60000,
-    );
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div
       className={styles.details}
