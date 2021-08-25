@@ -109,22 +109,36 @@ export const isPlotPicker = (data: PickerObject): boolean => {
 };
 
 export const getGeoJsonLayer = (data: FeatureCollection, selectedRouteId?: string) => {
+  const id = selectedRouteId ? `geojson-line-layer-${selectedRouteId}` : 'geojson-line-layer';
   return new GeoJsonLayer({
-    id: 'geojson-line-layer',
+    id,
     data,
     pickable: true,
     lineWidthScale: 10,
     lineWidthMinPixels: 2,
     getLineColor: (d: any) => {
       const { color, routeId } = d.properties;
-      if (!selectedRouteId || routeId === selectedRouteId) {
-        const rgbArray: RGBArray = hexToRGBArray(color);
-        return [...rgbArray, 100];
+      let opacity;
+      if (selectedRouteId) {
+        if (routeId === selectedRouteId) {
+          opacity = 256;
+        } else {
+          opacity = 20;
+        }
+      } else {
+        opacity = 160;
       }
-      return [160, 160, 160, 100];
+      const rgbArray: RGBArray = hexToRGBArray(color);
+      return [...rgbArray, opacity];
     },
     getPointRadius: 100,
-    getLineWidth: 1,
+    getLineWidth: (d: any) => {
+      const { routeId } = d.properties;
+      if (selectedRouteId && routeId === selectedRouteId) {
+        return 3;
+      }
+      return 1;
+    },
   });
 };
 
