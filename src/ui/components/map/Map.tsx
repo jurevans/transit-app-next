@@ -264,7 +264,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         />
         {isPopupOpen && <MapPopup data={popupData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
-        <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
+        <NavigationControl style={{ right: 10, top: 10 }} captureClick={true} capturePointerMove={true} />
         <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
         <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
       </DeckGL>

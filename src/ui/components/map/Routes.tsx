@@ -83,14 +83,6 @@ const Routes: FC = (): ReactElement => {
         <div className={styles.statusItem}>
           <span className={styles.statusText}>
             <span>{alert.headerText}</span>
-            {alert.routeId &&
-              <Image
-                src={getIconPath(agencyId, alert.routeId)}
-                width={16}
-                height={16}
-                className={styles.statusIcon}
-              />
-            }
           </span>
       </div>
       <div className={styles.statusDateTime}>

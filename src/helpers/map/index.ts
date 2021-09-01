@@ -123,7 +123,7 @@ export const getGeoJsonLayer = (data: FeatureCollection, selectedRouteId?: strin
         if (routeId === selectedRouteId) {
           opacity = 256;
         } else {
-          opacity = 20;
+          opacity = 15;
         }
       } else {
         opacity = 160;
