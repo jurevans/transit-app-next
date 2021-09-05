@@ -3,11 +3,13 @@ import { GetServerSideProps, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Map from '../../ui/components/map/Map';
 import { wrapper } from '../../app/store';
+import { setFeeds } from '../../features/gtfs/feedsSlice';
 import { setAgency } from '../../features/gtfs/agencySlice';
 import { setRoutes } from '../../features/gtfs/routesSlice';
 import { FeatureCollection } from '../../helpers/map';
 import { API_URL } from '../../../config/api.config';
 import SocketManager from '../../ui/components/socket/SocketManager';
+import GTFSConfig from '../../../config/gtfs.config';
 
 type Props = {
   stations: any[],
@@ -37,25 +39,48 @@ const MapPage: NextPage<Props> = (props: Props): ReactElement => {
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(store => async ({ params }: GetServerSidePropsContext) => {
+  const { latitude, longitude } = GTFSConfig;
+
   // Fetch feeds:
   const feedResponse = await fetch(`${API_URL}/api/feed`);
-  const feed = await feedResponse.json();
+  const feedsData = await feedResponse.json();
+
+  const feedIndicesQuery = feedsData.map((feed: any) => feed.feedIndex).join(',');
+  const agenciesResponse = await fetch(`${API_URL}/api/agency/${feedIndicesQuery}`);
+  const agencies = await agenciesResponse.json();
+
+  const feeds = feedsData.map((feed: any) => ({
+    ...feed,
+    agencies: agencies.filter((agency: any) => agency.feedIndex === feed.feedIndex),
+  }));
+
+  await store.dispatch(setFeeds(feeds));
+
   // In the future, there may be a configuration option to select which feed to load,
   // identified by associated agency. For now, load the first one:
-  const { feedIndex, agencyId } = feed[0];
+  const { feedIndex } = feeds[0];
 
   if (!feedIndex) {
     return {
       notFound: true,
     };
   }
+
   // Fetch agency:
-  const agencyResponse = await fetch(`${API_URL}/api/agency/${agencyId}?feedIndex=${feedIndex}`);
-  const agency = await agencyResponse.json();
+  const agency = agencies[0];
 
   // Fetch location data for feed:
-  const locationResponse = await fetch(`${API_URL}/api/location/${feedIndex}`);
-  const location: any = await locationResponse.json();
+  let location: any;
+
+  if (!latitude || !longitude) {
+    const locationResponse = await fetch(`${API_URL}/api/location/${feedIndex}`);
+    location = await locationResponse.json();
+  } else {
+    location = {
+      latitude,
+      longitude,
+    };
+  }
 
   await store.dispatch(setAgency({
     ...agency,

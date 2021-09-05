@@ -14,7 +14,7 @@ const Routes: FC = (): ReactElement => {
   const { agencyId, feedIndex, agencyTimezone } = useAppSelector((state: any) => state.gtfs.agency);
   const dispatch = useAppDispatch();
   const { socket, alerts } = useSocket();
-  const config = gtfsConfig.find((config: any) => config.feedIndex === feedIndex);
+  const config = gtfsConfig; // TODO: Implement for multiple feeds
   const alertsForFeed = alerts[feedIndex];
   const { routeGroupings } = config as ConfigItem;
   const routes: any[] = useMemo(() => getSortedRoutes(routesObj), [routesObj]);
