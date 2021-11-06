@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import styles from '../../../styles/components/map/Routes.module.scss';
+import styles from '../../../styles/components/panel/Routes.module.scss';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { useSocket } from '../socket/SocketContext';
 import { getIconPath } from '../../../helpers/map';
@@ -14,7 +14,7 @@ const Routes: FC = (): ReactElement => {
   const { agencyId, feedIndex, agencyTimezone } = useAppSelector((state: any) => state.gtfs.agency);
   const dispatch = useAppDispatch();
   const { socket, alerts } = useSocket();
-  const config = gtfsConfig.find((config: any) => config.feedIndex === feedIndex);
+  const config = gtfsConfig; // TODO: Implement for multiple feeds
   const alertsForFeed = alerts[feedIndex];
   const { routeGroupings } = config as ConfigItem;
   const routes: any[] = useMemo(() => getSortedRoutes(routesObj), [routesObj]);
@@ -83,14 +83,6 @@ const Routes: FC = (): ReactElement => {
         <div className={styles.statusItem}>
           <span className={styles.statusText}>
             <span>{alert.headerText}</span>
-            {alert.routeId &&
-              <Image
-                src={getIconPath(agencyId, alert.routeId)}
-                width={16}
-                height={16}
-                className={styles.statusIcon}
-              />
-            }
           </span>
       </div>
       <div className={styles.statusDateTime}>

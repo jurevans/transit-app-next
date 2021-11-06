@@ -1,6 +1,9 @@
 # transit-app-next
 The goal of this project is to provide a 3D transit map (based on [DeckGL](https://deck.gl/) and [MapBox](https://www.mapbox.com/)) with real-time updates, utilizing GTFS feed data. This should work with any GTFS dataset (ideally), and will transit types such as subway, rail, bus, etc., so long as it is in GTFS format. This app is built with [NextJS](https://nextjs.org/), [TypeScript](https://www.typescriptlang.org/), and [Redux Toolkit](https://redux-toolkit.js.org/).
 
+### [Screenshots &raquo;](#screenshots)
+
+
 ## Setting up the development environment
 Before running the app, you need to set up a couple variables in an `.env.local` file,
 which needs to be in the root of the project directory:
@@ -70,3 +73,20 @@ public/icons/MTA NYCT/3.svg
 
 ## TODO
 This is a work-in-progress! As the API is built out, integrating more of the GTFS static and realtime data, this will be expanded into a more useful web application. The goal is that this project remains suited and easily adapted to any GTFS feed with minimal effort.
+
+# Screenshots
+
+Station detail, dark theme:
+![Station detail, dark theme](https://imgur.com/HOyGj7P.png)
+
+Routes detail, dark theme:
+![Routes detail, dark theme](https://imgur.com/pGYI6R2.png)
+
+Route detail, dark theme:
+![Route detail, dark theme](https://imgur.com/yIoUbI4.png)
+
+Station detail, outdoor theme:
+![Station detail, outdoor theme](https://imgur.com/1a4Bt4s.png)
+
+Station detail - no trains, light theme:
+![Station detail - no trains, light theme](https://imgur.com/dYRx7fe.png)

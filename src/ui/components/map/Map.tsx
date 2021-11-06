@@ -13,13 +13,13 @@ import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
   _MapContext as MapContext,
   NavigationControl,
-  GeolocateControl,
-  FullscreenControl,
+  //GeolocateControl,
+  //FullscreenControl,
 } from 'react-map-gl';
 import MapTooltip from './MapTooltip';
 import MapPopup from './MapPopup';
 import SelectMapStyle from './SelectMapStyle';
-import Details from './Details';
+import Details from '../panel/Details';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/ui/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/ui/mapStyleSlice';
@@ -220,25 +220,15 @@ const Map: FC<Props> = (props: Props): ReactElement => {
     }
   };
 
-  // Update GeoJsonLayer to highlight selected route
-  // TODO: This doesn't work, even though logically it really seems like it should.
-  // Removing layers updates the map, but, for some reason, replacing the
-  // GeoJSONLayer with one of a different configuration does not get reflected
-  // in the updated map state. This should be revisited in a future PR:
+  // Update layers to highlight selected route
   useEffect(() => {
-    const layerId = 'geojson-line-layer';
-    const layers = [...mapViewState.layers];
-
-    const index = layers.map(layer => layer.id).indexOf(layerId);
-    if (index > -1) {
-      layers.splice(index, 1);
-    }
+    const layers = mapViewState.layers
+      .filter((layer: any) => !layer.id.match(/geojson-line-layer/));
 
     if (isRouteDetailsOpen) {
-      // Highlight route color
+      // Highlight route
       layers.unshift(getGeoJsonLayer(lines, routeId));
     } else {
-      // Show all route colors
       layers.unshift(getGeoJsonLayer(lines));
     }
 
@@ -252,7 +242,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
   return (
     <div className={styles.map} onClick={handleClick} onContextMenu={event => event.preventDefault()}>
       <DeckGL
-        id="deck"
+        id='deck'
         ref={deckRef}
         viewState={viewState}
         onViewStateChange={handleViewStateChange}
@@ -264,7 +254,7 @@ const Map: FC<Props> = (props: Props): ReactElement => {
             id: 'base-map',
             controller: true,
             inertia: true,
-            doubleClickZoom: false,
+            doubleClickZoom: true,
           }),
         ]}
       >
@@ -274,9 +264,9 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         />
         {isPopupOpen && <MapPopup data={popupData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
-        <NavigationControl style={{ right: 10,top: 10 }} captureClick={true} capturePointerMove={true} />
-        <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
-        <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
+        <NavigationControl style={{ right: 10, top: 10 }} captureClick={true} capturePointerMove={true} />
+        {/*<GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} /> */}
+        {/*<FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />*/}
       </DeckGL>
       <Details />
       {tooltipData && <MapTooltip data={tooltipData} />}

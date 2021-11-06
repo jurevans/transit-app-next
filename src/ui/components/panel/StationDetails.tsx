@@ -5,7 +5,7 @@ import { openRouteDetails } from '../../../features/ui/mapDetails';
 import { useSocket } from '../socket/SocketContext';
 import { getIconPath } from '../../../helpers/map';
 import { formatMinUntil, getSortedRoutes } from '../../../helpers/functions';
-import styles from '../../../styles/components/map/StationDetails.module.scss';
+import styles from '../../../styles/components/panel/StationDetails.module.scss';
 
 type Props = {
   data?: any;

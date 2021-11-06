@@ -1,11 +1,9 @@
 import { FC, ReactElement } from 'react';
-import Routes from './Routes';
+import Routes from '../panel/Routes';
 import RouteDetail from './RouteDetail';
-import StationDetails from './StationDetails';
-import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import styles from '../../../styles/components/map/Details.module.scss';
-import { useEffect } from 'react';
-import { fetchServiceStatus } from '../../../features/realtime/statusSlice';
+import StationDetails from '../panel/StationDetails';
+import { useAppSelector } from '../../../app/hooks';
+import styles from '../../../styles/components/panel/Details.module.scss';
 
 const Details: FC = (): ReactElement => {
   const {
@@ -15,7 +13,6 @@ const Details: FC = (): ReactElement => {
     stationData,
   } = useAppSelector((state: any) => state.ui.stationDetails);
   const { agencyId, routeId } = useAppSelector((state: any) => state.ui.stationDetails.routeDetailsData)
-  const dispatch = useAppDispatch();
 
   return (
     <div

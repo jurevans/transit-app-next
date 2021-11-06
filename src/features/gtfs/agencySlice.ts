@@ -40,7 +40,7 @@ const agencySlice = createSlice({
       return {
         ...state,
         ...action.payload.gtfs.agency,
-      }
+      };
     },
   },
 });

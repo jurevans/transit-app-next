@@ -31,7 +31,7 @@ const SelectMapStyle: FC<Props> = (props: Props): ReactElement => {
 
   return (
     <HTMLOverlay
-      captureDrag={true} // change to true once I figure out the height style issue
+      captureDrag={true}
       captureScroll={true}
       captureClick={true}
       captureDoubleClick={true}
