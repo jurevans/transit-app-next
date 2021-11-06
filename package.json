@@ -17,7 +17,6 @@
     "@reduxjs/toolkit": "^1.6.2",
     "deck.gl": "^8.6.2",
     "luxon": "^2.0.2",
-    "mongodb": "^3.7.3",
     "next": "^11.1.2",
     "next-redux-wrapper": "^7.0.5",
     "react": "17.0.2",
@@ -25,18 +24,15 @@
     "react-map-gl": "^6.1.17",
     "react-redux": "^7.2.6",
     "sass": "^1.43.4",
-    "socket.io-client": "^4.3.2",
-    "xml2js": "^0.4.23"
+    "socket.io-client": "^4.3.2"
   },
   "devDependencies": {
     "@danmarshall/deckgl-typings": "^4.9.8",
     "@types/enzyme": "^3.10.10",
     "@types/jest": "^26.0.24",
     "@types/luxon": "^1.27.1",
-    "@types/mongodb": "^3.6.20",
     "@types/react": "17.0.13",
     "@types/react-map-gl": "^5.2.11",
-    "@types/xml2js": "^0.4.9",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.5",
     "enzyme": "^3.11.0",
     "eslint": "7.30.0",
