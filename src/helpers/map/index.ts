@@ -1,5 +1,5 @@
 import { ScatterplotLayer, GeoJsonLayer, TextLayer, PathLayer } from '@deck.gl/layers';
-import { RGBAColor } from "@deck.gl/core/utils/color";
+import { RGBAColor } from '@deck.gl/core/utils/color';
 import { hexToRGBArray, RGBArray } from '../functions';
 
 export interface Route {
@@ -60,8 +60,8 @@ export const getScatterplotLayer = (data: PlotData[]) => {
     lineWidthMaxPixels: 5,
     getPosition: (d: any) =>  d.coordinates,
     getRadius: (d: any) => d.properties.routes.length,
-    getFillColor: (d: any): RGBAColor => [255, 255, 255, 255],
-    getLineColor: (d: any): RGBAColor => [0, 0, 0, 255],
+    getFillColor: (): RGBAColor => [255, 255, 255, 255],
+    getLineColor: (): RGBAColor => [0, 0, 0, 255],
   });
 };
 
@@ -101,7 +101,7 @@ export const getTooltipObject = (data: PickerObject, isStation?: boolean): Toolt
     x,
     y,
   };
-}
+};
 
 export const isPlotPicker = (data: PickerObject): boolean => {
   const { object } = data;
@@ -149,7 +149,6 @@ export const getPathLayer = (id: string='path-layer', data: any) => {
     pickable: true,
     widthScale: 10,
     widthMinPixels: 1,
-    rounded: true,
     getPath: (d: any) => d.path,
     getColor: (d: any): RGBAColor => {
       const rgbArray: RGBArray = hexToRGBArray(d.color);

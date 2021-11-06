@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import styles from '../../../styles/components/map/Routes.module.scss';
+import styles from '../../../styles/components/panel/Routes.module.scss';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { useSocket } from '../socket/SocketContext';
 import { getIconPath } from '../../../helpers/map';

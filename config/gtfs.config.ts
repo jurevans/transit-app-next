@@ -1,11 +1,11 @@
-type RouteList = string[];
-
 type FeedConfig = {
   feedIndex: number;
   label: string;
   routeGroupings?: string[][];
   icon: string;
 }
+
+type RouteList = string[];
 
 export type ConfigItem = {
   feedIndex: number;
@@ -74,6 +74,8 @@ const gtfsConfig: Config = {
     ['FS', 'GS', 'H'],
     ['SI'],
   ],
+  // You can specify a default coordinate to center the map here. If not
+  // specified, a request will be made to calculate this via PostGIS:
   latitude: 40.7227534777328,
   longitude: -73.94594865587045,
 };

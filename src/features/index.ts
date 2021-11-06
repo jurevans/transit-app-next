@@ -17,7 +17,7 @@ const rootReducer = {
   }),
   gtfs: combineReducers({
     agency: agencyReducer,
-    stations: stationsReducer,
+    //stations: stationsReducer, // TODO: Remove this and related slice if unused!
     routes: routesReducer,
     feeds: feedsReducer,
   }),

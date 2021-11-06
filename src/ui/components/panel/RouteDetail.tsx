@@ -5,7 +5,7 @@ import { useSocket } from '../socket/SocketContext';
 import { openRoutes } from '../../../features/ui/mapDetails';
 import { getIconPath } from '../../../helpers/map';
 import { stripTags } from '../../../helpers/functions';
-import styles from '../../../styles/components/map/RouteDetail.module.scss';
+import styles from '../../../styles/components/panel/RouteDetail.module.scss';
 import { DateTime, Settings } from 'luxon';
 
 type Props = {
@@ -19,7 +19,8 @@ const RouteDetail: FC<Props> = (props: Props): ReactElement => {
   const { feedIndex, agencyTimezone } = useAppSelector((state: any) => state.gtfs.agency);
   const dispatch = useAppDispatch();
   const { socket, alerts } = useSocket();
-  const alertsForRoute = alerts[feedIndex][routeId];
+  // TODO: Why is alerts[feedIndex] sometimes undefined, even if the route has alerts?
+  const alertsForRoute = alerts[feedIndex] ? alerts[feedIndex][routeId] : null;
 
   // Set timezone for Luxon to match that of agency:
   Settings.defaultZoneName = agencyTimezone;

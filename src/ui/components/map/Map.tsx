@@ -13,13 +13,13 @@ import DeckGL, { FlyToInterpolator, MapView } from 'deck.gl';
 import MapGL, {
   _MapContext as MapContext,
   NavigationControl,
-  GeolocateControl,
-  FullscreenControl,
+  //GeolocateControl,
+  //FullscreenControl,
 } from 'react-map-gl';
 import MapTooltip from './MapTooltip';
 import MapPopup from './MapPopup';
 import SelectMapStyle from './SelectMapStyle';
-import Details from './Details';
+import Details from '../panel/Details';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { openPopup, closePopup } from '../../../features/ui/mapPopupSlice';
 import { updatedMapStyle } from '../../../features/ui/mapStyleSlice';
@@ -265,8 +265,8 @@ const Map: FC<Props> = (props: Props): ReactElement => {
         {isPopupOpen && <MapPopup data={popupData} />}
         <SelectMapStyle mapStyle={mapStyle} onChange={handleStyleUpdate} />
         <NavigationControl style={{ right: 10, top: 10 }} captureClick={true} capturePointerMove={true} />
-        <GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} />
-        <FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />
+        {/*<GeolocateControl style={{ right: 10, top: 110 }} captureClick={true} capturePointerMove={true} /> */}
+        {/*<FullscreenControl style={{ right: 10, bottom: 10 }} captureClick={true} capturePointerMove={true} />*/}
       </DeckGL>
       <Details />
       {tooltipData && <MapTooltip data={tooltipData} />}

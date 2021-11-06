@@ -33,7 +33,6 @@ const agencySlice = createSlice({
       state.agencyLang = agency.agencyLang;
       state.agencyPhone = agency.agencyPhone;
       state.location = agency.location;
-      console.log({ state })
     },
   },
   extraReducers: {

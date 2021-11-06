@@ -98,10 +98,12 @@ export const formatMinUntil = (time: number, timezone: string) => {
  */
 export const getSortedRoutes = (routesObj: any) => {
   let routes: any[] = [];
+  // TODO: Perhaps this should only accept an array:
   const routesKeys = Object.keys(routesObj);
   if (routesKeys.length > 0) {
     routes = routesKeys.map((key: any) => routesObj[key])
   } else {
+    // routesObj is actually an Array
     routes = routesObj.map((route: any) => route.routeId);
   }
 
@@ -110,6 +112,9 @@ export const getSortedRoutes = (routesObj: any) => {
 
   // Group by color:
   const groupedRoutes = routes.reduce((grouped: any, route: any) => {
+    if (!route) {
+      return grouped;
+    }
     const { routeColor } = route;
     if (!grouped[routeColor]) {
       grouped[routeColor] = [];
